@@ -83,11 +83,11 @@ Commits no padrão `tipo(escopo): descrição` em português, seguidos de `git p
 - Desenho: **API real para autorização e estrutura das campanhas; métricas sintéticas**
   (contas de teste não veiculam), associadas aos IDs reais e marcadas `origem='sintetica'`.
 
-## Situação (12/11/2026, 11h30)
+## Situação (12/11/2026, atualizado após sub-etapa 4)
 
 Feito: tabela congelada (`29de91d`) · motor + 45 testes (`cfb8ac0`) · banco + migração
 (`6aa88ba`) · API REST (`1e22777`) · OAuth + cifragem (`f49faf9`) · sincronização campanhas
-(em andamento). Total **109 testes passando** (12/11, após sub-etapa 3).
+(sub-etapas 3 e 4 concluídas). Total **131 testes passando** (12/11, após sub-etapa 4).
 
 **Integração Google Ads — estado (12/11/2026):**
 - ✅ Sub-etapa 1: Login OAuth (CSRF + PKCE S256, `email_verified`)
@@ -97,9 +97,9 @@ Feito: tabela congelada (`29de91d`) · motor + 45 testes (`cfb8ac0`) · banco + 
   `{"campanhas_sincronizadas": 3}`) e `2026-11-12_IN-02_campanhas_banco.png` (banco limen:
   campanhas A ENABLED 50 M, B ENABLED 80 M, C PAUSED 40 M com IDs reais e
   sincronizada_em = 2026-11-12 19:29:24 UTC).
-- ⬜ Sub-etapa 4: Falhas simuladas (token expirado → renova; refresh revogado → pede
-  reautorização; indisponibilidade → 3 tentativas com espera crescente; cota excedida →
-  adiar e registrar o código).
+- ✅ Sub-etapa 4: Falhas simuladas — IN-03 a IN-06 aprovados por testes com dublê da porta
+  (a tabela define esses casos como "Simulada"). 131/131 passando. Evidência:
+  `2026-11-12_etapa4_falhas_pytest.txt`.
 - ⬜ IN-02b: Métricas sintéticas associadas às campanhas reais sincronizadas.
 
 Depois: dashboard (React) → testes de desempenho (aba Desempenho: 5 aquecimentos,
@@ -201,6 +201,43 @@ Depois: dashboard (React) → testes de desempenho (aba Desempenho: 5 aqueciment
 - **Variáveis de ambiente (não segredos)**: `GOOGLE_CUSTOMER_ID=4327030343` (conta cliente),
   `GOOGLE_LOGIN_CUSTOMER_ID=1137051091` (MCC). Lidas em `configuracoes.google_customer_id`
   e `configuracoes.google_login_customer_id`.
+- **Falhas simuladas (sub-etapa 4) — hierarquia de exceções**: `ErroGoogleAds` (base, HTTP
+  502) → `TokenExpirado` (503), `TokenRevogado` (409), `ApiIndisponivel` (503),
+  `CotaExcedida` (503 + `Retry-After: 3600`). `GoogleAdsException` **não** herda de
+  `grpc.RpcError` (confirmado por inspeção do venv) — por isso é capturada em ramo próprio
+  com `except GoogleAdsException`. `grpc.RpcError` nu chega quando o status está em
+  `_RETRY_STATUS_CODES` (INTERNAL ou RESOURCE_EXHAUSTED).
+- **Falhas simuladas — classificação de erros gRPC**: `invalid_grant` verificado nos
+  detalhes **antes** do status code — pode vir disfarçado como UNAVAILABLE ou UNAUTHENTICATED.
+  Apenas UNAVAILABLE e DEADLINE_EXCEEDED entram no loop de retry (IN-05). RESOURCE_EXHAUSTED
+  → `CotaExcedida` sem retry (IN-06). Qualquer outro código → `ErroGoogleAds` genérico
+  (HTTP 502), também sem retry. Alternativa descartada: tratar todos os erros gRPC como
+  transitórios — oculta falhas permanentes de configuração (ex.: PERMISSION_DENIED).
+- **Falhas simuladas — retryable=False por padrão**: `google.auth.exceptions.RefreshError`
+  com `retryable=False` → `TokenRevogado`. Na dúvida, pede reautorização (política
+  conservadora). `retryable=True` → `TokenExpirado` (falha temporária, repete uma vez sem
+  espera). Alternativa descartada: tratar toda `RefreshError` como recuperável — mascararia
+  `invalid_grant` e levaria a loop infinito de renovação.
+- **Falhas simuladas — porta chamada antes do banco**: `sincronizar()` chama
+  `porta.listar_campanhas()` **antes** de criar `ContaGoogleAds` ou executar qualquer
+  `flush/commit`. Se a porta falhar, o banco fica intacto. `TokenRevogado` é capturado após
+  os laços: apaga `usuario.refresh_token_cifrado` e faz `commit` isolado (só isso), depois
+  repropaga. A próxima chamada já cai em `TokenGoogleAusente` (409).
+- **Falhas simuladas — retries aninhados**: laço externo (`TokenExpirado`, `range(2)`) sobre
+  laço interno (`ApiIndisponivel`, `range(1 + tentativas_indisp=3)`). Pior caso:
+  2 × 4 = 8 chamadas à porta. Espera crescente injetável (`espera: Callable[[int], None]`,
+  default `time.sleep`): 1 s, 2 s, 4 s entre as tentativas de IN-05. `CotaExcedida` e
+  `ErroGoogleAds` genérico saem imediatamente de ambos os laços. Alternativa descartada:
+  retry único sem distinção de tipo — CotaExcedida e PERMISSION_DENIED não se beneficiam
+  de retry e apenas atrasariam a resposta de erro.
+- **Falhas simuladas — logging sem token**: `logging.getLogger(__name__)` em
+  `sincronizador.py`. Logs incluem o caso (IN-03 a IN-06), tipo da falha e código da API
+  quando disponível; nunca o valor do refresh token. Testado via `caplog` do pytest.
+- **Falhas simuladas — handlers HTTP (main.py)**: `TokenRevogado` → 409 (não 401; 401 é
+  "não logado no Limen"); `TokenExpirado` → 503; `ApiIndisponivel` → 503; `CotaExcedida`
+  → 503 + `Retry-After: 3600`; `ErroGoogleAds` base → 502. Se `codigo` for None,
+  o trecho `[codigo]` é omitido do `detail` (sem `[None]`). Os handlers específicos
+  prevalecem sobre o handler base por ordem de registro.
 - **Pendências a mencionar no artigo**: declarar o uso de IA conforme regra do iCEV
   (confirmar com o orientador); justificar Liang et al. (2009) na seção 2.5; buscar fonte
   recente (IEEE/ACM, "rule engine evaluation"); deixar explícito na metodologia o que usou

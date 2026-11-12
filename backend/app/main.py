@@ -10,7 +10,16 @@ from starlette.middleware.sessions import SessionMiddleware
 
 from .api.rotas import alertas, avaliacoes, campanhas, dev, oauth, regras
 from .config import configuracoes
-from .servicos.erros import ConflitoDados, NaoEncontrado, TokenGoogleAusente
+from .servicos.erros import (
+    ApiIndisponivel,
+    CotaExcedida,
+    ConflitoDados,
+    ErroGoogleAds,
+    NaoEncontrado,
+    TokenExpirado,
+    TokenGoogleAusente,
+    TokenRevogado,
+)
 
 
 def criar_app() -> FastAPI:
@@ -46,6 +55,47 @@ def criar_app() -> FastAPI:
     @app.exception_handler(TokenGoogleAusente)
     async def token_google_ausente(_: Request, erro: TokenGoogleAusente):
         return JSONResponse(status_code=status.HTTP_409_CONFLICT, content={"detail": str(erro)})
+
+    @app.exception_handler(TokenRevogado)
+    async def token_revogado(_: Request, erro: TokenRevogado):
+        # 409: estado inconsistente — logado no Limen, mas token Google revogado.
+        # 401 está reservado para "não logado no Limen".
+        return JSONResponse(
+            status_code=status.HTTP_409_CONFLICT,
+            content={"detail": "Token Google revogado; faça login com o Google novamente."},
+        )
+
+    @app.exception_handler(TokenExpirado)
+    async def token_expirado(_: Request, erro: TokenExpirado):
+        return JSONResponse(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            content={"detail": "Falha temporária de autenticação com o Google; tente novamente."},
+        )
+
+    @app.exception_handler(ApiIndisponivel)
+    async def api_indisponivel(_: Request, erro: ApiIndisponivel):
+        return JSONResponse(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            content={"detail": str(erro)},
+        )
+
+    @app.exception_handler(CotaExcedida)
+    async def cota_excedida(_: Request, erro: CotaExcedida):
+        sufixo = f" [{erro.codigo}]" if erro.codigo else ""
+        return JSONResponse(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            headers={"Retry-After": "3600"},
+            content={"detail": f"Cota excedida{sufixo}; tente novamente em 1 hora."},
+        )
+
+    @app.exception_handler(ErroGoogleAds)
+    async def erro_google_ads(_: Request, erro: ErroGoogleAds):
+        # Captura subclasses não tratadas pelos handlers específicos acima.
+        sufixo = f" [{erro.codigo}]" if erro.codigo else ""
+        return JSONResponse(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            content={"detail": f"Erro na comunicação com o Google Ads{sufixo}."},
+        )
 
     @app.get("/saude", tags=["sistema"])
     def saude():
