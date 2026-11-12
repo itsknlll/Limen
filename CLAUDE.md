@@ -38,7 +38,7 @@ pytest. Frontend previsto: React + TypeScript (Vite) + Recharts. SO do Kauan: Zo
 (base Ubuntu 24.04).
 
 ```
-docker-compose.yml          PostgreSQL 16 (bancos limen e limen_teste)
+docker-compose.yml          PostgreSQL 16 (bancos limen e limen_teste; container: limen-db)
 infra/postgres/init/        cria o banco limen_teste
 backend/
   app/motor/                motor puro (sem banco/rede): metricas, validacao, regras, avaliador
@@ -92,8 +92,11 @@ Feito: tabela congelada (`29de91d`) · motor + 45 testes (`cfb8ac0`) · banco + 
 **Integração Google Ads — estado (12/11/2026):**
 - ✅ Sub-etapa 1: Login OAuth (CSRF + PKCE S256, `email_verified`)
 - ✅ Sub-etapa 2: Refresh token cifrado em `Usuario.refresh_token_cifrado` (Fernet)
-- ⏳ Sub-etapa 3: Sincronização de campanhas — suíte 107/107 passando; aguarda
-  evidência da chamada real (IN-02: `POST /campanhas/sincronizar` retornando 3 campanhas).
+- ✅ Sub-etapa 3: Sincronização de campanhas — 109/109 passando + caso IN-02 aprovado.
+  Evidências (12/11): `2026-11-12_IN-02_sincronizacao_real.png` (endpoint retornou
+  `{"campanhas_sincronizadas": 3}`) e `2026-11-12_IN-02_campanhas_banco.png` (banco limen:
+  campanhas A ENABLED 50 M, B ENABLED 80 M, C PAUSED 40 M com IDs reais e
+  sincronizada_em = 2026-11-12 19:29:24 UTC).
 - ⬜ Sub-etapa 4: Falhas simuladas (token expirado → renova; refresh revogado → pede
   reautorização; indisponibilidade → 3 tentativas com espera crescente; cota excedida →
   adiar e registrar o código).
