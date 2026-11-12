@@ -205,8 +205,7 @@ Depois: dashboard (React) → testes de desempenho (aba Desempenho: 5 aqueciment
   502) → `TokenExpirado` (503), `TokenRevogado` (409), `ApiIndisponivel` (503),
   `CotaExcedida` (503 + `Retry-After: 3600`). `GoogleAdsException` **não** herda de
   `grpc.RpcError` (confirmado por inspeção do venv) — por isso é capturada em ramo próprio
-  com `except GoogleAdsException`. `grpc.RpcError` nu chega quando o status está em
-  `_RETRY_STATUS_CODES` (INTERNAL ou RESOURCE_EXHAUSTED).
+  com `except GoogleAdsException`.
 - **Falhas simuladas — classificação de erros gRPC**: `invalid_grant` verificado nos
   detalhes **antes** do status code — pode vir disfarçado como UNAVAILABLE ou UNAUTHENTICATED.
   Apenas UNAVAILABLE e DEADLINE_EXCEEDED entram no loop de retry (IN-05). RESOURCE_EXHAUSTED
@@ -217,7 +216,7 @@ Depois: dashboard (React) → testes de desempenho (aba Desempenho: 5 aqueciment
   com `retryable=False` → `TokenRevogado`. Na dúvida, pede reautorização (política
   conservadora). `retryable=True` → `TokenExpirado` (falha temporária, repete uma vez sem
   espera). Alternativa descartada: tratar toda `RefreshError` como recuperável — mascararia
-  `invalid_grant` e levaria a loop infinito de renovação.
+  `invalid_grant` e tentaria renovar sem chance de sucesso, atrasando o pedido de reautorização.
 - **Falhas simuladas — porta chamada antes do banco**: `sincronizar()` chama
   `porta.listar_campanhas()` **antes** de criar `ContaGoogleAds` ou executar qualquer
   `flush/commit`. Se a porta falhar, o banco fica intacto. `TokenRevogado` é capturado após
@@ -237,7 +236,8 @@ Depois: dashboard (React) → testes de desempenho (aba Desempenho: 5 aqueciment
   "não logado no Limen"); `TokenExpirado` → 503; `ApiIndisponivel` → 503; `CotaExcedida`
   → 503 + `Retry-After: 3600`; `ErroGoogleAds` base → 502. Se `codigo` for None,
   o trecho `[codigo]` é omitido do `detail` (sem `[None]`). Os handlers específicos
-  prevalecem sobre o handler base por ordem de registro.
+  prevalecem sobre o handler base porque o FastAPI/Starlette escolhe o handler pela classe
+  mais específica da exceção (MRO), não por ordem de registro.
 - **Pendências a mencionar no artigo**: declarar o uso de IA conforme regra do iCEV
   (confirmar com o orientador); justificar Liang et al. (2009) na seção 2.5; buscar fonte
   recente (IEEE/ACM, "rule engine evaluation"); deixar explícito na metodologia o que usou
