@@ -25,13 +25,16 @@ from sqlalchemy import (
     BigInteger,
     Boolean,
     CheckConstraint,
+    Column,
     Date,
     DateTime,
     ForeignKey,
     Integer,
+    MetaData,
     Numeric,
     SmallInteger,
     String,
+    Table,
     Text,
     UniqueConstraint,
     func,
@@ -227,3 +230,23 @@ class Alerta(Base):
     valores_medidos: Mapped[dict] = mapped_column(JSONB)
     condicoes: Mapped[list] = mapped_column(JSONB)
     criado_em: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+# View só de leitura (criada na migração 0001). Fica num MetaData separado para
+# o Alembic não tentar criá-la como tabela.
+vw_metrica_diaria = Table(
+    "vw_metrica_diaria",
+    MetaData(),
+    Column("id", BigInteger, primary_key=True),
+    Column("campanha_id", BigInteger),
+    Column("data", Date),
+    Column("impressoes", BigInteger),
+    Column("cliques", BigInteger),
+    Column("custo", Numeric),
+    Column("conversoes", Numeric),
+    Column("origem", String),
+    Column("lote", String),
+    Column("criado_em", DateTime(timezone=True)),
+    Column("ctr", Numeric),
+    Column("cpc", Numeric),
+)

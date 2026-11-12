@@ -1,0 +1,91 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.1.1, pluggy-1.7.0 -- /home/kauan/projetos/limen/backend/.venv/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/kauan/projetos/limen/backend
+configfile: pyproject.toml
+testpaths: tests
+plugins: anyio-4.16.0
+collecting ... collected 74 items
+
+tests/api/test_api.py::test_in07_ingestao_persiste_e_ctr_cpc_batem_com_o_motor PASSED [  1%]
+tests/api/test_api.py::test_ingestao_recusa_registro_invalido_sem_gravar_nada[FM-15] PASSED [  2%]
+tests/api/test_api.py::test_ingestao_recusa_registro_invalido_sem_gravar_nada[FM-16] PASSED [  4%]
+tests/api/test_api.py::test_ingestao_recusa_registro_invalido_sem_gravar_nada[FM-17] PASSED [  5%]
+tests/api/test_api.py::test_ingestao_de_dia_repetido_e_conflito PASSED   [  6%]
+tests/api/test_api.py::test_in08_regra_criada_e_usada_na_proxima_avaliacao PASSED [  8%]
+tests/api/test_api.py::test_in09_regra_com_limiar_invalido_e_recusada[negativo] PASSED [  9%]
+tests/api/test_api.py::test_in09_regra_com_limiar_invalido_e_recusada[nulo] PASSED [ 10%]
+tests/api/test_api.py::test_in09_regra_com_limiar_invalido_e_recusada[vazio] PASSED [ 12%]
+tests/api/test_api.py::test_codigo_de_regra_repetido_e_conflito PASSED   [ 13%]
+tests/api/test_api.py::test_regra_desativada_nao_gera_alerta PASSED      [ 14%]
+tests/api/test_api.py::test_atualizar_regra_troca_as_condicoes PASSED    [ 16%]
+tests/api/test_api.py::test_in10_alerta_traz_campanha_regra_valor_e_data PASSED [ 17%]
+tests/api/test_api.py::test_in11_reavaliar_sem_mudanca_nao_duplica_alertas PASSED [ 18%]
+tests/api/test_api.py::test_campanha_pausada_so_e_avaliada_quando_pedido PASSED [ 20%]
+tests/api/test_api.py::test_avaliacao_registra_contagens_e_tempo PASSED  [ 21%]
+tests/api/test_api.py::test_rotas_exigem_login PASSED                    [ 22%]
+tests/api/test_api.py::test_campanha_inexistente_ou_de_outro_usuario_e_404 PASSED [ 24%]
+tests/api/test_api.py::test_saude PASSED                                 [ 25%]
+tests/api/test_fluxo_tabela.py::test_alertas_gravados_batem_com_a_tabela PASSED [ 27%]
+tests/banco/test_esquema.py::test_view_calcula_ctr_e_cpc_igual_ao_motor PASSED [ 28%]
+tests/banco/test_esquema.py::test_banco_recusa_registro_invalido[FM-15] PASSED [ 29%]
+tests/banco/test_esquema.py::test_banco_recusa_registro_invalido[FM-16] PASSED [ 31%]
+tests/banco/test_esquema.py::test_banco_recusa_registro_invalido[FM-17] PASSED [ 32%]
+tests/banco/test_esquema.py::test_um_registro_por_campanha_e_dia PASSED  [ 33%]
+tests/banco/test_esquema.py::test_um_alerta_por_regra_e_registro PASSED  [ 35%]
+tests/banco/test_esquema.py::test_banco_recusa_condicao_invalida[metrica_inexistente] PASSED [ 36%]
+tests/banco/test_esquema.py::test_banco_recusa_condicao_invalida[operador_invalido] PASSED [ 37%]
+tests/banco/test_esquema.py::test_banco_recusa_condicao_invalida[limiar_negativo] PASSED [ 39%]
+tests/test_cenarios_tabela.py::test_tabela_tem_os_23_casos_registrados PASSED [ 40%]
+tests/test_cenarios_tabela.py::test_regras_padrao_do_codigo_usam_os_limiares_da_tabela PASSED [ 41%]
+tests/test_cenarios_tabela.py::test_cenario_da_tabela[RA-01] PASSED      [ 43%]
+tests/test_cenarios_tabela.py::test_cenario_da_tabela[RA-02] PASSED      [ 44%]
+tests/test_cenarios_tabela.py::test_cenario_da_tabela[RA-03] PASSED      [ 45%]
+tests/test_cenarios_tabela.py::test_cenario_da_tabela[RA-04] PASSED      [ 47%]
+tests/test_cenarios_tabela.py::test_cenario_da_tabela[RA-05] PASSED      [ 48%]
+tests/test_cenarios_tabela.py::test_cenario_da_tabela[RA-06] PASSED      [ 50%]
+tests/test_cenarios_tabela.py::test_cenario_da_tabela[FM-01] PASSED      [ 51%]
+tests/test_cenarios_tabela.py::test_cenario_da_tabela[FM-02] PASSED      [ 52%]
+tests/test_cenarios_tabela.py::test_cenario_da_tabela[FM-03] PASSED      [ 54%]
+tests/test_cenarios_tabela.py::test_cenario_da_tabela[FM-04] PASSED      [ 55%]
+tests/test_cenarios_tabela.py::test_cenario_da_tabela[FM-05] PASSED      [ 56%]
+tests/test_cenarios_tabela.py::test_cenario_da_tabela[FM-06] PASSED      [ 58%]
+tests/test_cenarios_tabela.py::test_cenario_da_tabela[FM-07] PASSED      [ 59%]
+tests/test_cenarios_tabela.py::test_cenario_da_tabela[FM-08] PASSED      [ 60%]
+tests/test_cenarios_tabela.py::test_cenario_da_tabela[FM-09] PASSED      [ 62%]
+tests/test_cenarios_tabela.py::test_cenario_da_tabela[FM-10] PASSED      [ 63%]
+tests/test_cenarios_tabela.py::test_cenario_da_tabela[FM-11] PASSED      [ 64%]
+tests/test_cenarios_tabela.py::test_cenario_da_tabela[FM-12] PASSED      [ 66%]
+tests/test_cenarios_tabela.py::test_cenario_da_tabela[FM-13] PASSED      [ 67%]
+tests/test_cenarios_tabela.py::test_cenario_da_tabela[FM-14] PASSED      [ 68%]
+tests/test_cenarios_tabela.py::test_cenario_da_tabela[FM-15] PASSED      [ 70%]
+tests/test_cenarios_tabela.py::test_cenario_da_tabela[FM-16] PASSED      [ 71%]
+tests/test_cenarios_tabela.py::test_cenario_da_tabela[FM-17] PASSED      [ 72%]
+tests/test_motor_unidade.py::test_ctr_em_porcentagem_e_exato PASSED      [ 74%]
+tests/test_motor_unidade.py::test_ctr_indefinido_com_zero_impressoes PASSED [ 75%]
+tests/test_motor_unidade.py::test_cpc_sem_erro_de_ponto_flutuante PASSED [ 77%]
+tests/test_motor_unidade.py::test_cpc_indefinido_com_zero_cliques PASSED [ 78%]
+tests/test_motor_unidade.py::test_ausente_e_diferente_de_zero PASSED     [ 79%]
+tests/test_motor_unidade.py::test_operadores[<-4.99-True] PASSED         [ 81%]
+tests/test_motor_unidade.py::test_operadores[<-5.00-False] PASSED        [ 82%]
+tests/test_motor_unidade.py::test_operadores[<=-5.00-True] PASSED        [ 83%]
+tests/test_motor_unidade.py::test_operadores[>-5.00-False] PASSED        [ 85%]
+tests/test_motor_unidade.py::test_operadores[>=-5.00-True] PASSED        [ 86%]
+tests/test_motor_unidade.py::test_operadores[==-5.00-True] PASSED        [ 87%]
+tests/test_motor_unidade.py::test_operadores[==-5.0-True] PASSED         [ 89%]
+tests/test_motor_unidade.py::test_regra_sem_condicoes_e_invalida PASSED  [ 90%]
+tests/test_motor_unidade.py::test_limiar_negativo_e_invalido PASSED      [ 91%]
+tests/test_motor_unidade.py::test_limiar_float_e_recusado PASSED         [ 93%]
+tests/test_motor_unidade.py::test_ids_de_regra_repetidos_sao_recusados PASSED [ 94%]
+tests/test_motor_unidade.py::test_resultado_nao_depende_da_ordem_das_condicoes PASSED [ 95%]
+tests/test_motor_unidade.py::test_regra_configurada_sem_alterar_codigo PASSED [ 97%]
+tests/test_motor_unidade.py::test_alerta_traz_o_valor_medido PASSED      [ 98%]
+tests/test_motor_unidade.py::test_registro_rejeitado_traz_mensagens_de_erro PASSED [100%]
+
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /home/kauan/projetos/limen/backend/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================== 74 passed, 1 warning in 0.81s =========================
