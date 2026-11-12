@@ -1,0 +1,23 @@
+services:
+  db:
+    image: postgres:16
+    container_name: limen-db
+    environment:
+      POSTGRES_USER: limen
+      POSTGRES_PASSWORD: limen
+      POSTGRES_DB: limen
+    ports:
+      # Porta 5433 no computador, para não conflitar com um PostgreSQL local na 5432
+      - "5433:5432"
+    volumes:
+      - limen-dados:/var/lib/postgresql/data
+      # Scripts executados só na primeira criação do volume (cria o banco de teste)
+      - ./infra/postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U limen -d limen"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  limen-dados:
