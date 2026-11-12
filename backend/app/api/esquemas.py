@@ -98,6 +98,10 @@ class IngestaoSaida(BaseModel):
     inseridos: int
 
 
+class SincronizacaoSaida(BaseModel):
+    campanhas_sincronizadas: int
+
+
 class MetricaSaida(BaseModel):
     data: date
     impressoes: int | None

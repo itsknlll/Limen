@@ -1,6 +1,7 @@
 """Configuração lida de variáveis de ambiente ou do arquivo backend/.env."""
 
 import json
+import re
 from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -29,6 +30,32 @@ class Configuracoes(BaseSettings):
     # Ausente → falha com mensagem clara ao tentar cifrar/decifrar.
     # Gere com: python3 -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
     chave_cifragem: str | None = None
+
+    # Conta Google Ads (não são segredos: IDs públicos). Obrigatórios para sincronizar.
+    # customer_id: conta cliente (10 dígitos). login_customer_id: MCC (10 dígitos).
+    google_customer_id: str | None = None
+    google_login_customer_id: str | None = None
+
+    @property
+    def ids_google_ads(self) -> tuple[str, str]:
+        """Retorna (customer_id, login_customer_id) validados (exatamente 10 dígitos cada).
+
+        Levanta ValueError com instrução clara se ausente ou fora do formato —
+        mesmo padrão da chave_cifragem.
+        """
+        for nome_var, valor in (
+            ("GOOGLE_CUSTOMER_ID", self.google_customer_id),
+            ("GOOGLE_LOGIN_CUSTOMER_ID", self.google_login_customer_id),
+        ):
+            if not valor:
+                raise ValueError(
+                    f"{nome_var} não configurada no .env — adicione {nome_var}=<10 dígitos>."
+                )
+            if not re.fullmatch(r"\d{10}", valor):
+                raise ValueError(
+                    f"{nome_var} inválida: deve ter exatamente 10 dígitos (recebido: '{valor}')."
+                )
+        return self.google_customer_id, self.google_login_customer_id  # type: ignore[return-value]
 
     @property
     def credenciais_google(self) -> tuple[str, str]:

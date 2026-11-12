@@ -10,7 +10,7 @@ from starlette.middleware.sessions import SessionMiddleware
 
 from .api.rotas import alertas, avaliacoes, campanhas, dev, oauth, regras
 from .config import configuracoes
-from .servicos.erros import ConflitoDados, NaoEncontrado
+from .servicos.erros import ConflitoDados, NaoEncontrado, TokenGoogleAusente
 
 
 def criar_app() -> FastAPI:
@@ -41,6 +41,10 @@ def criar_app() -> FastAPI:
 
     @app.exception_handler(ConflitoDados)
     async def conflito(_: Request, erro: ConflitoDados):
+        return JSONResponse(status_code=status.HTTP_409_CONFLICT, content={"detail": str(erro)})
+
+    @app.exception_handler(TokenGoogleAusente)
+    async def token_google_ausente(_: Request, erro: TokenGoogleAusente):
         return JSONResponse(status_code=status.HTTP_409_CONFLICT, content={"detail": str(erro)})
 
     @app.get("/saude", tags=["sistema"])

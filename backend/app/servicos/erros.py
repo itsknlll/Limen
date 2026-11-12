@@ -7,3 +7,7 @@ class NaoEncontrado(Exception):
 
 class ConflitoDados(Exception):
     """Operação conflita com dados existentes (HTTP 409)."""
+
+
+class TokenGoogleAusente(Exception):
+    """Usuário não autorizou acesso ao Google Ads (sem refresh_token_cifrado). HTTP 409."""

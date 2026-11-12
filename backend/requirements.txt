@@ -7,3 +7,4 @@ pydantic-settings
 httpx
 itsdangerous
 cryptography
+google-ads==35.1.0

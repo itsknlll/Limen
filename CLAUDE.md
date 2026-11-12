@@ -86,19 +86,18 @@ Commits no padrão `tipo(escopo): descrição` em português, seguidos de `git p
 ## Situação (12/11/2026, 11h30)
 
 Feito: tabela congelada (`29de91d`) · motor + 45 testes (`cfb8ac0`) · banco + migração
-(`6aa88ba`) · API REST (`1e22777`). Total 74 testes passando.
+(`6aa88ba`) · API REST (`1e22777`) · OAuth + cifragem (`f49faf9`) · sincronização campanhas
+(em andamento). Total **109 testes passando** (12/11, após sub-etapa 3).
 
-**Próximo — integração Google Ads (casos IN-01 a IN-06 e IN-02b da tabela):**
-1. Login com Google na própria aplicação (fluxo OAuth web, escopos `openid email adwords`),
-   callback no backend, usuário identificado pelo e-mail, sessão por cookie assinado.
-   Ajustar a porta do callback (cadastrada 8080; uvicorn padrão 8000) — decidir com o Kauan.
-2. Guardar o refresh token **cifrado** em `conta_google_ads.refresh_token_cifrado`.
-3. Serviço de sincronização de campanhas via biblioteca oficial `google-ads` (Python),
-   atrás de uma interface/porta para permitir dublê nos testes.
-4. Falhas simuladas com dublê da API: token expirado (renova uma vez), refresh token revogado
-   (sem dados parciais, pedir reautorização), indisponibilidade (até 3 tentativas com espera
-   crescente, sem duplicar), cota excedida (adiar e registrar o código).
-5. IN-02b: métricas sintéticas associadas às campanhas reais sincronizadas.
+**Integração Google Ads — estado (12/11/2026):**
+- ✅ Sub-etapa 1: Login OAuth (CSRF + PKCE S256, `email_verified`)
+- ✅ Sub-etapa 2: Refresh token cifrado em `Usuario.refresh_token_cifrado` (Fernet)
+- ⏳ Sub-etapa 3: Sincronização de campanhas — suíte 107/107 passando; aguarda
+  evidência da chamada real (IN-02: `POST /campanhas/sincronizar` retornando 3 campanhas).
+- ⬜ Sub-etapa 4: Falhas simuladas (token expirado → renova; refresh revogado → pede
+  reautorização; indisponibilidade → 3 tentativas com espera crescente; cota excedida →
+  adiar e registrar o código).
+- ⬜ IN-02b: Métricas sintéticas associadas às campanhas reais sincronizadas.
 
 Depois: dashboard (React) → testes de desempenho (aba Desempenho: 5 aquecimentos,
 30 repetições, 9 combinações volume × regras, 4 endpoints; tempo do motor medido isolado)
@@ -162,6 +161,43 @@ Depois: dashboard (React) → testes de desempenho (aba Desempenho: 5 aqueciment
 - **OpenAPI**: `app.openapi()` sobrescrito em `main.py` para substituir 422 → 400 em
   todos os endpoints (IN-09). Alternativa descartada: `responses=` em cada rota —
   verboso e fácil de esquecer em rotas novas.
+- **Sincronização Google Ads — `TokenGoogleAusente`**: exceção própria em `servicos/erros.py`
+  lançada pelo sincronizador quando `refresh_token_cifrado` é None; tratada em `main.py` com
+  409 (estado inconsistente do usuário). Alternativa descartada: verificação duplicada no
+  endpoint com HTTPException — criava dois pontos de falha e confundia com o `ValueError` de
+  chave de cifragem inválida.
+- **Sincronização Google Ads — `ids_google_ads`**: property em `Configuracoes` valida
+  `GOOGLE_CUSTOMER_ID` e `GOOGLE_LOGIN_CUSTOMER_ID` (exatamente 10 dígitos; `str | None = None`
+  sem default string). Levanta `ValueError` com instrução clara sobre qual variável configurar
+  — mesmo padrão da `chave_cifragem`. Testada isoladamente (sem banco).
+- **Sincronização Google Ads — `CampanhaGoogle` imutável**: `@dataclass(frozen=True)` em
+  `interface.py`, coerente com o padrão do motor (`RegistroMetricas` também é imutável).
+  Instâncias não podem ser alteradas após criação, o que evita mutações acidentais no
+  sincronizador ou nos testes. Alternativa descartada: dataclass mutável — sem vantagem
+  concreta nesse contexto.
+- **Sincronização Google Ads — `_orcamento(amount_micros, resource_name)`**: função pura em
+  `cliente_real.py`; retorna `None` apenas quando `resource_name == ""` (sem orçamento
+  vinculado). `0` é orçamento válido e é mantido como `0` (ausente ≠ zero, coerente com
+  a política do motor). Testada sem banco e sem Google.
+- **Sincronização Google Ads — biblioteca**: `google-ads==35.1.0` (padrão v26,
+  `developer_token` em `_OPTIONAL_KEYS` — não enviado quando ausente, compatível com a
+  descontinuação de 09/09/2026). Alternativa descartada: httpx REST direto (Playground) —
+  funcionaria, mas exigiria gerenciar o ciclo de vida do `access_token` manualmente; a
+  biblioteca faz isso automaticamente a partir do `refresh_token`.
+- **Sincronização Google Ads — interface (porta)**: `app/servicos/sincronizacao/interface.py`
+  define `CampanhaGoogle` (dataclass) e `PortaGoogleAds` (Protocol). A porta retorna objetos
+  do projeto, não da biblioteca; sincronizador e testes são independentes do `google-ads`.
+  Implementação real: `ClienteRealGoogleAds` (import lazy — não quebra testes sem a lib).
+  Dublê: `PortaFalsa` em `tests/test_sincronizacao.py`.
+- **Sincronização Google Ads — idempotência**: `INSERT … ON CONFLICT DO UPDATE` na constraint
+  `uq_campanha_conta_google_id` — rodar duas vezes atualiza sem duplicar. Status fora de
+  ENABLED/PAUSED/REMOVED normalizado para UNKNOWN antes de gravar (defesa em profundidade
+  contra futuros valores da API). `ContaGoogleAds` criada ou reaproveitada por
+  `(usuario_id, customer_id)`. Token decifrado só no momento da chamada, nunca logado.
+  Endpoint: `POST /campanhas/sincronizar` (usuário logado).
+- **Variáveis de ambiente (não segredos)**: `GOOGLE_CUSTOMER_ID=4327030343` (conta cliente),
+  `GOOGLE_LOGIN_CUSTOMER_ID=1137051091` (MCC). Lidas em `configuracoes.google_customer_id`
+  e `configuracoes.google_login_customer_id`.
 - **Pendências a mencionar no artigo**: declarar o uso de IA conforme regra do iCEV
   (confirmar com o orientador); justificar Liang et al. (2009) na seção 2.5; buscar fonte
   recente (IEEE/ACM, "rule engine evaluation"); deixar explícito na metodologia o que usou
