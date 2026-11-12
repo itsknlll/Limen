@@ -1,8 +1,9 @@
-"""Testes do fluxo OAuth 2.0 com Google (sub-etapa 1 da integração).
+"""Testes do fluxo OAuth 2.0 com Google (sub-etapas 1 e 2 da integração).
 
 Nenhum teste chama o Google de verdade: as respostas HTTP são simuladas por mocks.
 As credenciais (client_id/client_secret) são substituídas por uma propriedade mockada
 para não exigir o arquivo client_secret.json durante o CI/CD.
+A CHAVE_CIFRAGEM é injetada via fixture autouse para todos os testes do arquivo.
 """
 
 import base64
@@ -11,6 +12,7 @@ import secrets
 
 import itsdangerous
 import pytest
+from cryptography.fernet import Fernet
 from fastapi.testclient import TestClient
 from unittest.mock import MagicMock, PropertyMock, patch
 from urllib.parse import parse_qs, urlparse
@@ -18,10 +20,19 @@ from urllib.parse import parse_qs, urlparse
 from app.api.deps import obter_sessao
 from app.main import app
 
+_CHAVE_FERNET_TESTE = Fernet.generate_key().decode()
+
 
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
+
+
+@pytest.fixture(autouse=True)
+def configurar_chave_cifragem(monkeypatch):
+    """Injeta uma chave Fernet válida em todos os testes deste arquivo."""
+    from app import config
+    monkeypatch.setattr(config.configuracoes, "chave_cifragem", _CHAVE_FERNET_TESTE)
 
 
 @pytest.fixture
@@ -284,3 +295,58 @@ def test_callback_state_so_pode_ser_usado_uma_vez(cliente_oauth):
 
     assert resp1.status_code in (302, 307)
     assert resp2.status_code == 400
+
+
+# ---------------------------------------------------------------------------
+# Sub-etapa 2: refresh token cifrado em Usuario
+# ---------------------------------------------------------------------------
+
+
+def test_callback_armazena_refresh_token_cifrado(cliente_oauth, sessao_teste):
+    """Refresh token deve ser armazenado cifrado em Usuario.refresh_token_cifrado."""
+    from sqlalchemy import select
+
+    from app.modelos import Usuario
+    from app.servicos.cifra import decifrar
+
+    state = _iniciar_login_e_obter_state(cliente_oauth)
+
+    with _patch_credenciais(), patch(
+        "app.api.rotas.oauth.httpx.Client",
+        return_value=_make_mock_httpx("token@exemplo.com"),
+    ):
+        cliente_oauth.get(
+            f"/api/oauth/google/callback?code=cod_fake&state={state}",
+            follow_redirects=False,
+        )
+
+    usuario = sessao_teste.scalar(select(Usuario).where(Usuario.email == "token@exemplo.com"))
+    assert usuario.refresh_token_cifrado is not None
+    assert usuario.refresh_token_cifrado != "tok_refresh_fake"   # não está em texto puro
+    assert decifrar(usuario.refresh_token_cifrado) == "tok_refresh_fake"
+
+
+def test_callback_sem_refresh_token_retorna_400(cliente_oauth, sessao_teste):
+    """Google sem refresh_token → 400 com mensagem específica; nenhum usuário criado."""
+    from sqlalchemy import func, select
+
+    from app.modelos import Usuario
+
+    contagem_antes = sessao_teste.scalar(select(func.count(Usuario.id)))
+
+    state = _iniciar_login_e_obter_state(cliente_oauth)
+
+    mock_sem_token = _make_mock_httpx()
+    mock_sem_token.post.return_value.json.return_value = {"access_token": "tok_acesso_fake"}
+
+    with _patch_credenciais(), patch(
+        "app.api.rotas.oauth.httpx.Client", return_value=mock_sem_token
+    ):
+        resp = cliente_oauth.get(
+            f"/api/oauth/google/callback?code=cod_fake&state={state}",
+            follow_redirects=False,
+        )
+
+    assert resp.status_code == 400
+    assert "refresh_token" in resp.json()["detail"]
+    assert sessao_teste.scalar(select(func.count(Usuario.id))) == contagem_antes

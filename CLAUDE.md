@@ -143,9 +143,25 @@ Depois: dashboard (React) → testes de desempenho (aba Desempenho: 5 aqueciment
   código — impede interceptação do authorization code. `email_verified` obrigatório:
   recusa contas Google com e-mail não confirmado. Sessão limpa antes de gravar
   `usuario_id`. Usuário identificado pelo e-mail (único); primeiro login cria o usuário e
-  as regras padrão; re-login atualiza o nome. Refresh token recebido mas armazenado
-  (cifrado) na sub-etapa 2. Redireciona para `/docs` enquanto o frontend React não existe.
+  as regras padrão; re-login atualiza o nome. Refresh token armazenado cifrado em
+  `Usuario.refresh_token_cifrado` (ver decisão abaixo). Redireciona para `/docs` enquanto
+  o frontend React não existe.
   Uvicorn deve rodar na porta 8080 (`--port 8080`) para bater com a URI cadastrada.
+- **OAuth — refresh token cifrado** (migration 0002): token armazenado em
+  `usuario.refresh_token_cifrado` (não em `conta_google_ads`). Decisão: fonte única —
+  o token autoriza o *usuário*, não a conta; `ContaGoogleAds` lê pela FK em vez de guardar
+  cópia. Coluna `conta_google_ads.refresh_token_cifrado` removida na migration 0002
+  (downgrade a restaura). Cifragem: Fernet (AES-128-CBC + HMAC-SHA256,
+  `app/servicos/cifra.py`); chave em `CHAVE_CIFRAGEM` no `.env` (`str | None = None` —
+  ausente ou inválida levanta `ValueError` com instrução de como gerar, sem default
+  silencioso). Fernet garante autenticação do ciphertext (adulteração levanta
+  `InvalidToken`). IV aleatório a cada `cifrar()`: dois tokens idênticos → ciphertexts
+  distintos. Google obrigado a devolver `refresh_token` (`prompt=consent`); ausente
+  levanta 400 e nenhum usuário é criado. Alternativa descartada: duplicar o token em
+  `conta_google_ads` — dois locais = risco de desincronização.
+- **OpenAPI**: `app.openapi()` sobrescrito em `main.py` para substituir 422 → 400 em
+  todos os endpoints (IN-09). Alternativa descartada: `responses=` em cada rota —
+  verboso e fácil de esquecer em rotas novas.
 - **Pendências a mencionar no artigo**: declarar o uso de IA conforme regra do iCEV
   (confirmar com o orientador); justificar Liang et al. (2009) na seção 2.5; buscar fonte
   recente (IEEE/ACM, "rule engine evaluation"); deixar explícito na metodologia o que usou

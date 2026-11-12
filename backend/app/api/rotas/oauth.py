@@ -8,7 +8,9 @@ Decisões:
 - email_verified deve ser true: recusa contas Google com e-mail não confirmado.
 - Sessão limpa antes de gravar usuario_id: descarta dados residuais de sessão anterior.
 - Usuário identificado pelo e-mail (único no banco). Novo usuário recebe as regras padrão.
-- O refresh_token é recebido aqui mas armazenado (cifrado) na sub-etapa 2.
+- refresh_token cifrado com Fernet (CHAVE_CIFRAGEM) e guardado em Usuario.refresh_token_cifrado
+  (fonte única; ContaGoogleAds lê por FK na sincronização de campanhas).
+  Google não devolve refresh_token sem prompt=consent; recusa-se a continuar se ausente.
 - Credenciais lidas em tempo de execução via configuracoes.credenciais_google
   (nunca duplicadas no .env).
 """
@@ -26,6 +28,7 @@ from sqlalchemy.orm import Session
 
 from ...config import configuracoes
 from ...modelos import Usuario
+from ...servicos.cifra import cifrar
 from ...servicos.regras import criar_regras_padrao
 from ..deps import obter_sessao
 
@@ -123,6 +126,14 @@ def callback_google(
 
     tokens = resposta_token.json()
 
+    # Google só devolve refresh_token com prompt=consent; ausente indica problema no fluxo.
+    refresh_token = tokens.get("refresh_token")
+    if not refresh_token:
+        raise HTTPException(
+            status.HTTP_400_BAD_REQUEST,
+            "Google não devolveu refresh_token — verifique os parâmetros do fluxo OAuth",
+        )
+
     # Obter e-mail e nome via endpoint de informações do usuário
     with httpx.Client() as cliente_http:
         resposta_info = cliente_http.get(
@@ -141,15 +152,16 @@ def callback_google(
     email: str = info["email"]
     nome: str = info.get("name", email)
 
-    # Criar usuário novo ou atualizar nome do já existente
+    # Criar usuário novo ou atualizar nome e token do já existente
     usuario = sessao.scalar(select(Usuario).where(Usuario.email == email))
     if usuario is None:
-        usuario = Usuario(email=email, nome=nome)
+        usuario = Usuario(email=email, nome=nome, refresh_token_cifrado=cifrar(refresh_token))
         sessao.add(usuario)
         sessao.flush()
         criar_regras_padrao(sessao, usuario.id)
     else:
         usuario.nome = nome
+        usuario.refresh_token_cifrado = cifrar(refresh_token)
     sessao.commit()
 
     # Limpar a sessão antes de gravar: descarta qualquer dado residual de sessão anterior

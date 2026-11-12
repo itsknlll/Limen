@@ -25,6 +25,11 @@ class Configuracoes(BaseSettings):
     google_client_secret_file: Path | None = None
     google_redirect_uri: str = "http://localhost:8080/api/oauth/google/callback"
 
+    # Cifragem de refresh tokens (Fernet/AES-128-CBC + HMAC-SHA256).
+    # Ausente → falha com mensagem clara ao tentar cifrar/decifrar.
+    # Gere com: python3 -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+    chave_cifragem: str | None = None
+
     @property
     def credenciais_google(self) -> tuple[str, str]:
         """Retorna (client_id, client_secret) lidos do arquivo JSON.

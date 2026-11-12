@@ -62,6 +62,8 @@ class Usuario(Base):
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
     email: Mapped[str] = mapped_column(String(320))
     nome: Mapped[str | None] = mapped_column(String(200))
+    # Cifrado com Fernet (CHAVE_CIFRAGEM). Fonte única: ContaGoogleAds lê por FK.
+    refresh_token_cifrado: Mapped[str | None] = mapped_column(Text)
     criado_em: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
@@ -83,8 +85,6 @@ class ContaGoogleAds(Base):
     customer_id: Mapped[str] = mapped_column(String(10))
     login_customer_id: Mapped[str | None] = mapped_column(String(10))
     nome: Mapped[str | None] = mapped_column(String(200))
-    # Preenchido na etapa de integração; guardado cifrado, nunca em texto puro.
-    refresh_token_cifrado: Mapped[str | None] = mapped_column(Text)
     criado_em: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     campanhas: Mapped[list[Campanha]] = relationship(back_populates="conta")

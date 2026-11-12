@@ -53,7 +53,31 @@ def criar_app() -> FastAPI:
     if configuracoes.ambiente == "desenvolvimento":
         app.include_router(dev.roteador)
 
+    _corrigir_openapi_422_para_400(app)
     return app
+
+
+def _corrigir_openapi_422_para_400(app: FastAPI) -> None:
+    """Substitui 422 → 400 na documentação OpenAPI gerada pelo FastAPI.
+
+    A API devolve 400 para erros de validação (IN-09), mas o FastAPI documenta 422
+    por padrão. Sobrescrever app.openapi() é o ponto correto: age sobre o esquema
+    final, sem repetir responses= em cada rota.
+    """
+    original = app.openapi
+
+    def openapi_corrigido() -> dict:
+        schema = original()
+        for path_item in schema.get("paths", {}).values():
+            for operacao in path_item.values():
+                if isinstance(operacao, dict):
+                    respostas = operacao.get("responses", {})
+                    if "422" in respostas:
+                        respostas["400"] = respostas.pop("422")
+                        respostas["400"]["description"] = "Erro de validação"
+        return schema
+
+    app.openapi = openapi_corrigido
 
 
 app = criar_app()
