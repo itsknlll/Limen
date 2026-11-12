@@ -8,7 +8,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from starlette.middleware.sessions import SessionMiddleware
 
-from .api.rotas import alertas, avaliacoes, campanhas, dev, regras
+from .api.rotas import alertas, avaliacoes, campanhas, dev, oauth, regras
 from .config import configuracoes
 from .servicos.erros import ConflitoDados, NaoEncontrado
 
@@ -49,6 +49,7 @@ def criar_app() -> FastAPI:
 
     for modulo in (campanhas, regras, avaliacoes, alertas):
         app.include_router(modulo.roteador)
+    app.include_router(oauth.roteador)
     if configuracoes.ambiente == "desenvolvimento":
         app.include_router(dev.roteador)
 

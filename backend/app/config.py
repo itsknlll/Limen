@@ -1,5 +1,6 @@
 """Configuração lida de variáveis de ambiente ou do arquivo backend/.env."""
 
+import json
 from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -18,6 +19,28 @@ class Configuracoes(BaseSettings):
     database_url_teste: str | None = None
     # Assina o cookie de sessão. Troque por um valor aleatório no .env.
     segredo_sessao: str = "dev-inseguro-troque-no-env"
+
+    # OAuth com Google: aponta para o arquivo client_secret.json (fora do repositório).
+    # O segredo nunca é duplicado no .env — é lido em tempo de execução via credenciais_google.
+    google_client_secret_file: Path | None = None
+    google_redirect_uri: str = "http://localhost:8080/api/oauth/google/callback"
+
+    @property
+    def credenciais_google(self) -> tuple[str, str]:
+        """Retorna (client_id, client_secret) lidos do arquivo JSON.
+
+        Decisão: o segredo nunca passa pela conversa nem fica duplicado no .env.
+        Configure GOOGLE_CLIENT_SECRET_FILE=/home/kauan/.config/limen/client_secret.json.
+        """
+        if self.google_client_secret_file is None:
+            raise ValueError(
+                "GOOGLE_CLIENT_SECRET_FILE não configurada no .env — "
+                "aponte para o client_secret.json do projeto Google Cloud."
+            )
+        dados = json.loads(self.google_client_secret_file.read_text(encoding="utf-8"))
+        # Suporta formato "web" (aplicativo da Web) e "installed" (desktop)
+        app_data = dados.get("web") or dados.get("installed") or {}
+        return app_data["client_id"], app_data["client_secret"]
 
 
 configuracoes = Configuracoes()

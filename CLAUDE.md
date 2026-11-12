@@ -127,6 +127,25 @@ Depois: dashboard (React) → testes de desempenho (aba Desempenho: 5 aqueciment
 - **Versões** (12/11): FastAPI 0.162.5, SQLAlchemy 2.1.8, Alembic 1.20.1, Pydantic 2.14.3,
   psycopg 3.3.9, pytest 9.1.1. Aviso conhecido: Starlette recomenda `httpx2` no TestClient
   (inofensivo, adiado).
+- **OAuth — credenciais Google**: `GOOGLE_CLIENT_SECRET_FILE` no `.env` aponta para
+  `~/.config/limen/client_secret.json` (fora do repositório). A aplicação lê o arquivo
+  em tempo de execução via `configuracoes.credenciais_google` (property em `app/config.py`).
+  Decisão: o segredo nunca passa pela conversa nem fica duplicado no `.env`. Testes fazem
+  mock da property para não depender do arquivo. Alternativa descartada: copiar client_id
+  e client_secret direto no `.env` — isso duplica o segredo e o expõe em conversas de IA.
+- **OAuth — fluxo de login**: rotas `GET /api/oauth/google/login` e
+  `GET /api/oauth/google/callback` (prefix `/api/oauth` para bater com a URI cadastrada no
+  Google Cloud: `http://localhost:8080/api/oauth/google/callback`). Proteção CSRF via
+  parâmetro `state` (aleatório, gravado na sessão, consumido uma única vez). PKCE S256
+  (RFC 7636, recomendado pela RFC 9700 para todas as aplicações web): `code_verifier`
+  (64 chars URL-safe) gerado em `/login` e guardado na sessão; `code_challenge =
+  BASE64URL(SHA-256(verifier))` enviado ao Google; `code_verifier` enviado na troca do
+  código — impede interceptação do authorization code. `email_verified` obrigatório:
+  recusa contas Google com e-mail não confirmado. Sessão limpa antes de gravar
+  `usuario_id`. Usuário identificado pelo e-mail (único); primeiro login cria o usuário e
+  as regras padrão; re-login atualiza o nome. Refresh token recebido mas armazenado
+  (cifrado) na sub-etapa 2. Redireciona para `/docs` enquanto o frontend React não existe.
+  Uvicorn deve rodar na porta 8080 (`--port 8080`) para bater com a URI cadastrada.
 - **Pendências a mencionar no artigo**: declarar o uso de IA conforme regra do iCEV
   (confirmar com o orientador); justificar Liang et al. (2009) na seção 2.5; buscar fonte
   recente (IEEE/ACM, "rule engine evaluation"); deixar explícito na metodologia o que usou
