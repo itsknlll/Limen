@@ -1,0 +1,10 @@
+[project]
+name = "limen-backend"
+version = "0.1.0"
+description = "Backend do Limen: motor de regras para alertas sobre métricas de campanhas (TCC)"
+requires-python = ">=3.12"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = "-v"

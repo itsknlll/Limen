@@ -1,0 +1,55 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.1.1, pluggy-1.7.0 -- /home/kauan/projetos/limen/backend/.venv/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/kauan/projetos/limen/backend
+configfile: pyproject.toml
+testpaths: tests
+collecting ... collected 45 items
+
+tests/test_cenarios_tabela.py::test_tabela_tem_os_23_casos_registrados PASSED [  2%]
+tests/test_cenarios_tabela.py::test_regras_padrao_do_codigo_usam_os_limiares_da_tabela PASSED [  4%]
+tests/test_cenarios_tabela.py::test_cenario_da_tabela[RA-01] PASSED      [  6%]
+tests/test_cenarios_tabela.py::test_cenario_da_tabela[RA-02] PASSED      [  8%]
+tests/test_cenarios_tabela.py::test_cenario_da_tabela[RA-03] PASSED      [ 11%]
+tests/test_cenarios_tabela.py::test_cenario_da_tabela[RA-04] PASSED      [ 13%]
+tests/test_cenarios_tabela.py::test_cenario_da_tabela[RA-05] PASSED      [ 15%]
+tests/test_cenarios_tabela.py::test_cenario_da_tabela[RA-06] PASSED      [ 17%]
+tests/test_cenarios_tabela.py::test_cenario_da_tabela[FM-01] PASSED      [ 20%]
+tests/test_cenarios_tabela.py::test_cenario_da_tabela[FM-02] PASSED      [ 22%]
+tests/test_cenarios_tabela.py::test_cenario_da_tabela[FM-03] PASSED      [ 24%]
+tests/test_cenarios_tabela.py::test_cenario_da_tabela[FM-04] PASSED      [ 26%]
+tests/test_cenarios_tabela.py::test_cenario_da_tabela[FM-05] PASSED      [ 28%]
+tests/test_cenarios_tabela.py::test_cenario_da_tabela[FM-06] PASSED      [ 31%]
+tests/test_cenarios_tabela.py::test_cenario_da_tabela[FM-07] PASSED      [ 33%]
+tests/test_cenarios_tabela.py::test_cenario_da_tabela[FM-08] PASSED      [ 35%]
+tests/test_cenarios_tabela.py::test_cenario_da_tabela[FM-09] PASSED      [ 37%]
+tests/test_cenarios_tabela.py::test_cenario_da_tabela[FM-10] PASSED      [ 40%]
+tests/test_cenarios_tabela.py::test_cenario_da_tabela[FM-11] PASSED      [ 42%]
+tests/test_cenarios_tabela.py::test_cenario_da_tabela[FM-12] PASSED      [ 44%]
+tests/test_cenarios_tabela.py::test_cenario_da_tabela[FM-13] PASSED      [ 46%]
+tests/test_cenarios_tabela.py::test_cenario_da_tabela[FM-14] PASSED      [ 48%]
+tests/test_cenarios_tabela.py::test_cenario_da_tabela[FM-15] PASSED      [ 51%]
+tests/test_cenarios_tabela.py::test_cenario_da_tabela[FM-16] PASSED      [ 53%]
+tests/test_cenarios_tabela.py::test_cenario_da_tabela[FM-17] PASSED      [ 55%]
+tests/test_motor_unidade.py::test_ctr_em_porcentagem_e_exato PASSED      [ 57%]
+tests/test_motor_unidade.py::test_ctr_indefinido_com_zero_impressoes PASSED [ 60%]
+tests/test_motor_unidade.py::test_cpc_sem_erro_de_ponto_flutuante PASSED [ 62%]
+tests/test_motor_unidade.py::test_cpc_indefinido_com_zero_cliques PASSED [ 64%]
+tests/test_motor_unidade.py::test_ausente_e_diferente_de_zero PASSED     [ 66%]
+tests/test_motor_unidade.py::test_operadores[<-4.99-True] PASSED         [ 68%]
+tests/test_motor_unidade.py::test_operadores[<-5.00-False] PASSED        [ 71%]
+tests/test_motor_unidade.py::test_operadores[<=-5.00-True] PASSED        [ 73%]
+tests/test_motor_unidade.py::test_operadores[>-5.00-False] PASSED        [ 75%]
+tests/test_motor_unidade.py::test_operadores[>=-5.00-True] PASSED        [ 77%]
+tests/test_motor_unidade.py::test_operadores[==-5.00-True] PASSED        [ 80%]
+tests/test_motor_unidade.py::test_operadores[==-5.0-True] PASSED         [ 82%]
+tests/test_motor_unidade.py::test_regra_sem_condicoes_e_invalida PASSED  [ 84%]
+tests/test_motor_unidade.py::test_limiar_negativo_e_invalido PASSED      [ 86%]
+tests/test_motor_unidade.py::test_limiar_float_e_recusado PASSED         [ 88%]
+tests/test_motor_unidade.py::test_ids_de_regra_repetidos_sao_recusados PASSED [ 91%]
+tests/test_motor_unidade.py::test_resultado_nao_depende_da_ordem_das_condicoes PASSED [ 93%]
+tests/test_motor_unidade.py::test_regra_configurada_sem_alterar_codigo PASSED [ 95%]
+tests/test_motor_unidade.py::test_alerta_traz_o_valor_medido PASSED      [ 97%]
+tests/test_motor_unidade.py::test_registro_rejeitado_traz_mensagens_de_erro PASSED [100%]
+
+============================== 45 passed in 0.12s ==============================
