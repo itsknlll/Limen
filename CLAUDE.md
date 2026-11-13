@@ -401,6 +401,83 @@ Depois: dashboard (React) → testes de desempenho (aba Desempenho: 5 aqueciment
   `npm audit fix --force` rebaixaria o ESLint para 9. Proxy do Vite: `/api/oauth` antes de
   `/api` (o Vite usa a primeira chave que casa). Cookie de sessão é por host, não por porta:
   a sessão criada no callback (8080) vale no Vite (5173).
+- **Fase 1 — shadcn/ui (13/11)**: `shadcn@4.23.0 init --base radix --preset nova` (estilo
+  `radix-nova`, ícones lucide). Sem `--preset` o CLI abre um menu interativo; sem
+  `src/index.css` com `@import "tailwindcss"` ele não reconhece o Tailwind v4 (não há arquivo
+  de configuração). O init pôs a fonte Geist (`@fontsource-variable/geist`), removida e trocada
+  pela Inter, e pôs `shadcn` em `dependencies`; movido para `devDependencies` (o app só usa o
+  arquivo `shadcn/tailwind.css`, que o Vite embute no CSS; o CLI não vai para o navegador).
+  **`cn` no lugar de `clsx` + `tailwind-merge`**: o shadcn 4.23 gera `export { cn } from "cn"`
+  e os componentes importam `cn` direto. Verificado com `npm view` em 13/11: pacote `cn`
+  0.5.2 (publicado em 02/11/2026), mantenedor `shadcn <m@shadcn.com>`, repositório
+  `github.com/shadcn-ui/cn`, licença MIT, existe desde 22/09/2026. Por ser 0.x e novo,
+  `src/lib/utils.test.ts` guarda o comportamento usado (`cn("px-2","px-4") === "px-4"`,
+  valores falsos ignorados, `className` externo vence). `clsx` e `tailwind-merge` removidos
+  só depois de um grep não achar nenhum import; o `clsx` segue como dependência indireta de
+  `class-variance-authority` e `recharts`. Alternativa descartada: manter `clsx` +
+  `tailwind-merge` reescrevendo o `utils.ts` (cada `shadcn add` voltaria a instalar `cn`).
+  **`npm audit`**: total foi de 10 para 15 (2 baixas, 13 moderadas): as 5 novas vêm do CLI do
+  shadcn (`deepmerge`, outra cópia do `minimatch`); todas só de desenvolvimento,
+  `npm audit --omit=dev` → 0. Componentes gerados (`src/components/ui/`) não são editados, para
+  continuarem iguais ao registro; por isso a regra `react-refresh/only-export-components`
+  está desligada só nessa pasta (eles exportam `buttonVariants`/`badgeVariants`).
+- **Fase 1 — tokens (13/11)**: `src/index.css` é a fonte da verdade. OKLCH, todas as cores
+  dentro da gama sRGB (fora dela o navegador ajusta a cor e o contraste calculado deixa de
+  valer). Neutros com matiz 264; índigo 277 (claro `0.51 0.225`, branco por cima; escuro
+  `0.72 0.14`, texto escuro por cima, porque também serve de link). Regras: forte (ícone,
+  texto, gráfico) + suave (fundo do selo): R1 âmbar 55/80, R2 rosa 355, R3 violeta 302
+  (afastado do índigo 277). Âmbar no claro fica queimado (`0.53`): o âmbar vivo dá ~2:1.
+  Borda de campo (`--input`, 3:1, WCAG 1.4.11) separada da borda decorativa (`--border`).
+  `--chart-1..3` = R1..R3. **Oráculo**: `contraste.test.ts` lê `:root` e `.dark` do CSS,
+  resolve `var()` e exige ≥ 4,5:1 para 8 tokens de texto × 4 superfícies, cada regra sobre o
+  próprio fundo suave, `primary-foreground` sobre `primary`, ≥ 3:1 para `input` e `ring`, e
+  `text-destructive` sobre `bg-destructive/10` (claro) e `/20` (escuro), compondo a
+  transparência como o navegador. Ele pegou dois pares que a conta manual do plano não
+  cobria (ajustados): `--input` claro sobre o fundo da página deu 2,98 (L 0,66 → 0,65) e
+  `text-destructive` sobre `bg-destructive/10` deu 4,40 (L 0,55 → 0,53). O estilo Nova usa
+  `destructive` como texto, nunca branco por cima, por isso o destructive escuro é um
+  vermelho claro. Mutação: R1 clara (L 0,70) → 5 testes reprovaram.
+  **Ajuste do tema escuro após ver a vitrine (13/11)**: o cartão quase sumia no fundo.
+  `--card`/`--popover` 0,205 → 0,235; `--border` 0,30 → 0,33 (mesma distância do cartão);
+  `--muted`/`--accent`/`--secondary` 0,25 → 0,28, porque a 0,25 ficavam quase iguais ao
+  cartão novo (razão 1,04) e o hover do menu sumia. Resultado: degraus iguais, fundo 0,165 <
+  cartão 0,235 < suave 0,28 (razões 1,16 e 1,14). Simulado antes de editar (0,27/0,28/0,29):
+  a 0,28 o pior texto sobre `--muted` fica 5,67 (`muted-foreground`). O teste reprovou
+  `text-destructive` sobre `bg-destructive/20` no cartão novo (4,41); destructive escuro de
+  `0.71 0.17 22` para `0.73 0.16 22` (4,66). Alternativa descartada: cartão 0,225 com o
+  vermelho antigo (4,53, folga mínima e degrau menor). `contraste.test.ts` não foi alterado.
+- **Fase 1 — tema (13/11)**: preferência `claro | escuro | sistema` em `localStorage`
+  (`limen:tema`); inválida ou armazenamento bloqueado → `sistema`, sem erro. Classe `dark` no
+  `<html>` + `color-scheme`. Anti-flash no `index.html`: `<script id="tema-inicial">` (ES5,
+  `try/catch`) aplica o tema antes da primeira pintura e `<style id="fundo-inicial">` pinta o
+  fundo antes do CSS (no dev o Vite injeta o CSS por JS). A lógica fica em dois lugares (script
+  e `tema.ts`); `script-inline.test.ts` executa o script do HTML com `node:vm` (localStorage e
+  matchMedia falsos, que só respondem à chave e à consulta certas) em 12 combinações e compara
+  com `tema.ts`; `contraste.test.ts` confere que o `<style>` usa o mesmo `--background`.
+  `ProvedorTema` acompanha a troca do sistema (`useSyncExternalStore` sobre `matchMedia`) e de
+  outras abas (evento `storage`). Testes com APIs do Node têm `tsconfig.test.json` próprio:
+  o código da aplicação continua sem tipos do Node.
+- **Fase 1 — selos de regra (13/11)**: `aparenciaDaRegra(codigo)` (pura) → tom, ícone
+  (R1 `MousePointerClick`, R2 `Coins`, R3 `Target`, outras `Bell`), classes literais (o
+  Tailwind só gera classes que encontra escritas no código) e `corCss` para o Recharts.
+  Código exato e `Object.hasOwn` ("r1", "R4", "toString", "__proto__" → neutro). `SeloRegra`
+  sempre mostra ícone (`aria-hidden`) + código; nome opcional (da API ou padrão da tabela).
+  Vitrine provisória (`src/paginas/Vitrine.tsx`) para aprovar o visual; sai com o roteador.
+  Vitest: 145 testes em 6 arquivos (contraste 92, script inline 13, tema 21, aparência 12,
+  cn 4, favicon 3), medidos em 13/11.
+- **Fase 1 — KPI com 14 px (13/11)**: o `CardTitle` do shadcn traz
+  `group-data-[size=sm]/card:text-sm`; essa variante tem especificidade maior que
+  `.text-3xl` e o `cn` não a remove (é outra variante), então num `Card size="sm"` o número
+  saía com 14 px. Correção fora de `components/ui`: repetir a variante com o tamanho certo
+  (`group-data-[size=sm]/card:text-3xl`), que o `cn` substitui; teste em `utils.test.ts`.
+- **Fase 1 — favicon (13/11)**: `public/favicon.svg`, "L" branco sobre `#4f47e2` (o
+  `--primary` claro convertido por `contraste.ts`; hex porque favicon nem sempre entende
+  `oklch`); resolve o 404 do `favicon.ico`. Bug encontrado no navegador: o comentário do
+  SVG citava `--primary`, e em XML "--" é proibido dentro de comentário ("Comment must not
+  contain '--'"), o que invalida o arquivo inteiro; reescrito como "token primary".
+  `src/favicon.test.ts` guarda isso (arquivo começa com `<svg`, nenhum comentário contém
+  "--", todo `<!--` fechado). Mutação: "token primary" → "--primary" na cópia de trabalho →
+  "nenhum comentário contém '--'" reprovou (1 de 3); arquivo restaurado e conferido com `cmp`.
 - **Pendências a mencionar no artigo**: declarar o uso de IA conforme regra do iCEV
   (confirmar com o orientador); justificar Liang et al. (2009) na seção 2.5; buscar fonte
   recente (IEEE/ACM, "rule engine evaluation"); deixar explícito na metodologia o que usou

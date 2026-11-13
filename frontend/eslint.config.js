@@ -21,4 +21,10 @@ export default defineConfig([
       globals: globals.browser,
     },
   },
+  {
+    // Código gerado pelo shadcn: exporta as variantes (cva) junto com o componente.
+    // Não editamos esses arquivos para continuarem iguais ao registro (shadcn add --diff).
+    files: ["src/components/ui/**/*.tsx"],
+    rules: { "react-refresh/only-export-components": "off" },
+  },
 ]);

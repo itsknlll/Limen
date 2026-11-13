@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Limen: "L" branco sobre o índigo do projeto. #4f47e2 = token primary do tema claro,
+       oklch(0.51 0.225 277), convertido por src/tema/contraste.ts (hex: favicons nem
+       sempre entendem oklch). Branco sobre ele: 6,28:1. -->
+  <rect width="32" height="32" rx="7" fill="#4f47e2"/>
+  <path d="M11 8v16h11" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

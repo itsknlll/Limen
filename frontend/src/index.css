@@ -1,0 +1,184 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/inter";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Tokens do Limen (Fase 1).
+ * Todas as cores em OKLCH e dentro da gama sRGB. Os pares texto/superfície são
+ * conferidos contra o mínimo WCAG 2.x por src/tema/contraste.test.ts, que lê
+ * este arquivo: mudou uma cor, o teste refaz a conta.
+ * Neutros com matiz 264 (frio, da família do índigo da marca, 277).
+ */
+
+@theme inline {
+    --font-heading: var(--font-sans);
+    --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+
+    /* Regras: forte = ícone, texto e série do gráfico; suave = fundo do selo. */
+    --color-regra-r1: var(--regra-r1);
+    --color-regra-r1-suave: var(--regra-r1-suave);
+    --color-regra-r2: var(--regra-r2);
+    --color-regra-r2-suave: var(--regra-r2-suave);
+    --color-regra-r3: var(--regra-r3);
+    --color-regra-r3-suave: var(--regra-r3-suave);
+    --color-regra-outra: var(--regra-outra);
+    --color-regra-outra-suave: var(--regra-outra-suave);
+
+    --color-sidebar-ring: var(--sidebar-ring);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar: var(--sidebar);
+    --color-chart-5: var(--chart-5);
+    --color-chart-4: var(--chart-4);
+    --color-chart-3: var(--chart-3);
+    --color-chart-2: var(--chart-2);
+    --color-chart-1: var(--chart-1);
+    --color-ring: var(--ring);
+    --color-input: var(--input);
+    --color-border: var(--border);
+    --color-destructive: var(--destructive);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-accent: var(--accent);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-muted: var(--muted);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-secondary: var(--secondary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-primary: var(--primary);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-popover: var(--popover);
+    --color-card-foreground: var(--card-foreground);
+    --color-card: var(--card);
+    --color-foreground: var(--foreground);
+    --color-background: var(--background);
+    --radius-sm: calc(var(--radius) * 0.6);
+    --radius-md: calc(var(--radius) * 0.8);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) * 1.4);
+    --radius-2xl: calc(var(--radius) * 1.8);
+    --radius-3xl: calc(var(--radius) * 2.2);
+    --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+    /* Neutros */
+    --background: oklch(0.985 0.003 264);
+    --foreground: oklch(0.21 0.02 264);
+    --card: oklch(1 0 0);
+    --card-foreground: var(--foreground);
+    --popover: oklch(1 0 0);
+    --popover-foreground: var(--foreground);
+    --secondary: oklch(0.965 0.006 264);
+    --secondary-foreground: var(--foreground);
+    --muted: oklch(0.965 0.006 264);
+    --muted-foreground: oklch(0.50 0.02 264);
+    --accent: oklch(0.965 0.006 264);
+    --accent-foreground: var(--foreground);
+    /* Borda decorativa (sem exigência de contraste) × borda de campo (3:1, WCAG 1.4.11) */
+    --border: oklch(0.91 0.006 264);
+    --input: oklch(0.65 0.015 264);
+
+    /* Destaque: índigo */
+    --primary: oklch(0.51 0.225 277);
+    --primary-foreground: oklch(1 0 0);
+    --ring: oklch(0.51 0.225 277);
+
+    /* Erro: usado como texto pelo estilo Nova (text-destructive) */
+    --destructive: oklch(0.53 0.2 27);
+
+    /* Regras */
+    --regra-r1: oklch(0.53 0.13 55);
+    --regra-r1-suave: oklch(0.96 0.04 85);
+    --regra-r2: oklch(0.55 0.21 355);
+    --regra-r2-suave: oklch(0.96 0.02 355);
+    --regra-r3: oklch(0.52 0.22 302);
+    --regra-r3-suave: oklch(0.96 0.02 302);
+    --regra-outra: var(--muted-foreground);
+    --regra-outra-suave: var(--muted);
+
+    /* Gráficos: as três primeiras séries são as regras */
+    --chart-1: var(--regra-r1);
+    --chart-2: var(--regra-r2);
+    --chart-3: var(--regra-r3);
+    --chart-4: var(--primary);
+    --chart-5: var(--muted-foreground);
+
+    --radius: 0.625rem;
+
+    --sidebar: var(--card);
+    --sidebar-foreground: var(--foreground);
+    --sidebar-primary: var(--primary);
+    --sidebar-primary-foreground: var(--primary-foreground);
+    --sidebar-accent: var(--accent);
+    --sidebar-accent-foreground: var(--accent-foreground);
+    --sidebar-border: var(--border);
+    --sidebar-ring: var(--ring);
+}
+
+.dark {
+    --background: oklch(0.165 0.012 264);
+    --foreground: oklch(0.97 0.004 264);
+    /* Degraus iguais: fundo 0,165 < cartão 0,235 < suave 0,28 (hover, secundário). */
+    --card: oklch(0.235 0.015 264);
+    --card-foreground: var(--foreground);
+    --popover: oklch(0.235 0.015 264);
+    --popover-foreground: var(--foreground);
+    --secondary: oklch(0.28 0.015 264);
+    --secondary-foreground: var(--foreground);
+    --muted: oklch(0.28 0.015 264);
+    --muted-foreground: oklch(0.71 0.015 264);
+    --accent: oklch(0.28 0.015 264);
+    --accent-foreground: var(--foreground);
+    --border: oklch(0.33 0.015 264);
+    --input: oklch(0.52 0.015 264);
+
+    /* No escuro, índigo claro com texto escuro (serve também como link) */
+    --primary: oklch(0.72 0.14 277);
+    --primary-foreground: oklch(0.17 0.02 277);
+    --ring: oklch(0.72 0.14 277);
+
+    --destructive: oklch(0.73 0.16 22);
+
+    --regra-r1: oklch(0.82 0.15 80);
+    --regra-r1-suave: oklch(0.30 0.06 60);
+    --regra-r2: oklch(0.76 0.16 355);
+    --regra-r2-suave: oklch(0.30 0.08 355);
+    --regra-r3: oklch(0.75 0.15 302);
+    --regra-r3-suave: oklch(0.30 0.09 302);
+    --regra-outra: var(--muted-foreground);
+    --regra-outra-suave: var(--muted);
+
+    --chart-1: var(--regra-r1);
+    --chart-2: var(--regra-r2);
+    --chart-3: var(--regra-r3);
+    --chart-4: var(--primary);
+    --chart-5: var(--muted-foreground);
+
+    --sidebar: var(--card);
+    --sidebar-foreground: var(--foreground);
+    --sidebar-primary: var(--primary);
+    --sidebar-primary-foreground: var(--primary-foreground);
+    --sidebar-accent: var(--accent);
+    --sidebar-accent-foreground: var(--accent-foreground);
+    --sidebar-border: var(--border);
+    --sidebar-ring: var(--ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply font-sans;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+}

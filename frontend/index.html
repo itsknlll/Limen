@@ -3,7 +3,37 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>Limen</title>
+    <!--
+      Anti-flash: fundo dos dois temas antes de qualquer CSS (no desenvolvimento o
+      Vite injeta o CSS por JavaScript, depois da primeira pintura). As cores são as
+      de --background em src/index.css (conferido por contraste.test.ts).
+    -->
+    <style id="fundo-inicial">
+      html { background-color: oklch(0.985 0.003 264); }
+      html.dark { background-color: oklch(0.165 0.012 264); }
+    </style>
+    <!--
+      Tema antes da primeira pintura. Repete src/tema/tema.ts (lerPreferencia +
+      resolverTema + aplicarTema); script-inline.test.ts executa este script e compara.
+      ES5 e try/catch: localStorage pode lançar (aba anônima, dados bloqueados).
+    -->
+    <script id="tema-inicial">
+      (function () {
+        var preferencia = "sistema";
+        try {
+          var guardada = window.localStorage.getItem("limen:tema");
+          if (guardada === "claro" || guardada === "escuro" || guardada === "sistema") preferencia = guardada;
+        } catch (e) {}
+        var escuro =
+          preferencia === "escuro" ||
+          (preferencia === "sistema" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+        document.documentElement.classList.toggle("dark", escuro);
+        document.documentElement.style.colorScheme = escuro ? "dark" : "light";
+      })();
+    </script>
   </head>
   <body>
     <div id="raiz"></div>

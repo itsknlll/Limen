@@ -1,10 +1,15 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import "./index.css";
+import { Vitrine } from "./paginas/Vitrine";
+import { ProvedorTema } from "./tema/ProvedorTema";
 
-// Ponto de partida provisório: só prova que a instalação compila.
-// Tokens, temas, layout e telas entram nas próximas etapas da Fase 1.
+// Provisório: renderiza a vitrine para aprovação do visual. O roteador, o layout e
+// as telas de entrar e visão geral entram na próxima etapa da Fase 1.
 createRoot(document.getElementById("raiz")!).render(
   <StrictMode>
-    <p>Limen</p>
+    <ProvedorTema>
+      <Vitrine />
+    </ProvedorTema>
   </StrictMode>,
 );
