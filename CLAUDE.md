@@ -385,6 +385,22 @@ Depois: dashboard (React) → testes de desempenho (aba Desempenho: 5 aqueciment
   IN-02b: 18 alertas (6/6/6) só com ativas; 27 (9/9/9) com pausadas. Alternativa
   descartada: contar no navegador (truncaria no limite de 5.000 alertas; a base de
   desempenho tem 10.000 registros).
+- **Fase 1 — instalação do frontend (13/11)**: versões conferidas com `npm view` no dia e
+  fixadas exatas (`.npmrc` com `save-exact=true` e `engine-strict=true`; `package-lock.json`
+  no git): React 19.3.1, Vite 8.3.8, @vitejs/plugin-react 6.3.0, Tailwind 4.3.5, React Router
+  8.5.1, TanStack Query 5.107.1, openapi-fetch 0.17.0 / openapi-typescript 7.13.0, Recharts
+  3.10.1, zod 4.6.7, react-hook-form 7.92.0, lucide-react 1.72.0, sonner 2.0.8, radix-ui
+  1.8.1, Inter (@fontsource-variable) 5.3.0, ESLint 10.14.0, Vitest 5.1.0. Node 24.14.1.
+  **TypeScript 5.9.3, não 7.0.2**: o `openapi-typescript` exige `^5.x` e o `typescript-eslint`
+  `<6.1`; a 6.0.3 resolveria só o ESLint. `@types/node` 24.x (mesma versão maior do Node).
+  Projeto montado à mão (não `npm create vite`, que impõe versões próprias). Vitest só para
+  funções puras (`environment: node`, sem jsdom/Testing Library); interface fica com o
+  Playwright (Fase 4). `npm audit`: 10 moderadas, todas do `minimatch` dentro do
+  ESLint/typescript-eslint (só desenvolvimento; `--omit=dev` → 0). Aceitas e registradas:
+  a correção é o `minimatch` 11, fora da faixa `^10` que o ESLint declara;
+  `npm audit fix --force` rebaixaria o ESLint para 9. Proxy do Vite: `/api/oauth` antes de
+  `/api` (o Vite usa a primeira chave que casa). Cookie de sessão é por host, não por porta:
+  a sessão criada no callback (8080) vale no Vite (5173).
 - **Pendências a mencionar no artigo**: declarar o uso de IA conforme regra do iCEV
   (confirmar com o orientador); justificar Liang et al. (2009) na seção 2.5; buscar fonte
   recente (IEEE/ACM, "rule engine evaluation"); deixar explícito na metodologia o que usou
