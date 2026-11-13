@@ -1,15 +1,22 @@
+import { QueryClientProvider } from "@tanstack/react-query";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { RouterProvider } from "react-router/dom";
 import "./index.css";
-import { Vitrine } from "./paginas/Vitrine";
+import { criarClienteQuery } from "./api/consultas";
+import { Notificacoes } from "./componentes/Notificacoes";
+import { roteador } from "./roteador";
 import { ProvedorTema } from "./tema/ProvedorTema";
 
-// Provisório: renderiza a vitrine para aprovação do visual. O roteador, o layout e
-// as telas de entrar e visão geral entram na próxima etapa da Fase 1.
+const clienteQuery = criarClienteQuery();
+
 createRoot(document.getElementById("raiz")!).render(
   <StrictMode>
     <ProvedorTema>
-      <Vitrine />
+      <QueryClientProvider client={clienteQuery}>
+        <RouterProvider router={roteador} />
+        <Notificacoes />
+      </QueryClientProvider>
     </ProvedorTema>
   </StrictMode>,
 );

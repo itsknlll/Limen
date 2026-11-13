@@ -101,6 +101,13 @@ describe.each(Object.entries(TEMAS))("tema %s", (_, camadas) => {
     const fundo = compor(cor("destructive"), alfa, cor(s));
     expect(razaoContraste(cor("destructive"), fundo)).toBeGreaterThanOrEqual(TEXTO);
   });
+
+  // Item ativo da navegação (layout/Navegacao.tsx): text-primary sobre bg-primary/10,
+  // por cima de --sidebar (barra lateral e menu do celular), nos dois temas.
+  it("item ativo da navegação: text-primary sobre bg-primary/10 em --sidebar ≥ 4,5:1", () => {
+    const fundo = compor(cor("primary"), 0.1, cor("sidebar"));
+    expect(razaoContraste(cor("primary"), fundo)).toBeGreaterThanOrEqual(TEXTO);
+  });
 });
 
 describe("<style> anti-flash do index.html", () => {

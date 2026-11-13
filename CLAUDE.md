@@ -478,6 +478,82 @@ Depois: dashboard (React) → testes de desempenho (aba Desempenho: 5 aqueciment
   `src/favicon.test.ts` guarda isso (arquivo começa com `<svg`, nenhum comentário contém
   "--", todo `<!--` fechado). Mutação: "token primary" → "--primary" na cópia de trabalho →
   "nenhum comentário contém '--'" reprovou (1 de 3); arquivo restaurado e conferido com `cmp`.
+- **Fase 1, parte 2 — componentes do shadcn (13/11)**: `sheet`, `skeleton`, `separator`,
+  `table` pelo CLI, um por vez, com `--dry-run` e `--view` antes (imports só de `react`,
+  `radix-ui`, `lucide-react`, `cn`) e SHA-256 do `package.json`/lock antes e depois de cada
+  um: inalterados. O CLI roda `npm install cn` sem versão; seguro porque o `cn` mais recente
+  (`npm view`) é o 0.5.2 já fixado. `sonner` do shadcn não foi adicionado: importa
+  `next-themes` (pacote novo e segundo controle de tema); `Notificacoes.tsx` usa o `Toaster`
+  do sonner direto, com o nosso tema e rótulos em português. Nenhum pacote npm novo na parte 2.
+- **Fase 1, parte 2 — cliente da API e erros (13/11)**: `src/api/esquema.d.ts` gerado por
+  `npm run tipos:api` e **versionado** (build/typecheck sem backend; o diff mostra mudança de
+  contrato). Mensagem e ação decididas pelo `tipo`, nunca pelo texto do `detail` (exceto
+  `conflito`/`requisicao_invalida`, cujo `detail` o backend já escreve em português;
+  `validacao` cita só os campos, porque o `msg` do Pydantic é em inglês). Com o backend
+  parado, o proxy do Vite responde 502 `text/plain` vazio (conferido no código do Vite);
+  502 sem `tipo` → `sem_conexao` (o 502 do backend sempre traz `erro_google_ads`). Fetch que
+  lança → `sem_conexao`; AbortError passa adiante. `deveRepetir`: só `sem_conexao`,
+  `google_ads_indisponivel` e `google_autenticacao_temporaria`, até 2 repetições (no TanStack
+  a 1ª falha chega com `failureCount = 0`); nunca 4xx (401 incluso) nem `cota_excedida`
+  (mesma lógica de IN-05/IN-06). **Oráculo** (`erros.test.ts`): lê todos os `.py` de
+  `backend/app` (o `.env` não é lido: fica fora dessa pasta e não é `.py`), extrai os `tipo`
+  de 4 formas e reprova se alguma chamada `_erro(...)` tiver um tipo que ele não sabe ler;
+  exige mensagem para cada tipo e que toda mensagem seja de um tipo existente. Achou os 12 da
+  Fase 0. Mutações: sem a mensagem de `token_google_revogado` → 2 reprovações; sem a barreira
+  de 4xx no `deveRepetir` → "401 mesmo com tipo transitório" reprovou.
+- **Fase 1, parte 2 — formatação (13/11)**: datas sem hora formatadas partindo o texto
+  (`new Date("2026-11-11")` é meia-noite UTC e mostraria 10/11 no Brasil; o teste fixa
+  `TZ=America/Fortaleza` e a mutação com `new Date` reprovou 7 casos); data e hora só com
+  fuso explícito; decimais como texto, sem `parseFloat`. **`formatarInteiro` usa o mesmo
+  `agruparMilhares` do `formatarDecimal`, não o Intl**: o agrupamento do Intl depende dos
+  dados de localização do navegador (há locais que só agrupam a partir de 5 dígitos) e os
+  testes rodam no Node. Teste exige `formatarInteiro(n) === formatarDecimal(String(n))`.
+  Achado: a mutação com `minimumGroupingDigits: 2` sobreviveu porque essa opção não existe
+  no `Intl.NumberFormat` (foi ignorada); a forma certa, `useGrouping: "min2"`, reprovou 5.
+- **Fase 1, parte 2 — roteador e sessão (13/11)**: `createBrowserRouter`; caminhos em
+  `src/rotas.ts` (teste: nenhum começa com `/api`, para não colidir com o proxy). Entrar é a
+  única rota pública; as demais passam pela `RotaProtegida` (GET `/eu`) e ficam no `Layout`;
+  o 404 fica dentro do layout (sem sessão, qualquer endereço leva a Entrar). `/eu` com 401 →
+  Entrar; outro erro (backend parado) → tela de erro com "tentar de novo", e não Entrar,
+  porque o problema não é falta de login. 401 em qualquer outra consulta → `invalidateQueries`
+  de `/eu` (não `reset`: o último usuário fica em `data`, e é assim que a `RotaProtegida` sabe
+  que a sessão terminou no meio do uso e Entrar avisa). Sair: `POST /sessao/sair` →
+  `queryClient.clear()` (nada do usuário anterior em memória) → `/entrar`; nessa ordem, senão
+  Entrar veria `/eu` ainda em cache e voltaria para "/". Alternativa descartada: `loader` do
+  React Router chamando `/eu` (segundo cache paralelo ao TanStack Query).
+  **Limitação (declarar no artigo): depois do login com Google, a aplicação volta sempre
+  para "/", e não para a tela em que a pessoa estava.** O callback redireciona para
+  `URL_FRONTEND`, que vem só da configuração; aceitar o destino por parâmetro da URL abriria
+  um redirecionamento aberto (decisão da Fase 0). Vale também para sessão expirada e para
+  "Reconectar Google".
+- **Fase 1, parte 2 — layout e acessibilidade (13/11)**: barra lateral própria a partir de
+  `md` (descartado o `sidebar` do shadcn: ~700 linhas, recolher para ícones, cookie, Ctrl+B);
+  abaixo de `md`, a mesma `Navegacao` num `Sheet`. Item ativo: `aria-current="page"` (do
+  `NavLink`) + `text-primary` sobre `bg-primary/10` + negrito (a cor não é o único sinal); par
+  novo em `contraste.test.ts` sobre `--sidebar`, nos dois temas. "Pular para o conteúdo" é o
+  primeiro focável e foca `<main id="conteudo" tabIndex={-1}>` sem pôr `#conteudo` na URL. Na
+  troca de rota, o foco vai para o `h1` (`TituloPagina`, `tabIndex={-1}`) e o título da aba
+  vira "Página · Limen"; o efeito compara com o caminho anterior (no StrictMode ele roda duas
+  vezes na montagem e focaria o h1 na primeira carga). O `Sheet` gerado tem "Close" em inglês:
+  desligado (`showCloseButton={false}`) e trocado por "Fechar menu". Fechar o `Sheet` por um
+  link manda o foco ao h1, e não de volta ao botão do menu (padrão do Radix). Selo
+  "Campanhas reais · Métricas sintéticas" em todas as larguras (no celular, numa segunda
+  linha). `errorElement` próprio em português no lugar da página padrão do React Router.
+  **Correções após o teste no navegador (13/11)**: (1) aviso "Blocked aria-hidden… descendant
+  retained focus" ao navegar pelo menu do celular. Causa (conferida no código do Radix): o
+  Sheet aplica `aria-hidden` no resto da página (`hideOthers`) e só o retira ao desmontar,
+  depois da animação de fechar; o efeito do Layout focava o h1 no mesmo instante da troca de
+  rota, ainda dentro da área escondida. O `onCloseAutoFocus` não era a causa: roda num
+  `setTimeout` após a desmontagem. Correção: o Layout não foca se o h1 estiver dentro de
+  `[aria-hidden="true"]` (o diálogo cuida do foco), e `anterior.current` é atualizado antes
+  dessa saída. Descartados: atrasar com `setTimeout` (depende da duração da animação) e um
+  contexto "menu aberto" (prende o Layout ao MenuCelular e a cada diálogo futuro).
+  (2) "Pular para o conteúdo" sem espaçamento: `.focus\:not-sr-only:focus` zera o padding e
+  tem especificidade maior que `.px-4`; o espaçamento passou para `focus:px-4 focus:py-2`
+  (mesma especificidade, vem depois no CSS gerado), mais `focus:shadow-lg`.
+  **Confirmado no navegador pelo Kauan (13/11)**: navegando para Campanhas pelo menu do
+  celular, o console ficou vazio (sem o aviso de `aria-hidden`); Esc fecha o menu; o link
+  "Pular para o conteúdo" aparece com espaçamento e sombra.
 - **Pendências a mencionar no artigo**: declarar o uso de IA conforme regra do iCEV
   (confirmar com o orientador); justificar Liang et al. (2009) na seção 2.5; buscar fonte
   recente (IEEE/ACM, "rule engine evaluation"); deixar explícito na metodologia o que usou
