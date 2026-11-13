@@ -188,6 +188,31 @@ def test_callback_cria_usuario_novo(cliente_oauth, sessao_teste):
     assert usuario.nome == "Novo Usuário"
 
 
+def test_callback_redireciona_para_url_frontend_da_configuracao(cliente_oauth, monkeypatch):
+    """O destino vem de configuracoes.url_frontend (valor diferente prova que não é fixo)."""
+    from app import config
+
+    monkeypatch.setattr(config.configuracoes, "url_frontend", "http://painel.teste:5999/")
+    state = _iniciar_login_e_obter_state(cliente_oauth)
+
+    with _patch_credenciais(), patch(
+        "app.api.rotas.oauth.httpx.Client", return_value=_make_mock_httpx()
+    ):
+        resp = cliente_oauth.get(
+            f"/api/oauth/google/callback?code=cod_fake&state={state}",
+            follow_redirects=False,
+        )
+
+    assert resp.status_code in (302, 307)
+    assert resp.headers["location"] == "http://painel.teste:5999/"
+
+
+def test_url_frontend_padrao_e_o_vite():
+    from app.config import Configuracoes
+
+    assert Configuracoes.model_fields["url_frontend"].default == "http://localhost:5173/"
+
+
 def test_callback_usuario_existente_atualiza_nome(cliente_oauth, sessao_teste):
     """Re-login: nome é atualizado, usuário não é duplicado."""
     from sqlalchemy import select

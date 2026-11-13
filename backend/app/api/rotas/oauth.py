@@ -168,5 +168,5 @@ def callback_google(
     request.session.clear()
     request.session["usuario_id"] = usuario.id
 
-    # Redirecionar para /docs enquanto o frontend React não está pronto
-    return RedirectResponse("/docs")
+    # Volta para o dashboard. Destino fixo na configuração (não vem da URL).
+    return RedirectResponse(configuracoes.url_frontend)

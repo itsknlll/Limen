@@ -37,7 +37,14 @@ def executar_avaliacao(
     fim: date | None = None,
     incluir_pausadas: bool = False,
 ) -> Avaliacao:
-    avaliacao = Avaliacao(usuario_id=usuario_id)
+    # Os parâmetros ficam gravados para o histórico explicar cada execução (migração 0003).
+    avaliacao = Avaliacao(
+        usuario_id=usuario_id,
+        incluir_pausadas=incluir_pausadas,
+        campanha_id=campanha_id,
+        inicio=inicio,
+        fim=fim,
+    )
     sessao.add(avaliacao)
     sessao.flush()
 
@@ -112,6 +119,18 @@ def executar_avaliacao(
     sessao.commit()
     sessao.refresh(avaliacao)
     return avaliacao
+
+
+def listar_avaliacoes(sessao: Session, usuario_id: int, limite: int = 50) -> list[Avaliacao]:
+    """Histórico do usuário, da mais recente para a mais antiga."""
+    return list(
+        sessao.scalars(
+            select(Avaliacao)
+            .where(Avaliacao.usuario_id == usuario_id)
+            .order_by(Avaliacao.iniciada_em.desc(), Avaliacao.id.desc())
+            .limit(limite)
+        )
+    )
 
 
 def obter_avaliacao(sessao: Session, usuario_id: int, avaliacao_id: int) -> Avaliacao | None:

@@ -196,11 +196,24 @@ class Avaliacao(Base):
     """Uma execução do motor. Guarda contagens e tempo para a avaliação de desempenho."""
 
     __tablename__ = "avaliacao"
+    __table_args__ = (
+        CheckConstraint(
+            "inicio IS NULL OR fim IS NULL OR inicio <= fim", name="ck_avaliacao_periodo"
+        ),
+    )
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
     usuario_id: Mapped[int] = mapped_column(
         ForeignKey("usuario.id", ondelete="CASCADE", name="fk_avaliacao_usuario")
     )
+    # Parâmetros da execução (migração 0003). NULL = não registrado (avaliações
+    # anteriores à 0003), e não "false": ausente ≠ zero.
+    incluir_pausadas: Mapped[bool | None] = mapped_column(Boolean)
+    campanha_id: Mapped[int | None] = mapped_column(
+        ForeignKey("campanha.id", ondelete="SET NULL", name="fk_avaliacao_campanha")
+    )
+    inicio: Mapped[date | None] = mapped_column(Date)
+    fim: Mapped[date | None] = mapped_column(Date)
     iniciada_em: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     concluida_em: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     registros_avaliados: Mapped[int] = mapped_column(Integer, server_default="0")

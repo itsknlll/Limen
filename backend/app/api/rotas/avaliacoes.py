@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from ...servicos import avaliacao as servico
@@ -24,6 +24,16 @@ def avaliar(
         fim=entrada.fim,
         incluir_pausadas=entrada.incluir_pausadas,
     )
+
+
+@roteador.get("", response_model=list[AvaliacaoSaida])
+def listar(
+    limite: int = Query(default=50, ge=1, le=500),
+    sessao: Session = Depends(obter_sessao),
+    usuario_id: int = Depends(obter_usuario_atual),
+):
+    """Histórico de avaliações do usuário, da mais recente para a mais antiga."""
+    return servico.listar_avaliacoes(sessao, usuario_id, limite)
 
 
 @roteador.get("/{avaliacao_id}", response_model=AvaliacaoSaida)

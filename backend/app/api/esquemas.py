@@ -48,6 +48,25 @@ class RegraSaida(BaseModel):
     condicoes: list[CondicaoSaida]
 
 
+# --- Sessão ---------------------------------------------------------------
+
+class ContaGoogleAdsSaida(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    customer_id: str
+    login_customer_id: str | None
+
+
+class EuSaida(BaseModel):
+    """Usuário logado. Nunca inclui o refresh token, nem cifrado."""
+
+    id: int
+    nome: str | None
+    email: str
+    google_conectado: bool
+    conta_google_ads: ContaGoogleAdsSaida | None
+
+
 # --- Campanhas e métricas -------------------------------------------------
 
 class CampanhaSaida(BaseModel):
@@ -140,6 +159,57 @@ class AvaliacaoSaida(BaseModel):
     alertas_gerados: int
     alertas_ja_existentes: int
     duracao_motor_ms: Decimal | None
+    # Parâmetros da execução; null = não registrado (avaliações anteriores à migração 0003)
+    incluir_pausadas: bool | None
+    campanha_id: int | None
+    inicio: date | None
+    fim: date | None
+
+
+# --- Resumo (visão geral) -------------------------------------------------
+
+class ResumoCampanhas(BaseModel):
+    total: int
+    por_status: dict[str, int]
+
+
+class ResumoRegras(BaseModel):
+    total: int
+    ativas: int
+
+
+class ResumoMetricas(BaseModel):
+    registros: int
+    inicio: date | None
+    fim: date | None
+    por_origem: dict[str, int]
+
+
+class ResumoAlertasRegra(BaseModel):
+    regra_id: int
+    codigo: str
+    nome: str
+    ativa: bool
+    total: int
+
+
+class ResumoAlertasDia(BaseModel):
+    data: date
+    por_regra: dict[str, int]
+
+
+class ResumoAlertas(BaseModel):
+    total: int
+    por_regra: list[ResumoAlertasRegra]
+    por_dia: list[ResumoAlertasDia]
+
+
+class ResumoSaida(BaseModel):
+    campanhas: ResumoCampanhas
+    regras: ResumoRegras
+    metricas: ResumoMetricas
+    alertas: ResumoAlertas
+    ultima_avaliacao: AvaliacaoSaida | None
 
 
 class AlertaSaida(BaseModel):

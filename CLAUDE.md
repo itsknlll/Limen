@@ -48,7 +48,8 @@ backend/
   app/servicos/sinteticas/  gerador (puro, semente fixa) e semeador (IN-02b)
   app/api/                  esquemas Pydantic, deps (sessão/usuário), rotas
   app/main.py               FastAPI (SessionMiddleware, handlers 400/404/409)
-  alembic/versions/0001_modelo_inicial.py
+  alembic/versions/         0001 modelo inicial · 0002 refresh token no usuário ·
+                            0003 parâmetros da avaliação
   tests/                    motor (tabela + unidade), banco, api
 docs/avaliacao/             tabela congelada
 docs/evidencias/            prints e saídas do pytest (nome: AAAA-MM-DD_caso_descricao)
@@ -59,7 +60,7 @@ docs/evidencias/            prints e saídas do pytest (nome: AAAA-MM-DD_caso_de
 ```bash
 cd ~/projetos/limen && docker compose up -d        # banco (após reiniciar o PC)
 cd backend && source .venv/bin/activate
-pytest -q                                           # 165 testes passando em 13/11
+pytest -q                                           # 211 testes passando em 13/11
 alembic upgrade head
 uvicorn app.main:app --reload --port 8080           # /docs; POST /dev/login (só em desenvolvimento)
 pytest | tee ../docs/evidencias/AAAA-MM-DD_<etapa>_pytest.txt   # evidência antes do commit
@@ -85,12 +86,30 @@ Commits no padrão `tipo(escopo): descrição` em português, seguidos de `git p
 - Desenho: **API real para autorização e estrutura das campanhas; métricas sintéticas**
   (contas de teste não veiculam), associadas aos IDs reais e marcadas `origem='sintetica'`.
 
-## Situação (13/11/2026, atualizado após IN-02b)
+## Situação (13/11/2026, atualizado após a Fase 0 do dashboard)
 
 Feito: tabela congelada (`29de91d`) · motor + 45 testes (`cfb8ac0`) · banco + migração
 (`6aa88ba`) · API REST (`1e22777`) · OAuth + cifragem (`f49faf9`) · sincronização campanhas
-(sub-etapas 3 e 4 concluídas) · métricas sintéticas nas campanhas reais (IN-02b).
-Total **165 testes passando** (13/11, após IN-02b).
+(sub-etapas 3 e 4 concluídas) · métricas sintéticas nas campanhas reais (IN-02b, `0cf461e`) ·
+Fase 0 do dashboard (backend). Total **211 testes passando** (13/11, após a Fase 0).
+
+**Dashboard — plano aprovado (13/11/2026):** React + TypeScript (Vite), Tailwind v4,
+shadcn/ui, lucide, Recharts, TanStack Query, React Router, react-hook-form + zod, sonner.
+Destaque índigo; R1 âmbar, R2 rosa, R3 violeta (sempre com código e ícone); Inter
+auto-hospedada; claro/escuro/sistema. Proxy do Vite: `/api/oauth/*` → 8080 sem reescrever;
+demais `/api/*` → 8080 sem o prefixo (evita colisão com as rotas do React). Tipos gerados
+do `openapi.json` (`openapi-typescript` + `openapi-fetch`). Ponta a ponta com Playwright
+contra o backend real num banco de teste preparado por script (login Google validado à mão).
+Fases: 0 backend ✅ → 1 base visual (aprovação do visual) → 2 campanhas → 3 regras e
+avaliações → 4 alertas, acessibilidade, ponta a ponta, evidências. Plano de corte (se
+atrasar) vale só para o dashboard, **nunca** para os testes de desempenho e a execução da
+tabela.
+- ✅ Fase 0 (backend do dashboard): `tipo` nos erros, callback → `URL_FRONTEND`, `GET /eu`,
+  `POST /sessao/sair`, migração 0003 + `GET /avaliacoes`, `GET /resumo`. 46 testes novos
+  (tipo 16, OAuth 2, sessão 6, histórico 12, resumo 10); os 165 anteriores sem alteração.
+  Migração 0003 aplicada no `limen` (13/11): as 2 avaliações reais do IN-02b ficaram com
+  parâmetros NULL, números inalterados. Evidência:
+  `docs/evidencias/2026-11-13_fase0_dashboard_pytest.txt` (211/211).
 
 **Integração Google Ads — estado (13/11/2026):**
 - ✅ Sub-etapa 1: Login OAuth (CSRF + PKCE S256, `email_verified`)
@@ -160,8 +179,8 @@ Depois: dashboard (React) → testes de desempenho (aba Desempenho: 5 aqueciment
   recusa contas Google com e-mail não confirmado. Sessão limpa antes de gravar
   `usuario_id`. Usuário identificado pelo e-mail (único); primeiro login cria o usuário e
   as regras padrão; re-login atualiza o nome. Refresh token armazenado cifrado em
-  `Usuario.refresh_token_cifrado` (ver decisão abaixo). Redireciona para `/docs` enquanto
-  o frontend React não existe.
+  `Usuario.refresh_token_cifrado` (ver decisão abaixo). Redirecionava para `/docs`; desde
+  a Fase 0 do dashboard, redireciona para `URL_FRONTEND` (ver decisão abaixo).
   Uvicorn deve rodar na porta 8080 (`--port 8080`) para bater com a URI cadastrada.
 - **OAuth — refresh token cifrado** (migration 0002): token armazenado em
   `usuario.refresh_token_cifrado` (não em `conta_google_ads`). Decisão: fonte única —
@@ -315,6 +334,57 @@ Depois: dashboard (React) → testes de desempenho (aba Desempenho: 5 aqueciment
   A=9/B=9/C=0 e C=9 com `incluir_pausadas`, e o conjunto exato (campanha, dia, regra)
   igual ao calculado pelo motor puro com os limiares da tabela. O IN-02b verifica a
   integração; a correção das regras é coberta pelos casos RA/FM.
+- **Fase 0 — `tipo` nos erros**: formato único `{"detail": ..., "tipo": ...}` montado por
+  `_erro()` em `main.py`; o `detail` não mudou (os 165 testes anteriores passaram sem
+  alteração). Valores: 400 `validacao` (o `tipo` interno de cada item da lista é o do
+  Pydantic) e `requisicao_invalida`; 401 `nao_autenticado`; 404 `nao_encontrado`; 409
+  `conflito`, `token_google_ausente`, `token_google_revogado`; 502 `erro_google_ads`; 503
+  `google_autenticacao_temporaria`, `google_ads_indisponivel`, `cota_excedida` (mantém
+  `Retry-After: 3600`); outros `erro_http`. Handler para `StarletteHTTPException` cobre
+  também os 404/405 do roteador e preserva os cabeçalhos (`Allow` do 405 testado). Motivo:
+  dois 409 pedem ações diferentes no frontend (regra duplicada × reconectar o Google) sem
+  depender do texto. Alternativa descartada: `tipo` à mão em cada handler (formato repetido
+  10 vezes). Testes: caminhos reais quando é possível provocar o erro; para os erros do
+  Google, uma aplicação própria do teste (`criar_app()`) com rota que levanta cada exceção.
+- **Fase 0 — callback → `URL_FRONTEND`**: `url_frontend` em `Configuracoes` (padrão
+  `http://localhost:5173/`; não é segredo, por isso tem padrão). O destino vem só da
+  configuração, nunca de parâmetro da URL (evita redirecionamento aberto). Erros do
+  callback continuam 400 em JSON. Alternativa descartada: redirecionar erros para
+  `/entrar?erro=…` (mais amigável, mas mudaria 8 testes do IN-01 por um caso raro). Os 14
+  testes de OAuth não conferiam o destino; 2 novos conferem o `Location` (com valor
+  trocado por monkeypatch) e o padrão.
+- **Fase 0 — `GET /eu` e `POST /sessao/sair`**: `/eu` devolve id, nome, e-mail,
+  `google_conectado` (existe refresh token?) e `conta_google_ads` (null até a primeira
+  sincronização; a mais recente se houver mais de uma). Nunca devolve o token: o teste
+  procura no corpo o texto do token cifrado e qualquer chave com "token". Depois de
+  `TokenRevogado`, `google_conectado=false` e a conta continua. `/sessao/sair` limpa a
+  sessão e devolve 204, mesmo sem login (idempotente); testado com sessão de verdade
+  aberta por `/dev/login`, sem sobrescrever o usuário.
+- **Fase 0 — migração 0003 (parâmetros da avaliação)**: `avaliacao` ganha
+  `incluir_pausadas`, `campanha_id`, `inicio`, `fim`, todos NULL. NULL = "não registrado"
+  nas avaliações anteriores à 0003, e não `false`, que seria falso para a execução real
+  com pausadas (ausente ≠ zero). `campanha_id` com FK `ON DELETE SET NULL` (o histórico
+  sobrevive à remoção da campanha). CHECK `ck_avaliacao_periodo` (`inicio <= fim`) repete
+  a validação do `AvaliacaoEntrada`, e um teste prova que o banco recusa sozinho. SQL
+  revisado em modo offline (`alembic upgrade 0002:0003 --sql`) antes de aplicar no
+  `limen`. `POST /avaliacoes` (endpoint fixo) grava os parâmetros; a resposta só ganha
+  campos (nome e corpo inalterados). Motivo: sem isso o histórico não explica 60 × 90
+  avaliados.
+- **Fase 0 — `GET /avaliacoes`**: histórico do usuário, mais recente primeiro (desempate
+  por id, porque `now()` do PostgreSQL é o mesmo dentro de uma transação); `limite` 1 a
+  500 (inválido → 400 `validacao`).
+- **Fase 0 — `GET /resumo`**: campanhas por status (todos os status, mesmo com 0), regras
+  (total/ativas), métricas no período (registros, primeira e última data, por origem),
+  alertas por regra e por dia, última avaliação. Tudo agregado no banco (`GROUP BY`).
+  Alertas por regra com `LEFT JOIN` de uma subconsulta já filtrada pelo período: o filtro
+  no WHERE externo faria sumir as regras sem alerta. `por_dia` traz só os dias com alerta
+  (o frontend preenche os vazios). O período filtra métricas e alertas pela data do
+  registro; campanhas, regras e última avaliação não dependem dele. Período invertido →
+  400 `requisicao_invalida` (checado na rota). Oráculo do teste: totais por dia e por
+  regra iguais à contagem sobre `GET /alertas` (endpoint fixo). Números com os dados do
+  IN-02b: 18 alertas (6/6/6) só com ativas; 27 (9/9/9) com pausadas. Alternativa
+  descartada: contar no navegador (truncaria no limite de 5.000 alertas; a base de
+  desempenho tem 10.000 registros).
 - **Pendências a mencionar no artigo**: declarar o uso de IA conforme regra do iCEV
   (confirmar com o orientador); justificar Liang et al. (2009) na seção 2.5; buscar fonte
   recente (IEEE/ACM, "rule engine evaluation"); deixar explícito na metodologia o que usou

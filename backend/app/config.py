@@ -25,6 +25,10 @@ class Configuracoes(BaseSettings):
     # O segredo nunca é duplicado no .env — é lido em tempo de execução via credenciais_google.
     google_client_secret_file: Path | None = None
     google_redirect_uri: str = "http://localhost:8080/api/oauth/google/callback"
+    # Para onde o callback OAuth leva o usuário após o login (dashboard React/Vite).
+    # Não é segredo, por isso tem padrão. O destino vem só daqui, nunca de parâmetro
+    # da URL (evita redirecionamento aberto).
+    url_frontend: str = "http://localhost:5173/"
 
     # Cifragem de refresh tokens (Fernet/AES-128-CBC + HMAC-SHA256).
     # Ausente → falha com mensagem clara ao tentar cifrar/decifrar.
