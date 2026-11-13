@@ -1,0 +1,50 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.1.1, pluggy-1.7.0 -- /home/kauan/projetos/limen/backend/.venv/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/kauan/projetos/limen/backend
+configfile: pyproject.toml
+plugins: anyio-4.16.0
+collecting ... collected 34 items
+
+tests/test_gerador_sinteticas.py::test_mesma_semente_gera_os_mesmos_dados PASSED [  2%]
+tests/test_gerador_sinteticas.py::test_semente_diferente_gera_dados_diferentes PASSED [  5%]
+tests/test_gerador_sinteticas.py::test_campanhas_diferentes_tem_dados_diferentes PASSED [  8%]
+tests/test_gerador_sinteticas.py::test_hash_do_conjunto_padrao_nao_mudou PASSED [ 11%]
+tests/test_gerador_sinteticas.py::test_periodo_fixo_e_dias_seguidos PASSED [ 14%]
+tests/test_gerador_sinteticas.py::test_registros_validos_e_decimais[24444020070] PASSED [ 17%]
+tests/test_gerador_sinteticas.py::test_registros_validos_e_decimais[24464752468] PASSED [ 20%]
+tests/test_gerador_sinteticas.py::test_registros_validos_e_decimais[24458906837] PASSED [ 23%]
+tests/test_gerador_sinteticas.py::test_quantidade_fixa_de_cada_perfil[24444020070] PASSED [ 26%]
+tests/test_gerador_sinteticas.py::test_quantidade_fixa_de_cada_perfil[24464752468] PASSED [ 29%]
+tests/test_gerador_sinteticas.py::test_quantidade_fixa_de_cada_perfil[24458906837] PASSED [ 32%]
+tests/test_gerador_sinteticas.py::test_cada_perfil_dispara_so_a_sua_regra[24444020070] PASSED [ 35%]
+tests/test_gerador_sinteticas.py::test_cada_perfil_dispara_so_a_sua_regra[24464752468] PASSED [ 38%]
+tests/test_gerador_sinteticas.py::test_cada_perfil_dispara_so_a_sua_regra[24458906837] PASSED [ 41%]
+tests/test_gerador_sinteticas.py::test_dias_insuficientes_para_as_anomalias PASSED [ 44%]
+tests/test_gerador_sinteticas.py::test_nome_do_lote_registra_a_semente PASSED [ 47%]
+tests/test_semeador_sinteticas.py::test_falha_na_segunda_campanha_nao_deixa_a_primeira_no_banco PASSED [ 50%]
+tests/test_semeador_sinteticas.py::test_registro_invalido_do_gerador_e_barrado_antes_de_gravar PASSED [ 52%]
+tests/test_semeador_sinteticas.py::test_grava_90_registros_sinteticos_com_ids_reais PASSED [ 55%]
+tests/test_semeador_sinteticas.py::test_rodar_duas_vezes_nao_duplica PASSED [ 58%]
+tests/test_semeador_sinteticas.py::test_dia_de_outro_lote_e_conflito_e_nada_e_gravado PASSED [ 61%]
+tests/test_semeador_sinteticas.py::test_periodo_incompleto_do_mesmo_lote_e_conflito PASSED [ 64%]
+tests/test_semeador_sinteticas.py::test_sem_campanha_sincronizada_e_conflito PASSED [ 67%]
+tests/test_semeador_sinteticas.py::test_campanha_removida_nao_recebe_metricas PASSED [ 70%]
+tests/test_semeador_sinteticas.py::test_campanhas_de_outro_usuario_nao_sao_tocadas PASSED [ 73%]
+tests/api/test_in02b.py::test_in02b_resultado_da_tabela PASSED           [ 76%]
+tests/api/test_in02b.py::test_in02b_reavaliar_nao_duplica_alertas PASSED [ 79%]
+tests/api/test_in02b.py::test_rota_so_existe_em_desenvolvimento PASSED   [ 82%]
+tests/api/test_in02b.py::test_rota_exige_login PASSED                    [ 85%]
+tests/api/test_in02b.py::test_rota_grava_e_e_idempotente PASSED          [ 88%]
+tests/api/test_in02b.py::test_rota_sem_campanha_sincronizada_e_409 PASSED [ 91%]
+tests/api/test_in02b.py::test_rota_parametro_invalido_e_400[8] PASSED    [ 94%]
+tests/api/test_in02b.py::test_rota_parametro_invalido_e_400[3661] PASSED [ 97%]
+tests/api/test_in02b.py::test_rota_parametro_invalido_e_400[abc] PASSED  [100%]
+
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /home/kauan/projetos/limen/backend/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================== 34 passed, 1 warning in 0.94s =========================

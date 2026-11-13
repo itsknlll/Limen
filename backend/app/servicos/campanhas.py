@@ -48,10 +48,16 @@ def listar_metricas(
     return [dict(linha) for linha in sessao.execute(consulta.order_by(v.c.data)).mappings()]
 
 
-def ingerir_metricas_sinteticas(
+def adicionar_metricas_sinteticas(
     sessao: Session, usuario_id: int, campanha_id: int, lote: str | None, registros
 ) -> int:
-    """Grava um lote de métricas sintéticas. Tudo ou nada: se um dia já existe, nada é gravado."""
+    """Adiciona métricas sintéticas à transação corrente, SEM commit.
+
+    Quem chama decide a transação: a ingestão pela API grava um lote por vez;
+    o semeador do IN-02b grava várias campanhas e faz um único commit no final.
+    O flush aciona os CHECKs e UNIQUEs do banco aqui mesmo, então uma violação
+    aparece nesta chamada (como ConflitoDados) e não só no commit.
+    """
     obter_campanha(sessao, usuario_id, campanha_id)
     datas = [r.data for r in registros]
     existentes = sorted(
@@ -79,8 +85,23 @@ def ingerir_metricas_sinteticas(
         for r in registros
     )
     try:
+        sessao.flush()
+    except IntegrityError as erro:
+        raise ConflitoDados("Métricas conflitam com registros existentes") from erro
+    return len(registros)
+
+
+def ingerir_metricas_sinteticas(
+    sessao: Session, usuario_id: int, campanha_id: int, lote: str | None, registros
+) -> int:
+    """Grava um lote de métricas sintéticas. Tudo ou nada: se um dia já existe, nada é gravado."""
+    try:
+        inseridos = adicionar_metricas_sinteticas(sessao, usuario_id, campanha_id, lote, registros)
         sessao.commit()
     except IntegrityError as erro:
         sessao.rollback()
         raise ConflitoDados("Métricas conflitam com registros existentes") from erro
-    return len(registros)
+    except Exception:
+        sessao.rollback()
+        raise
+    return inseridos

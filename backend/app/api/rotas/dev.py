@@ -3,13 +3,17 @@
 Permitem testar a API pelo /docs antes do login com Google estar pronto.
 """
 
-from fastapi import APIRouter, Depends, Request
+from datetime import date
+
+from fastapi import APIRouter, Depends, Query, Request
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from ...modelos import Usuario
 from ...servicos.regras import criar_regras_padrao
-from ..deps import obter_sessao
+from ...servicos.sinteticas import gerador
+from ...servicos.sinteticas.semeador import semear_metricas_sinteticas
+from ..deps import obter_sessao, obter_usuario_atual
 
 roteador = APIRouter(prefix="/dev", tags=["desenvolvimento"])
 
@@ -32,3 +36,22 @@ def login_dev(request: Request, sessao: Session = Depends(obter_sessao)):
 def logout_dev(request: Request):
     request.session.clear()
     return {"ok": True}
+
+
+@roteador.post(
+    "/metricas-sinteticas",
+    summary="Gera métricas sintéticas nas campanhas sincronizadas (IN-02b)",
+)
+def metricas_sinteticas(
+    semente: int = Query(gerador.SEMENTE_PADRAO),
+    inicio: date = Query(gerador.INICIO_PADRAO),
+    dias: int = Query(gerador.DIAS_PADRAO, ge=9, le=3660),
+    sessao: Session = Depends(obter_sessao),
+    usuario_id: int = Depends(obter_usuario_atual),
+):
+    """Grava métricas sintéticas (origem='sintetica') com semente fixa. Rodar de novo não duplica.
+
+    Usa a mesma dependência de login das rotas autenticadas (401 sem sessão).
+    Como todo o roteador /dev, só existe com AMBIENTE=desenvolvimento.
+    """
+    return semear_metricas_sinteticas(sessao, usuario_id, semente, inicio, dias)

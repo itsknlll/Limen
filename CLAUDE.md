@@ -44,6 +44,8 @@ backend/
   app/motor/                motor puro (sem banco/rede): metricas, validacao, regras, avaliador
   app/modelos.py            modelo relacional + view vw_metrica_diaria (somente leitura)
   app/servicos/             regras, campanhas, avaliacao, alertas, erros
+  app/servicos/sincronizacao/  porta Google Ads, cliente real, sincronizador
+  app/servicos/sinteticas/  gerador (puro, semente fixa) e semeador (IN-02b)
   app/api/                  esquemas Pydantic, deps (sessão/usuário), rotas
   app/main.py               FastAPI (SessionMiddleware, handlers 400/404/409)
   alembic/versions/0001_modelo_inicial.py
@@ -57,9 +59,9 @@ docs/evidencias/            prints e saídas do pytest (nome: AAAA-MM-DD_caso_de
 ```bash
 cd ~/projetos/limen && docker compose up -d        # banco (após reiniciar o PC)
 cd backend && source .venv/bin/activate
-pytest -q                                           # 74 testes passando em 12/11
+pytest -q                                           # 165 testes passando em 13/11
 alembic upgrade head
-uvicorn app.main:app --reload                       # /docs; POST /dev/login (só em desenvolvimento)
+uvicorn app.main:app --reload --port 8080           # /docs; POST /dev/login (só em desenvolvimento)
 pytest | tee ../docs/evidencias/AAAA-MM-DD_<etapa>_pytest.txt   # evidência antes do commit
 ```
 
@@ -83,13 +85,14 @@ Commits no padrão `tipo(escopo): descrição` em português, seguidos de `git p
 - Desenho: **API real para autorização e estrutura das campanhas; métricas sintéticas**
   (contas de teste não veiculam), associadas aos IDs reais e marcadas `origem='sintetica'`.
 
-## Situação (12/11/2026, atualizado após sub-etapa 4)
+## Situação (13/11/2026, atualizado após IN-02b)
 
 Feito: tabela congelada (`29de91d`) · motor + 45 testes (`cfb8ac0`) · banco + migração
 (`6aa88ba`) · API REST (`1e22777`) · OAuth + cifragem (`f49faf9`) · sincronização campanhas
-(sub-etapas 3 e 4 concluídas). Total **131 testes passando** (12/11, após sub-etapa 4).
+(sub-etapas 3 e 4 concluídas) · métricas sintéticas nas campanhas reais (IN-02b).
+Total **165 testes passando** (13/11, após IN-02b).
 
-**Integração Google Ads — estado (12/11/2026):**
+**Integração Google Ads — estado (13/11/2026):**
 - ✅ Sub-etapa 1: Login OAuth (CSRF + PKCE S256, `email_verified`)
 - ✅ Sub-etapa 2: Refresh token cifrado em `Usuario.refresh_token_cifrado` (Fernet)
 - ✅ Sub-etapa 3: Sincronização de campanhas — 109/109 passando + caso IN-02 aprovado.
@@ -100,7 +103,18 @@ Feito: tabela congelada (`29de91d`) · motor + 45 testes (`cfb8ac0`) · banco + 
 - ✅ Sub-etapa 4: Falhas simuladas — IN-03 a IN-06 aprovados por testes com dublê da porta
   (a tabela define esses casos como "Simulada"). 131/131 passando. Evidência:
   `2026-11-12_etapa4_falhas_pytest.txt`.
-- ⬜ IN-02b: Métricas sintéticas associadas às campanhas reais sincronizadas.
+- ✅ IN-02b: Métricas sintéticas associadas às campanhas reais sincronizadas — aprovado
+  (13/11). Testes: 34 novos (gerador 16, semeador 9, API 9), incluindo
+  `test_in02b_resultado_da_tabela`; 165/165 passando. Execução real no banco `limen`,
+  todos os números iguais ao esperado: `POST /dev/metricas-sinteticas` → 200, lote
+  `in02b-s20261112`, 13/10 a 11/11/2026, 30 inseridos em A, B e C (segunda execução:
+  0 inseridos, 30 já existentes); banco com 3 campanhas de IDs reais, origem `sintetica`,
+  30 dias cada; `POST /avaliacoes {}` → 60 avaliados, 0 rejeitados, 18 alertas
+  (A 3/3/3, B 3/3/3, C 0/0/0), `duracao_motor_ms` 0.504; `POST /avaliacoes
+  {"incluir_pausadas": true}` → 90 avaliados, 9 gerados, 18 já existentes (C 3/3/3).
+  Evidências: `docs/evidencias/2026-11-13_IN-02b_*` (pytest.txt, precondicao_sincronizacao,
+  semeadura_resposta, semeadura_idempotente, metricas_banco, avaliacao_ativas,
+  alertas_ativas, avaliacao_com_pausadas, alertas_com_pausadas).
 
 Depois: dashboard (React) → testes de desempenho (aba Desempenho: 5 aquecimentos,
 30 repetições, 9 combinações volume × regras, 4 endpoints; tempo do motor medido isolado)
@@ -238,6 +252,69 @@ Depois: dashboard (React) → testes de desempenho (aba Desempenho: 5 aqueciment
   o trecho `[codigo]` é omitido do `detail` (sem `[None]`). Os handlers específicos
   prevalecem sobre o handler base porque o FastAPI/Starlette escolhe o handler pela classe
   mais específica da exceção (MRO), não por ordem de registro.
+- **IN-02b — gerador puro e reproduzível** (`app/servicos/sinteticas/gerador.py`): sem
+  banco, rede ou relógio. Um `random.Random` por campanha, semeado com
+  `"semente:google_campaign_id"` (semente padrão 20261112): incluir ou remover campanha
+  não altera as demais. Só `rng.random()` é usado (a documentação do Python garante essa
+  sequência entre versões; `randint`/`choice`/`shuffle` não), com sorteio de inteiros e
+  Fisher-Yates próprios. Nenhum float: sorteiam-se inteiros (impressões, pontos-base de CTR,
+  centavos de CPC) e o custo vira `Decimal` com 2 casas (`scaleb(-2)`). Período fixo
+  13/10 a 11/11/2026 (30 dias, sem `date.today()`); 3 campanhas × 30 = 90 registros.
+  O nome do lote registra a semente (`in02b-s20261112`). Um teste guarda o SHA-256 do
+  conjunto padrão: se a geração mudar, falha (gerar novo lote em vez de alterar o hash).
+- **IN-02b — perfis com quantidade fixa**: em cada campanha, 21 dias normais + 3 "CTR
+  baixo" (R1) + 3 "CPC alto" (R2) + 3 "custo sem conversão" (R3); a semente só decide em
+  que dias caem. Faixas longe dos limiares da tabela, então cada perfil dispara só a sua
+  regra (testado com os limiares lidos da tabela). Resultado esperado conhecido: 9 alertas
+  por campanha avaliada.
+- **IN-02b — orçamento ignorado na geração**: a R3 exige custo > R$ 100, mas a campanha A
+  tem R$ 50/dia (teto de gasto do Google = 2× o diário = R$ 100). Decisão: ignorar o
+  orçamento, pois os dados são declaradamente sintéticos e o teto de gasto não faz parte da
+  tabela congelada. Limitação a declarar no artigo. Alternativa descartada: limitar o custo
+  a 2× o orçamento (mais realista, mas a R3 nunca dispararia na A e o gerador passaria a
+  depender de uma regra fora da tabela).
+- **IN-02b — mesma validação, sem atalho**: o semeador valida cada registro com
+  `validar_registro` (a mesma função que o `MetricaEntrada` da API chama) e grava pelo
+  mesmo código do `POST /campanhas/{id}/metricas`; os CHECKs do banco continuam valendo.
+  O gerador produz um dataclass próprio (`MetricaGerada`) em vez do esquema Pydantic,
+  para não inverter a dependência entre camadas (`servicos` não importa de `api`).
+- **IN-02b — `adicionar_` × `ingerir_` e transação única**: `ingerir_metricas_sinteticas`
+  fazia commit por chamada; no laço do semeador, uma falha na 2ª campanha deixaria a 1ª
+  gravada. Separado em `adicionar_metricas_sinteticas` (verificações + `flush`, que aciona
+  CHECK/UNIQUE na hora; sem commit) e `ingerir_metricas_sinteticas` (chama a anterior +
+  commit/rollback; comportamento do endpoint inalterado). O semeador chama `adicionar_`
+  por campanha e faz um único `commit` no final, com `rollback` em qualquer falha.
+  Tudo ou nada em duas camadas: (1) gera, valida e confere conflitos de todas as campanhas
+  antes de gravar; (2) transação única cobre o que (1) não prevê (ex.: CHECK do banco).
+  Alternativa descartada: `begin_nested` dentro da função antiga (manteria commits no meio
+  do laço e esconderia onde a transação começa e termina).
+- **IN-02b — teste de mutação da transação**: `test_falha_na_segunda_campanha_nao_deixa_a_
+  primeira_no_banco` provoca falha real do CHECK `ck_metrica_cliques_ate_impressoes` na
+  campanha B (validação Python desligada só nesse teste) e usa um espião para provar que A
+  chegou a ser gravada (flush) antes da falha. Com o mutante "commit por campanha"
+  (aplicado só em memória), o teste reprovou com `assert 30 == 0`: os 30 registros de A
+  sobravam no banco.
+- **IN-02b — idempotência por lote**: por campanha, o semeador classifica o período como
+  vazio (grava), completo com o mesmo lote (pula; conta em `ja_existentes`) ou conflito
+  (dias de outro lote ou período incompleto → `ConflitoDados`, HTTP 409, nada gravado).
+  Alternativa descartada: `ON CONFLICT DO NOTHING`, que misturaria lotes em silêncio.
+  Só recebem métricas as campanhas vindas da sincronização (`sincronizada_em` preenchido)
+  e não REMOVED; sem nenhuma → 409 (pré-condição IN-02 não cumprida). Campanha PAUSED
+  recebe métricas; quem decide avaliá-la é `incluir_pausadas`.
+- **IN-02b — rota `POST /dev/metricas-sinteticas`**: no roteador `/dev`, que `criar_app()`
+  só inclui com `AMBIENTE=desenvolvimento` (fora dele, 404: a rota nem é registrada).
+  Exige login com `obter_usuario_atual` (401 sem sessão), a mesma dependência das rotas
+  autenticadas (`/dev/login` e `/dev/logout` não usam dependência de usuário). Parâmetros
+  opcionais `semente`, `inicio`, `dias` (9 a 3660; inválido → 400). Os 4 endpoints fixos
+  não foram alterados. Testes da rota montam a própria aplicação com `criar_app()` e o
+  AMBIENTE controlado, para o 404 ser real e nada depender do `.env`.
+- **IN-02b — oráculo do teste literal**: `test_in02b_resultado_da_tabela` lê a linha IN-02b
+  da planilha e confere o texto; cumpre a pré-condição pelo `POST /campanhas/sincronizar`
+  (dublê `PortaFalsa` com os IDs reais) e verifica cada parte do resultado esperado:
+  (a) ID real, (b) `origem='sintetica'` e lote, (c) motor avalia normalmente — 0 rejeitados,
+  A=9/B=9/C=0 e C=9 com `incluir_pausadas`, e o conjunto exato (campanha, dia, regra)
+  igual ao calculado pelo motor puro com os limiares da tabela. O IN-02b verifica a
+  integração; a correção das regras é coberta pelos casos RA/FM.
 - **Pendências a mencionar no artigo**: declarar o uso de IA conforme regra do iCEV
   (confirmar com o orientador); justificar Liang et al. (2009) na seção 2.5; buscar fonte
   recente (IEEE/ACM, "rule engine evaluation"); deixar explícito na metodologia o que usou
