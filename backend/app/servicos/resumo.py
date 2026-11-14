@@ -5,7 +5,9 @@ contar. A listagem de alertas tem limite (5.000) e a avaliação de desempenho
 usa base de 10.000 registros; contar no cliente truncaria os números.
 
 O período (inicio/fim) filtra métricas e alertas pela data do registro avaliado.
-Campanhas, regras e última avaliação não dependem do período.
+Campanhas, regras e última avaliação não dependem do período. `alertas.avaliacoes`
+conta as avaliações distintas que geraram os alertas do período (o "27" da tela
+soma alertas de mais de uma execução).
 """
 
 from __future__ import annotations
@@ -113,6 +115,21 @@ def obter_resumo(
     for dia, codigo, total in linhas:
         por_dia.setdefault(dia, {})[codigo] = total
 
+    # --- Avaliações que geraram os alertas contados acima (mesmo período). Distinto do
+    # total de avaliações do usuário: uma execução que não gerou alerta novo (todos já
+    # existiam, ON CONFLICT DO NOTHING) não entra, e o período vale como nos alertas.
+    avaliacoes_com_alerta = sessao.execute(
+        _no_periodo(
+            select(func.count(func.distinct(Alerta.avaliacao_id)))
+            .select_from(Alerta)
+            .join(MetricaDiaria, Alerta.metrica_diaria_id == MetricaDiaria.id)
+            .join(Regra, Alerta.regra_id == Regra.id)
+            .where(Regra.usuario_id == usuario_id),
+            inicio,
+            fim,
+        )
+    ).scalar_one()
+
     ultimas = listar_avaliacoes(sessao, usuario_id, limite=1)
 
     return {
@@ -126,6 +143,7 @@ def obter_resumo(
         },
         "alertas": {
             "total": sum(r["total"] for r in por_regra),
+            "avaliacoes": avaliacoes_com_alerta,
             "por_regra": por_regra,
             "por_dia": [{"data": d, "por_regra": c} for d, c in por_dia.items()],
         },

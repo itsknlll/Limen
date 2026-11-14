@@ -581,6 +581,8 @@ export interface components {
         ResumoAlertas: {
             /** Total */
             total: number;
+            /** Avaliacoes */
+            avaliacoes: number;
             /** Por Regra */
             por_regra: components["schemas"]["ResumoAlertasRegra"][];
             /** Por Dia */

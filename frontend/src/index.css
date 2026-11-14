@@ -103,12 +103,15 @@
     --regra-outra: var(--muted-foreground);
     --regra-outra-suave: var(--muted);
 
-    /* Gráficos: as três primeiras séries são as regras */
+    /* Gráficos: as três primeiras séries são as regras; --chart-5 = regras do usuário.
+       No claro as regras usam a própria cor de texto (passa no validador de paleta).
+       --chart-5 tem valor próprio: o --muted-foreground (L 0,50) ficava a ΔE 6,4 do R2
+       sob protanopia; a 0,64 dá 8,1 e ainda 3,22:1 sobre o fundo (grafico.test.ts). */
     --chart-1: var(--regra-r1);
     --chart-2: var(--regra-r2);
     --chart-3: var(--regra-r3);
     --chart-4: var(--primary);
-    --chart-5: var(--muted-foreground);
+    --chart-5: oklch(0.64 0.02 264);
 
     --radius: 0.625rem;
 
@@ -155,9 +158,14 @@
     --regra-outra: var(--muted-foreground);
     --regra-outra-suave: var(--muted);
 
-    --chart-1: var(--regra-r1);
-    --chart-2: var(--regra-r2);
-    --chart-3: var(--regra-r3);
+    /* Barras no escuro: tons próprios, com os mesmos matizes das regras. As cores de
+       texto (--regra-*, L 0,75 a 0,82) passam de 4,5:1, mas como barra ficam claras
+       demais e R2 × R3 a ΔE 13,9 (< 15). Estes passam no validador de paleta (faixa
+       L 0,48 a 0,67, CVD ≥ 8, ΔE ≥ 15). --chart-5 segue o --muted-foreground: nenhum
+       cinza dentro da faixa se separa do R2 sob daltonismo (limitação registrada). */
+    --chart-1: oklch(0.66 0.135 80);
+    --chart-2: oklch(0.56 0.2 355);
+    --chart-3: oklch(0.66 0.19 302);
     --chart-4: var(--primary);
     --chart-5: var(--muted-foreground);
 
@@ -180,5 +188,22 @@
   }
   body {
     @apply bg-background text-foreground antialiased;
+  }
+}
+
+/* Menos movimento (WCAG 2.3.3): com a preferência do sistema ativa, animações e
+   transições de CSS ficam praticamente instantâneas (ex.: o Sheet do menu do celular
+   deixa de deslizar), sem editar src/components/ui. Fora das camadas e com !important
+   para vencer as classes de animação do tw-animate-css. 0.01ms, e não 0: com 0 o
+   animationend/transitionend pode não disparar, e o Radix espera o animationend para
+   desmontar o Sheet. O Recharts anima por JavaScript: quem o desliga é
+   usePrefereMenosMovimento (src/lib/movimento.ts). Testado em movimento-css.test.ts. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

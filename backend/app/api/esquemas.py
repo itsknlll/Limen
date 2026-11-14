@@ -200,6 +200,8 @@ class ResumoAlertasDia(BaseModel):
 
 class ResumoAlertas(BaseModel):
     total: int
+    # Avaliações distintas que geraram os alertas do período (não o total de execuções)
+    avaliacoes: int
     por_regra: list[ResumoAlertasRegra]
     por_dia: list[ResumoAlertasDia]
 

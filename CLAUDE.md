@@ -60,7 +60,7 @@ docs/evidencias/            prints e saídas do pytest (nome: AAAA-MM-DD_caso_de
 ```bash
 cd ~/projetos/limen && docker compose up -d        # banco (após reiniciar o PC)
 cd backend && source .venv/bin/activate
-pytest -q                                           # 211 testes passando em 13/11
+pytest -q                                           # 213 testes passando em 14/11
 alembic upgrade head
 uvicorn app.main:app --reload --port 8080           # /docs; POST /dev/login (só em desenvolvimento)
 pytest | tee ../docs/evidencias/AAAA-MM-DD_<etapa>_pytest.txt   # evidência antes do commit
@@ -91,7 +91,12 @@ Commits no padrão `tipo(escopo): descrição` em português, seguidos de `git p
 Feito: tabela congelada (`29de91d`) · motor + 45 testes (`cfb8ac0`) · banco + migração
 (`6aa88ba`) · API REST (`1e22777`) · OAuth + cifragem (`f49faf9`) · sincronização campanhas
 (sub-etapas 3 e 4 concluídas) · métricas sintéticas nas campanhas reais (IN-02b, `0cf461e`) ·
-Fase 0 do dashboard (backend). Total **211 testes passando** (13/11, após a Fase 0).
+Fase 0 do dashboard (backend). Total **211 testes passando** (13/11, após a Fase 0);
+**213** em 14/11, com o campo `alertas.avaliacoes` do `/resumo` (Fase 1, etapa 4).
+✅ **Fase 1, etapa 4 — Visão geral (14/11)**: KPIs de `GET /resumo`, alertas por dia
+(Recharts, cores das regras), alertas por regra e últimas avaliações de `GET /avaliacoes`,
+com estados de carregando, vazio e erro. Teste no navegador aprovado pelo Kauan (8 itens).
+pytest 213/213, Vitest 491/491. Evidências: `docs/evidencias/2026-11-14_fase1_visao-geral_*`.
 
 **Dashboard — plano aprovado (13/11/2026):** React + TypeScript (Vite), Tailwind v4,
 shadcn/ui, lucide, Recharts, TanStack Query, React Router, react-hook-form + zod, sonner.
@@ -554,6 +559,169 @@ Depois: dashboard (React) → testes de desempenho (aba Desempenho: 5 aqueciment
   **Confirmado no navegador pelo Kauan (13/11)**: navegando para Campanhas pelo menu do
   celular, o console ficou vazio (sem o aviso de `aria-hidden`); Esc fecha o menu; o link
   "Pular para o conteúdo" aparece com espaçamento e sombra.
+- **Fase 1, etapa 4 — `alertas.avaliacoes` no `/resumo` (14/11)**: o cartão
+  de Alertas mostra 27, que soma alertas de duas execuções (18 da primeira + 9 da segunda,
+  com pausadas); sem contexto seria confundido com os 18 da primeira. O `/resumo` não dizia
+  quantas avaliações havia. Campo novo `alertas.avaliacoes` = `COUNT(DISTINCT
+  alerta.avaliacao_id)` no banco, só das regras do usuário e no mesmo período dos alertas:
+  são as avaliações que **geraram** os alertas contados. Descartados: (a) total de
+  avaliações do usuário (contaria execuções sem alerta novo, por causa do `ON CONFLICT DO
+  NOTHING`, e ignoraria o período: rodar de novo daria "27 alertas em 3 avaliações");
+  (b) contar no navegador com `GET /avaliacoes?limite=500` (contradiz a decisão da Fase 0
+  de agregar no banco; trunca acima de 500); (c) texto sem número. A resposta só ganha um
+  campo; o nome do endpoint não muda. Testes: `test_resumo_vazio` ganhou
+  `"avaliacoes": 0` (único teste antigo alterado, porque compara o dicionário inteiro);
+  asserções de 1 (só ativas) e 2 (com pausadas), e oráculo independente no teste de
+  período (`avaliacao_id` distintos em `GET /alertas`, endpoint fixo). Dois testes novos:
+  `test_avaliacao_sem_alerta_novo_nao_conta` (3ª execução sem alerta novo: `GET
+  /avaliacoes` tem 3, o campo continua 2) e `test_avaliacoes_de_outro_usuario_nao_contam`
+  (segundo usuário com conta, campanha A, métricas e avaliação que gera 9 alertas; o banco
+  fica com 36 alertas de 3 avaliações e o `/resumo` do primeiro continua 27 e 2). O
+  `test_resumo_so_do_usuario` já existia, mas só cria regras do outro usuário, sem alertas:
+  uma asserção ali passaria mesmo sem o filtro. **Mutação** (cópia no scratchpad, restaurada
+  e conferida com `cmp` e `git diff`): sem o `.where(Regra.usuario_id == usuario_id)` da
+  contagem nova, só `test_avaliacoes_de_outro_usuario_nao_contam` reprovou, com
+  `(27, 3) == (27, 2)`. pytest: **213/213** (211 + 2). `esquema.d.ts` regenerado com o
+  uvicorn em `--reload` (o `openapi.json` servido foi conferido antes): diff de 2 linhas,
+  só `avaliacoes: number` em `ResumoAlertas`.
+- **Fase 1, etapa 4 — cores do gráfico (14/11)**: paleta conferida com o validador da skill
+  dataviz (`validate_palette.js`): faixa de luminosidade (claro L 0,43 a 0,77; escuro 0,48 a
+  0,67), saturação mínima 0,10, separação sob daltonismo (CVD, ΔE ≥ 8; de 6 a 8 só com
+  segunda codificação), distância em visão normal (ΔE OKLab ×100 ≥ 15) e contraste ≥ 3:1.
+  **Claro**: as regras usam a própria cor de texto (`--chart-1..3 = var(--regra-r*)`); tudo
+  passa (CVD pior 11,4, distância pior 18,5). **Escuro**: as cores de texto (L 0,75 a 0,82,
+  claras para dar 4,5:1) reprovavam como barra (fora da faixa, e R2 × R3 a 13,9). Tons
+  próprios com os mesmos matizes: `--chart-1 oklch(0.66 0.135 80)`, `--chart-2 oklch(0.56
+  0.2 355)`, `--chart-3 oklch(0.66 0.19 302)`; passam em tudo (CVD 16,8, distância 20,1).
+  Os tokens de texto `--regra-*` não mudaram. **`--chart-5`** (regras criadas pelo usuário):
+  no claro era o `--muted-foreground` (L 0,50), a ΔE 6,4 do R2 sob protanopia; passou a
+  `oklch(0.64 0.02 264)`, que dá CVD 8,1, 3,36:1 sobre o cartão, 3,22:1 sobre o fundo e
+  distância mínima de 18,4 (a 0,66 o contraste sobre o fundo cai para 2,98). No escuro
+  continua `var(--muted-foreground)` (CVD 14,2, distância 15,8 do R1). `aparencia.ts` ganhou
+  `corGrafico` (`var(--chart-N)`; barra e amostra da legenda); `corCss` continua sendo a
+  cor de texto. `contraste.ts` ganhou `deltaEOk`. **Testes em arquivos novos**, para
+  `contraste.test.ts` e `aparencia.test.ts` ficarem idênticos ao commit (conferido com
+  `git diff`). `grafico.test.ts` lê `--chart-1..5` do `index.css` (nenhuma cor repetida no
+  teste) e confere, em cada tema: gama sRGB, ≥ 3:1 sobre `--card` e `--background`,
+  distância ≥ 15 nos 6 pares (com `--chart-5`) e faixa de luminosidade (exceção escrita só
+  para o `--chart-5` do escuro). A `deltaEOk` é conferida contra a saída do validador.
+  `aparencia-grafico.test.ts`: mapeamento R1 a R3 → `--chart-1..3`, outros → `--chart-5`, e
+  todo token entre as séries conferidas. **Mutações** (cópia no scratchpad, restaurada e
+  conferida com `cmp` após cada uma):
+
+  | Mutação | Reprovou | Valor |
+  |---|---|---|
+  | só `--chart-2` do escuro → `var(--regra-r2)` (1ª tentativa) | nada (sobreviveu) | R2 × R3 = 18,7 |
+  | os três do escuro → `var(--regra-r*)` (1a) | R2 × R3; R3 × `--chart-5` | 13,897; 14,41 |
+  | só `--chart-2` do escuro, depois do teste de faixa | faixa no escuro | L 0,76 > 0,67 |
+  | `--chart-5` do claro → L 0,66 | `--chart-5` sobre `--background` | 2,98 < 3 |
+
+  A 1ª tentativa sobreviveu porque a previsão estava errada: o 13,9 era com R2 e R3 ambos na
+  cor de texto. Ela revelou que nenhum teste conferia a faixa de luminosidade, e por isso o
+  teste de faixa foi acrescentado. **Limitações (declarar no artigo)**: o cinza das regras do
+  usuário tem saturação baixa nos dois temas (inerente a um cinza, neutro de propósito) e,
+  no escuro, L 0,71, acima da faixa de barras: nenhum cinza dentro da faixa se separa do R2
+  sob daltonismo (CVD entre 1,9 e 5,3 no intervalo testado). Todas as regras do usuário
+  dividem essa cor; o código na legenda e no selo as distingue. **Estado do frontend**:
+  Vitest **416/416** em 13 arquivos (358 anteriores + 58 novos), typecheck, lint e build ok.
+  O aviso de 500 kB do build foi tratado na entrada seguinte (`lazy()` e decisão).
+- **Fase 1, etapa 4 — Visão geral (14/11, concluída)**: **dados** (`src/visao-geral/dados.ts`,
+  funções puras): série de alertas por dia do período das métricas (13/10 a 11/11 = 30
+  pontos), com os 10 dias sem alerta preenchidos com 0 (o backend só manda os dias com
+  alerta); dia fora do período estende o eixo em vez de sumir; código só em `por_dia` entra
+  no fim. Datas puras sem `new Date`: `diasEntre` parte o texto e avança o calendário
+  (bissexto ÷4/÷100/÷400 à mão); data inválida lança erro em vez de virar gráfico vazio sem
+  aviso. Textos dos KPIs ("2 ativas · 1 pausada", "3 ativas de 3", "13/10 a 11/11/2026 · 90
+  sintéticos", "gerados em 2 avaliações" a partir de `alertas.avaliacoes`); parâmetros NULL
+  → "não registrado" (nunca "só ativas"; ausente ≠ falso); `estadoVazio` na ordem do fluxo
+  (sem campanhas → sem métricas → sem avaliações; "sem alertas" não é vazio: o gráfico
+  mostra os zeros); `codigoNoTopo` (só o segmento do topo da pilha ganha o canto de 4 px).
+  Testes: fixture com os números do banco `limen`, tipada com
+  `components["schemas"]["ResumoSaida"]` por **anotação** (com `satisfies`, o tipo literal de
+  `por_dia` vira uma união que não cabe em `{ [codigo]: number }` e o typecheck reprovou);
+  invariantes como oráculo (soma da série = `alertas.total`; soma de cada regra = total dela
+  em `por_regra`, que vem de outra consulta do backend); `TZ=America/Fortaleza`.
+  **Mutações** (cópia no scratchpad, restaurada e conferida com `cmp` após cada uma):
+
+  | Mutação | Reprovaram | Exemplo |
+  |---|---|---|
+  | sem preencher os dias vazios | 4 | 20 dias em vez de 30; 0 dias com zero em vez de 10 |
+  | `diasEntre` com `new Date` | 13 | `'2026-10-12'` em vez de `'2026-10-13'`; soma 26 ≠ 27 |
+  | NULL tratado como `false` | 1 | `'só ativas · …'` em vez de `'não registrado'` |
+  | sem a regra CSS de menos movimento | 5 | `expected null not to be null` (bloco ausente) |
+
+  Na 1ª, os invariantes de soma passaram (zeros não mudam soma): quem pegou foi o teste dos
+  30 dias, por isso ele existe separado. **Componentes**: `CartoesKpi` (4 cartões com
+  `role="group"` + `aria-labelledby`; o de Alertas diz de quantas avaliações vieram),
+  `GraficoAlertasPorDia` (barras empilhadas ≤ 24 px, 2 px na cor do cartão entre os
+  segmentos, eixo Y só com inteiros; legenda própria com a amostra em `corGrafico` e o
+  texto em `corCss`; o SVG fica `aria-hidden` com `accessibilityLayer={false}`, porque o
+  padrão do Recharts 3 torna o SVG focável, e foco dentro de área escondida é erro;
+  descrição em texto visível no cabeçalho do cartão; botão "Ver dados em tabela" com
+  `aria-expanded`/`aria-controls`, a tabela fica no DOM com `hidden` para o `aria-controls`
+  apontar para algo que existe), `AlertasPorRegra` (`<dl>`, regra sem alerta aparece com 0,
+  marca "desativada"; `self-start` na grade para não esticar até a altura do gráfico),
+  `UltimasAvaliacoes` (consulta própria `useAvaliacoes(5)`: se falhar, KPIs e gráfico
+  continuam), `EstadoVazio` genérico (sem `role="alert"`: vazio não é erro). **Um status de
+  carregando por consulta**: os esqueletos individuais anunciam o próprio status; o
+  `EsqueletoResumo` (uma consulta: KPIs, gráfico, alertas por regra) e o
+  `EsqueletoVisaoGeral` (fallback do Suspense) desligam os internos (`comStatus={false}`) e
+  anunciam uma mensagem só. Alternativa descartada: um status por bloco (o leitor de tela
+  anunciaria quatro mensagens seguidas). **Carregamento sob demanda**: o conteúdo
+  (`ConteudoVisaoGeral`, com o Recharts) vem por `React.lazy` + `Suspense`; o **h1 fica fora
+  do Suspense**, porque o Layout foca o h1 ao trocar de rota, e um h1 dentro do fallback
+  seria desmontado quando o conteúdo chegasse, mandando o foco para o `<body>`. Falha ao
+  baixar o pedaço sobe até o `errorElement` da raiz (`ErroDeRota`, com "Recarregar").
+  Alternativa descartada: `lazy` do React Router (a navegação esperaria o download sem
+  fallback visível). **Menos movimento** (WCAG 2.3.3): `src/lib/movimento.ts`
+  (`matchMedia("(prefers-reduced-motion: reduce)")` com `useSyncExternalStore`, reage se a
+  preferência mudar com a página aberta; teste com `matchMedia` falso que só responde à
+  consulta exata) desliga a animação do Recharts, que é por JavaScript. Para as animações de
+  CSS (o Sheet do menu do celular ainda deslizava), regra global no `index.css`, fora das
+  camadas e com `!important`: `animation-duration` e `transition-duration` em `0.01ms` (não
+  0: com 0 o `animationend` pode não disparar, e o Radix espera por ele para desmontar o
+  Sheet) e `animation-iteration-count: 1`, em `*`, `*::before`, `*::after`; sem editar
+  `src/components/ui`. `movimento-css.test.ts` lê o CSS sem os comentários (o comentário
+  cita a consulta) e confere seletores, propriedades, valores e `!important`.
+  **Build** (JS):
+
+  | | Principal | Visão geral | Baixado ao abrir |
+  |---|---|---|---|
+  | antes da etapa 4 | 549,97 kB (174,80 gzip) | — | 549,97 kB |
+  | import estático | 941,76 kB (287,75 gzip) | — | 941,76 kB |
+  | com `lazy()` | 556,31 kB (176,84 gzip) | 387,23 kB (112,43 gzip) | 556,31 kB |
+
+  **Aviso de 500 kB aceito por enquanto**: a base (React, roteador, Radix, TanStack) já tinha
+  549,97 kB antes do Recharts, e separar as bibliotecas num pedaço próprio não diminui o que
+  é baixado no início. As outras telas entram com `lazy()` nas Fases 2 e 3; decisão final na
+  etapa 5. **Teste no navegador (Kauan, 14/11), 8 itens aprovados**: valores dos KPIs,
+  gráfico, dica, tabela, alertas por regra e últimas avaliações iguais ao banco; tema
+  escuro; Tab não entra no gráfico; com `prefers-reduced-motion` as barras aparecem sem
+  animação e, sem ele, animam; com Slow 3G aparece o esqueleto e `document.activeElement` é
+  o h1; bloqueando `ConteudoVisaoGeral.tsx` aparece o `ErroDeRota`, sem tela branca; no
+  celular os KPIs ficam em 2 colunas e só a tabela rola para o lado; console sem erros.
+  Depois do teste: a regra CSS de menos movimento e o `self-start`. **Melhoria opcional**:
+  o `ErroDeRota` fica na rota raiz e ocupa a tela toda, escondendo o menu lateral; um
+  `errorElement` dentro do Layout manteria a navegação, mas exigiria uma versão sem o
+  próprio `<main id="conteudo">` (senão haveria dois). Totais: pytest **213/213**, Vitest
+  **491/491** (16 arquivos), typecheck, lint e build ok. Evidências:
+  `docs/evidencias/2026-11-14_fase1_visao-geral_pytest.txt` e `_vitest.txt` (verbose).
+- **Pendência visual — rever a Visão geral para ficar mais intuitiva (14/11, baixa
+  prioridade)**: entra no **plano de corte**, só depois das Fases 2 a 4, dos testes de
+  desempenho, da execução da tabela congelada e da implantação. Itens: (a) ranking
+  "Campanhas com mais alertas", com a contagem feita no banco, no `/resumo` (mesma decisão
+  da Fase 0: agregar no banco, não no navegador); (b) clicar numa barra do gráfico leva à
+  tela de Alertas filtrada por aquele dia (depende da Fase 4); (c) revisar proporção,
+  destaques e espaçamentos do gráfico **sem mudar a paleta validada** (`grafico.test.ts`);
+  (d) uma frase de propósito sob o título de cada página; (e) alertas descritos de forma
+  concreta, por exemplo "CTR de 0,8% ficou abaixo de 1% na campanha X em 17/10", na tela de
+  Alertas da Fase 4 (o alerta já guarda os valores medidos e a cópia das condições);
+  (f) mais presença da cor principal do Limen e títulos um pouco maiores, **sem perder o
+  contraste testado** (`contraste.test.ts`).
+- **Pendência — prints de evidência das telas (14/11)**: ficam para o **final do projeto**,
+  com as telas já ajustadas: tema claro, tema escuro e celular, sem e-mail e com o menu do
+  usuário fechado. Até lá, as evidências de cada etapa são as saídas do pytest e do Vitest
+  em `docs/evidencias/`.
 - **Pendências a mencionar no artigo**: declarar o uso de IA conforme regra do iCEV
   (confirmar com o orientador); justificar Liang et al. (2009) na seção 2.5; buscar fonte
   recente (IEEE/ACM, "rule engine evaluation"); deixar explícito na metodologia o que usou

@@ -54,6 +54,17 @@ export function compor(frente: Rgb, alfa: number, fundo: Rgb): Rgb {
   return [0, 1, 2].map((i) => frente[i]! * alfa + fundo[i]! * (1 - alfa)) as unknown as Rgb;
 }
 
+/**
+ * Distância entre duas cores no OKLab, ×100 (a escala do validador de paleta da skill
+ * dataviz: abaixo de 15, as séries de um gráfico ficam difíceis de separar mesmo com
+ * visão normal). OKLCH → OKLab é só polar → cartesiano: a = C·cos h, b = C·sin h.
+ */
+export function deltaEOk(p: Oklch, q: Oklch): number {
+  const lab = ({ l, c, h }: Oklch) => [l, c * Math.cos((h * Math.PI) / 180), c * Math.sin((h * Math.PI) / 180)];
+  const [a, b] = [lab(p), lab(q)];
+  return 100 * Math.hypot(a[0]! - b[0]!, a[1]! - b[1]!, a[2]! - b[2]!);
+}
+
 export function luminancia(rgb: Rgb): number {
   const [r, g, b] = rgb.map(decodificar);
   return 0.2126 * r! + 0.7152 * g! + 0.0722 * b!;

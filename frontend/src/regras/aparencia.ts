@@ -13,30 +13,42 @@ export interface AparenciaRegra {
   Icone: LucideIcon;
   /** Classes completas e literais, para o Tailwind encontrá-las no código. */
   classes: { texto: string; fundo: string };
-  /** Cor para o Recharts (fill/stroke), que recebe CSS e não classes. */
+  /** Cor de texto da regra (a mesma de classes.texto) para estilo inline. ≥ 4,5:1. */
   corCss: string;
+  /**
+   * Cor da série no gráfico (fill das barras e amostra da legenda). No escuro é outro
+   * tom: a cor de texto, clara para passar de 4,5:1, pesa demais como barra
+   * (ver --chart-* em index.css e grafico.test.ts).
+   */
+  corGrafico: string;
 }
 
-const TONS: Record<TomRegra, Pick<AparenciaRegra, "Icone" | "classes" | "corCss">> = {
+const TONS: Record<TomRegra, Pick<AparenciaRegra, "Icone" | "classes" | "corCss" | "corGrafico">> = {
   r1: {
     Icone: MousePointerClick,
     classes: { texto: "text-regra-r1", fundo: "bg-regra-r1-suave" },
     corCss: "var(--regra-r1)",
+    corGrafico: "var(--chart-1)",
   },
   r2: {
     Icone: Coins,
     classes: { texto: "text-regra-r2", fundo: "bg-regra-r2-suave" },
     corCss: "var(--regra-r2)",
+    corGrafico: "var(--chart-2)",
   },
   r3: {
     Icone: Target,
     classes: { texto: "text-regra-r3", fundo: "bg-regra-r3-suave" },
     corCss: "var(--regra-r3)",
+    corGrafico: "var(--chart-3)",
   },
+  // Regras criadas pelo usuário dividem a mesma cor neutra (limitação registrada);
+  // o código no selo e na legenda as distingue.
   outra: {
     Icone: Bell,
     classes: { texto: "text-regra-outra", fundo: "bg-regra-outra-suave" },
     corCss: "var(--regra-outra)",
+    corGrafico: "var(--chart-5)",
   },
 };
 
