@@ -17,6 +17,12 @@ dashboard dão suporte a ele.
   servir de base ao artigo (ele escreve o artigo com as próprias palavras). Por isso, manter
   o registro de decisões abaixo **atualizado** a cada etapa.
 - Prazo: aplicação pronta até **segunda, 16/11/2026**; artigo até **27/11/2026**.
+- **Segredos fora do alcance**: nunca ler nem editar `backend/.env` nem nada em
+  `~/.config/limen/`. Buscas de segredo só com `grep -l` (mostra o nome do arquivo,
+  nunca a linha).
+- **Critério do ✅**: uma etapa só é marcada ✅ com testes passando, mutação documentada
+  (o que foi mudado, qual teste reprovou, arquivo restaurado e conferido) e execução real
+  (no navegador, na API ou no banco, conforme a etapa).
 
 ## Regras que não podem ser quebradas
 
@@ -97,6 +103,9 @@ Fase 0 do dashboard (backend). Total **211 testes passando** (13/11, após a Fas
 (Recharts, cores das regras), alertas por regra e últimas avaliações de `GET /avaliacoes`,
 com estados de carregando, vazio e erro. Teste no navegador aprovado pelo Kauan (8 itens).
 pytest 213/213, Vitest 491/491. Evidências: `docs/evidencias/2026-11-14_fase1_visao-geral_*`.
+✅ **Fase 1, etapa 5 — limpeza (14/11)**: Vitrine removida; teste do número do KPI ligado à
+constante real (com mutação). Vitest 492/492, typecheck, lint e build ok. Execução real
+aprovada pelo Kauan no navegador (KPIs com 30 px).
 
 **Dashboard — plano aprovado (13/11/2026):** React + TypeScript (Vite), Tailwind v4,
 shadcn/ui, lucide, Recharts, TanStack Query, React Router, react-hook-form + zod, sonner.
@@ -706,6 +715,28 @@ Depois: dashboard (React) → testes de desempenho (aba Desempenho: 5 aqueciment
   próprio `<main id="conteudo">` (senão haveria dois). Totais: pytest **213/213**, Vitest
   **491/491** (16 arquivos), typecheck, lint e build ok. Evidências:
   `docs/evidencias/2026-11-14_fase1_visao-geral_pytest.txt` e `_vitest.txt` (verbose).
+- **Fase 1, etapa 5 — limpeza (14/11)**: `src/paginas/Vitrine.tsx` removida (`git rm`);
+  antes, uma busca por "vitrine" e `CLASSE_KPI` em todo o frontend (fora `node_modules` e
+  `dist`) só achou o próprio arquivo, e o roteador não a importava. O build ficou com os
+  mesmos tamanhos (556,31 kB e 387,23 kB), sinal de que ela já não entrava no pacote.
+  **Teste do KPI com 14 px**: o teste antigo de `utils.test.ts` conferia o `cn` com classes
+  escritas à mão, mas nada garantia que o `CartoesKpi` usasse a variante; tirá-la do
+  componente passaria em todos os testes. A constante foi para `src/visao-geral/classes.ts`
+  (`export const CLASSE_NUMERO`), importada pelo `CartoesKpi.tsx`; teste novo:
+  `cn(<classes do CardTitle>, CLASSE_NUMERO)` contém `group-data-[size=sm]/card:text-3xl`
+  e não contém `…:text-sm`. As classes do `CardTitle` ficam escritas à mão no teste
+  (decisão do Kauan; ler `card.tsx` acompanharia o shadcn, mas complicaria o teste).
+  Alternativa descartada: exportar a constante de dentro do `CartoesKpi.tsx` (a regra
+  `react-refresh/only-export-components` reclamaria e teria de ser desligada no arquivo).
+  **Mutação** (cópia no scratchpad, restaurada e conferida com `cmp`): sem a variante no
+  `CLASSE_NUMERO`, só o teste novo reprovou (1 de 5 no arquivo), com "expected
+  'font-heading group-data-[size=sm]/car…' to contain 'group-data-[size=sm]/card:text-3xl'".
+  **Aviso de 500 kB**: mantido como aceito na etapa 4, sem mudar o build. Totais: Vitest
+  **492/492** (16 arquivos), typecheck, lint e build ok; pytest não rodado (backend
+  intocado, 213/213 desde 14/11). Evidência: `docs/evidencias/2026-11-14_fase1_etapa5_vitest.txt`.
+  **Execução real (Kauan, 14/11)**: na Visão geral, os números dos KPIs com `font-size`
+  30px no DevTools (classe com `group-data-[size=sm]/card:text-3xl`, sem `text-sm`); o
+  cartão "Alertas por regra" com a altura do conteúdo (`self-start` da etapa 4). Etapa ✅.
 - **Pendência visual — rever a Visão geral para ficar mais intuitiva (14/11, baixa
   prioridade)**: entra no **plano de corte**, só depois das Fases 2 a 4, dos testes de
   desempenho, da execução da tabela congelada e da implantação. Itens: (a) ranking

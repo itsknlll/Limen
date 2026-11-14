@@ -1,12 +1,8 @@
 import { useId } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatarInteiro } from "@/lib/formatar";
+import { CLASSE_NUMERO } from "./classes";
 import { textoAlertas, textoCampanhas, textoMetricas, textoRegras, type Resumo } from "./dados";
-
-// O CardTitle do shadcn traz `group-data-[size=sm]/card:text-sm`, de especificidade
-// maior que `.text-3xl`; repetir a variante com o tamanho certo faz o `cn` trocá-la
-// (decisão "KPI com 14 px" da Fase 1, testada em utils.test.ts).
-const CLASSE_NUMERO = "text-3xl group-data-[size=sm]/card:text-3xl font-semibold tabular-nums";
 
 function Kpi({ titulo, valor, detalhe }: { titulo: string; valor: number; detalhe: string }) {
   const id = useId();
