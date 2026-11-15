@@ -88,3 +88,10 @@ def regras_padrao() -> list[Regra]:
             ),
         ),
     ]
+
+
+# Códigos das regras de referência da tabela congelada (R1, R2, R3). A API recusa
+# criar, editar ou desativar regras com esses códigos (HTTP 409, tipo
+# "regra_referencia"): só nascem em criar_regras_padrao, com os limiares da tabela.
+# A execução formal não depende deste bloqueio: usa banco e usuário próprios.
+CODIGOS_REFERENCIA: frozenset[str] = frozenset(r.id for r in regras_padrao())

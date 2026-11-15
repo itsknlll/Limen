@@ -33,6 +33,18 @@ function lerData(texto: string): [number, number, number] {
   return [ano, mes, dia];
 }
 
+/**
+ * "AAAA-MM-DD" de um dia que existe, com ano ≥ 1 (como o date do Python). Para o pedido
+ * de avaliação, que recebe o texto do <input type="date">. Não lança erro.
+ */
+export function ehDataIso(texto: string): boolean {
+  try {
+    return lerData(texto)[0] >= 1;
+  } catch {
+    return false;
+  }
+}
+
 const doisDigitos = (n: number) => String(n).padStart(2, "0");
 
 /**

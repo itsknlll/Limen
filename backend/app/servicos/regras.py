@@ -10,7 +10,19 @@ from sqlalchemy.orm import Session, selectinload
 
 from .. import motor
 from ..modelos import Condicao, Regra
-from .erros import ConflitoDados, NaoEncontrado
+from .erros import ConflitoDados, NaoEncontrado, RegraReferencia
+
+
+def _recusar_referencia(codigo: str) -> None:
+    """R1 a R3 só existem como em criar_regras_padrao (limiares da tabela congelada).
+
+    Sem distinguir maiúsculas: "r1" seria confundida com a R1 na tela.
+    """
+    if codigo.upper() in motor.CODIGOS_REFERENCIA:
+        raise RegraReferencia(
+            f"A regra {codigo} é referência da tabela congelada: não pode ser criada, "
+            "alterada nem desativada pela API"
+        )
 
 
 def para_motor(regra: Regra) -> motor.Regra:
@@ -57,7 +69,22 @@ def obter_regra(sessao: Session, usuario_id: int, regra_id: int) -> Regra:
     return regra
 
 
+def _reler_do_banco(sessao: Session, usuario_id: int, regra_id: int) -> Regra:
+    """Relê a regra do banco depois do commit, para POST e PUT responderem como o GET.
+
+    A sessão não expira no commit (expire_on_commit=False em app/db.py): sem isto, a
+    resposta traria o limiar como foi enviado ("7.5") e o GET seguinte, como o banco
+    guarda ("7.500000"). O expire_all() faz a regra e as condições serem relidas do
+    banco, com o limiar no formato NUMERIC(18,6). A mutação B7 mostrou que
+    sessao.refresh(regra) também funcionaria; a escolha foi expirar tudo porque o
+    comportamento é simples de explicar e a sessão é de um pedido só.
+    """
+    sessao.expire_all()
+    return obter_regra(sessao, usuario_id, regra_id)
+
+
 def criar_regra(sessao: Session, usuario_id: int, codigo: str, nome: str, ativa: bool, condicoes) -> Regra:
+    _recusar_referencia(codigo)
     regra = Regra(
         usuario_id=usuario_id,
         codigo=codigo,
@@ -71,13 +98,15 @@ def criar_regra(sessao: Session, usuario_id: int, codigo: str, nome: str, ativa:
     except IntegrityError as erro:
         sessao.rollback()
         raise ConflitoDados(f"Já existe uma regra com o código {codigo}") from erro
-    return obter_regra(sessao, usuario_id, regra.id)
+    return _reler_do_banco(sessao, usuario_id, regra.id)
 
 
 def atualizar_regra(
     sessao: Session, usuario_id: int, regra_id: int, codigo: str, nome: str, ativa: bool, condicoes
 ) -> Regra:
-    regra = obter_regra(sessao, usuario_id, regra_id)
+    regra = obter_regra(sessao, usuario_id, regra_id)  # 404 antes do 409: não revela regra alheia
+    _recusar_referencia(regra.codigo)  # editar R1 a R3
+    _recusar_referencia(codigo)  # renomear outra regra para R1 a R3
     regra.codigo = codigo
     regra.nome = nome
     regra.ativa = ativa
@@ -90,12 +119,13 @@ def atualizar_regra(
     except IntegrityError as erro:
         sessao.rollback()
         raise ConflitoDados(f"Já existe uma regra com o código {codigo}") from erro
-    return obter_regra(sessao, usuario_id, regra.id)
+    return _reler_do_banco(sessao, usuario_id, regra.id)
 
 
 def desativar_regra(sessao: Session, usuario_id: int, regra_id: int) -> None:
     """Regras não são apagadas, para preservar o histórico de alertas."""
     regra = obter_regra(sessao, usuario_id, regra_id)
+    _recusar_referencia(regra.codigo)
     regra.ativa = False
     sessao.commit()
 

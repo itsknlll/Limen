@@ -12,7 +12,7 @@ from datetime import datetime, timezone
 
 import pytest
 
-from app.modelos import Alerta, Campanha, ContaGoogleAds, Regra, Usuario
+from app.modelos import Alerta, Campanha, ContaGoogleAds, Usuario
 from app.servicos.avaliacao import executar_avaliacao
 from app.servicos.regras import criar_regras_padrao
 from app.servicos.sinteticas.semeador import semear_metricas_sinteticas
@@ -162,12 +162,17 @@ def test_regra_sem_alerta_aparece_com_zero(cliente, sessao_teste, usuario_teste,
     assert vazio["alertas"]["por_dia"] == []
 
 
-def test_regra_desativada_conta_como_inativa(cliente, sessao_teste, usuario_teste, dados_in02b):
-    regra = sessao_teste.query(Regra).filter_by(usuario_id=usuario_teste, codigo="R2").one()
-    cliente.delete(f"/regras/{regra.id}")
+def test_regra_desativada_conta_como_inativa(cliente, dados_in02b):
+    # Fase 3: R1 a R3 não podem ser desativadas; o teste usa uma regra do usuário.
+    r4 = cliente.post("/regras", json={
+        "codigo": "R4",
+        "nome": "CPC muito alto",
+        "condicoes": [{"metrica": "cpc", "operador": ">", "limiar": "7.5"}],
+    }).json()
+    assert cliente.delete(f"/regras/{r4['id']}").status_code == 204
     resumo = cliente.get("/resumo").json()
-    assert resumo["regras"] == {"total": 3, "ativas": 2}
-    assert {r["codigo"]: r["ativa"] for r in resumo["alertas"]["por_regra"]}["R2"] is False
+    assert resumo["regras"] == {"total": 4, "ativas": 3}
+    assert {r["codigo"]: r["ativa"] for r in resumo["alertas"]["por_regra"]}["R4"] is False
 
 
 def test_resumo_so_do_usuario(cliente, sessao_teste, dados_in02b):

@@ -9,6 +9,11 @@ class ConflitoDados(Exception):
     """Operação conflita com dados existentes (HTTP 409)."""
 
 
+class RegraReferencia(Exception):
+    """Regra de referência da tabela congelada (R1 a R3): não pode ser criada, editada
+    nem desativada pela API. HTTP 409."""
+
+
 class TokenGoogleAusente(Exception):
     """Usuário não autorizou acesso ao Google Ads (sem refresh_token_cifrado). HTTP 409."""
 

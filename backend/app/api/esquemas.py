@@ -9,9 +9,9 @@ from __future__ import annotations
 from datetime import date, datetime
 from decimal import Decimal
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import BaseModel, ConfigDict, Field, computed_field, field_validator, model_validator
 
-from ..motor import Metrica, Operador, RegistroMetricas, validar_registro
+from ..motor import CODIGOS_REFERENCIA, Metrica, Operador, RegistroMetricas, validar_registro
 
 
 # --- Regras ---------------------------------------------------------------
@@ -46,6 +46,12 @@ class RegraSaida(BaseModel):
     nome: str
     ativa: bool
     condicoes: list[CondicaoSaida]
+
+    @computed_field
+    @property
+    def referencia(self) -> bool:
+        """R1 a R3 (tabela congelada): a API recusa criar, editar ou desativar (409 regra_referencia)."""
+        return self.codigo in CODIGOS_REFERENCIA
 
 
 # --- Sessão ---------------------------------------------------------------

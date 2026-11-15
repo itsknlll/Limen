@@ -17,6 +17,7 @@ from .servicos.erros import (
     ConflitoDados,
     ErroGoogleAds,
     NaoEncontrado,
+    RegraReferencia,
     TokenExpirado,
     TokenGoogleAusente,
     TokenRevogado,
@@ -79,6 +80,10 @@ def criar_app() -> FastAPI:
     @app.exception_handler(ConflitoDados)
     async def conflito(_: Request, erro: ConflitoDados):
         return _erro(status.HTTP_409_CONFLICT, "conflito", str(erro))
+
+    @app.exception_handler(RegraReferencia)
+    async def regra_referencia(_: Request, erro: RegraReferencia):
+        return _erro(status.HTTP_409_CONFLICT, "regra_referencia", str(erro))
 
     @app.exception_handler(TokenGoogleAusente)
     async def token_google_ausente(_: Request, erro: TokenGoogleAusente):

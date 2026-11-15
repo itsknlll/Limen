@@ -3,11 +3,14 @@ import {
   type MutationObserverOptions,
   QueryCache,
   QueryClient,
+  type QueryKey,
   queryOptions,
   useMutation,
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
+import type { CorpoAvaliacao } from "@/avaliacoes/pedido";
+import { corpoParaAtivar, type CorpoRegra } from "@/regras/validacao";
 import { api, type Esquemas, exigir } from "./cliente";
 import { deveRepetir, ErroApi } from "./erros";
 
@@ -16,10 +19,17 @@ export const chaves = {
   eu: ["eu"] as const,
   resumo: ["resumo"] as const,
   avaliacoes: (limite: number) => ["avaliacoes", limite] as const,
+  /** Prefixo do histórico de avaliações de qualquer limite (a tela usa 50; a Visão geral, 5). */
+  todasAsAvaliacoes: ["avaliacoes"] as const,
   campanhas: ["campanhas"] as const,
   metricas: (campanhaId: number | null) => ["metricas", campanhaId] as const,
   /** Prefixo de todas as métricas: invalidar com ele atinge as de qualquer campanha. */
   todasAsMetricas: ["metricas"] as const,
+  /** Lista de regras. Também é o prefixo de `regra(id)`: invalidar a lista atinge as duas. */
+  regras: ["regras"] as const,
+  regra: (id: number | null) => ["regras", id] as const,
+  /** Prefixo dos alertas (a tela é da Fase 4; invalidar desde já não custa nada). */
+  alertas: ["alertas"] as const,
 };
 
 export function ehNaoAutenticado(erro: unknown): boolean {
@@ -155,4 +165,142 @@ export function useSair() {
     mutationFn: () => exigir(api.POST("/sessao/sair")),
     onSuccess: () => cliente.clear(),
   });
+}
+
+// --- Regras e avaliações (Fase 3) ----------------------------------------------------
+
+/** Cliente da API trocável só nos testes (openapi-fetch de verdade com um fetch falso). */
+type ClienteApi = typeof api;
+type Regra = Esquemas["RegraSaida"];
+
+export function useRegras() {
+  return useQuery({
+    queryKey: chaves.regras,
+    queryFn: ({ signal }) => exigir(api.GET("/regras", { signal })),
+  });
+}
+
+/** Uma regra (tela de edição). Id inválido (null) → consulta desligada, nenhum pedido. */
+export function opcoesRegra(id: number | null, cliente: ClienteApi = api) {
+  return queryOptions({
+    queryKey: chaves.regra(id),
+    queryFn: ({ signal }) => {
+      // Não deveria rodar com null (enabled: false); se rodar, falha em vez de pedir /regras/null.
+      if (id === null) throw new Error("consulta de regra sem id");
+      return exigir(cliente.GET("/regras/{regra_id}", { params: { path: { regra_id: id } }, signal }));
+    },
+    enabled: id !== null,
+  });
+}
+
+export function useRegra(id: number | null) {
+  return useQuery(opcoesRegra(id));
+}
+
+/** O que mudar uma regra pode ter mudado: a lista, a própria regra e o resumo (nome e situação em "Alertas por regra"). */
+export const CHAVES_APOS_REGRA = [chaves.regras, chaves.resumo] as const;
+/** O que uma avaliação muda: o histórico (de qualquer limite), o resumo e os alertas. */
+export const CHAVES_APOS_AVALIAR = [chaves.todasAsAvaliacoes, chaves.resumo, chaves.alertas] as const;
+
+function invalidar(cliente: QueryClient, lista: readonly QueryKey[]) {
+  return Promise.all(lista.map((queryKey) => cliente.invalidateQueries({ queryKey })));
+}
+
+export interface PedidoSalvarRegra {
+  /** null = regra nova (POST); número = edição (PUT). */
+  id: number | null;
+  corpo: CorpoRegra;
+}
+
+/** POST /regras (endpoint fixo) para regra nova; PUT /regras/{id} para edição. */
+export function salvarRegra({ id, corpo }: PedidoSalvarRegra, cliente: ClienteApi = api): Promise<Regra> {
+  return id === null
+    ? exigir(cliente.POST("/regras", { body: corpo }))
+    : exigir(cliente.PUT("/regras/{regra_id}", { params: { path: { regra_id: id } }, body: corpo }));
+}
+
+/**
+ * Criar ou editar uma regra.
+ * - retry: false explícito: repetir um POST sem resposta poderia criar a regra e depois
+ *   receber 409 de código repetido.
+ * - Sucesso: invalida CHAVES_APOS_REGRA; o onSuccess devolve a promessa (o botão segue
+ *   ocupado até a lista voltar com a regra nova). Erro: nada é invalidado (a regra não
+ *   mudou); o 401 continua no MutationCache global.
+ */
+export function opcoesSalvarRegra(
+  cliente: QueryClient,
+  apiCliente: ClienteApi = api,
+): MutationObserverOptions<Regra, unknown, PedidoSalvarRegra> {
+  return {
+    mutationFn: (pedido) => salvarRegra(pedido, apiCliente),
+    retry: false,
+    onSuccess: () => invalidar(cliente, CHAVES_APOS_REGRA),
+  };
+}
+
+/** Ativar: PUT com a regra inteira e ativa = true (não há PATCH). O corpo passa pela mesma validação do formulário. */
+export function opcoesAtivarRegra(
+  cliente: QueryClient,
+  apiCliente: ClienteApi = api,
+): MutationObserverOptions<Regra, unknown, Regra> {
+  return {
+    mutationFn: (regra) => {
+      const resultado = corpoParaAtivar(regra);
+      if (!resultado.ok) {
+        return Promise.reject(new Error(`a regra ${regra.codigo} não passa na validação: ${Object.keys(resultado.erros).join(", ")}`));
+      }
+      return salvarRegra({ id: regra.id, corpo: resultado.corpo }, apiCliente);
+    },
+    retry: false,
+    onSuccess: () => invalidar(cliente, CHAVES_APOS_REGRA),
+  };
+}
+
+/** Desativar: DELETE /regras/{id} (a regra não é apagada; os alertas antigos ficam). */
+export function opcoesDesativarRegra(
+  cliente: QueryClient,
+  apiCliente: ClienteApi = api,
+): MutationObserverOptions<void, unknown, number> {
+  return {
+    mutationFn: (id) =>
+      exigir(apiCliente.DELETE("/regras/{regra_id}", { params: { path: { regra_id: id } } })).then(() => undefined),
+    retry: false,
+    onSuccess: () => invalidar(cliente, CHAVES_APOS_REGRA),
+  };
+}
+
+/**
+ * POST /avaliacoes (endpoint fixo). retry: false: cada pedido cria uma avaliação nova no
+ * histórico; repetir duplicaria a execução (os alertas não se repetem, IN-11, mas a linha
+ * da avaliação sim). Sucesso: invalida CHAVES_APOS_AVALIAR.
+ */
+export function opcoesExecutarAvaliacao(
+  cliente: QueryClient,
+  apiCliente: ClienteApi = api,
+): MutationObserverOptions<Esquemas["AvaliacaoSaida"], unknown, CorpoAvaliacao> {
+  return {
+    mutationFn: (corpo) => exigir(apiCliente.POST("/avaliacoes", { body: corpo })),
+    retry: false,
+    onSuccess: () => invalidar(cliente, CHAVES_APOS_AVALIAR),
+  };
+}
+
+export function useSalvarRegra() {
+  const cliente = useQueryClient();
+  return useMutation(opcoesSalvarRegra(cliente));
+}
+
+export function useAtivarRegra() {
+  const cliente = useQueryClient();
+  return useMutation(opcoesAtivarRegra(cliente));
+}
+
+export function useDesativarRegra() {
+  const cliente = useQueryClient();
+  return useMutation(opcoesDesativarRegra(cliente));
+}
+
+export function useExecutarAvaliacao() {
+  const cliente = useQueryClient();
+  return useMutation(opcoesExecutarAvaliacao(cliente));
 }

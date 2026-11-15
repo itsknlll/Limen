@@ -904,6 +904,191 @@ Depois: dashboard (React) → testes de desempenho (aba Desempenho: 5 aqueciment
   visível na tabela; no celular só a tabela rola; console sem erros. Totais: Vitest
   **653/653** (19 arquivos), typecheck, lint e build ok; pytest não rodado (backend
   intocado, 213/213). Evidência: `docs/evidencias/2026-11-15_fase2_telas_vitest.txt`.
+- **Fase 3, etapa 1 — R1 a R3 bloqueadas no backend (15/11)**: decisão do Kauan, em duas
+  camadas. (a) A execução formal (planilha completa e desempenho) usa banco e usuário
+  próprios, criados por script; antes de medir, um script compara `GET /regras` com a aba
+  "Regras e limiares" (3 regras ativas, limiares iguais, nenhuma outra ativa; se houver
+  diferença, para sem medir). É a garantia de verdade: nada que se faça na tela chega
+  nela. (b) A API recusa criar, editar (qualquer PUT, mesmo idêntico ou só ativando) e
+  desativar (DELETE) regra com código R1, R2 ou R3, e renomear outra regra para esses
+  códigos: 409 `regra_referencia`. Comparação sem distinguir maiúsculas ("r1" seria
+  confundida com a R1 na tela). `CODIGOS_REFERENCIA` vem de `regras_padrao()` no motor
+  (R1 a R3 não ficam repetidos à mão); um teste confere que são os códigos lidos da
+  planilha. `obter_regra` vem antes da checagem: a R1 de outro usuário continua 404 (não
+  revela que existe). R1 a R3 só nascem em `criar_regras_padrao`. `RegraSaida` ganha o
+  campo calculado `referencia: bool`, para a tela travar sem repetir a lista;
+  `esquema.d.ts` regenerado (diff de 5 linhas). Mensagem nova em `erros.ts`: o oráculo de
+  `erros.test.ts` reconheceu o tipo sozinho (103 → 105). Os endpoints fixos não mudaram
+  de nome. Banco `limen` conferido antes, só leitura: R1 a R3 ativas e iguais à tabela,
+  então nada ficou travado num estado errado. Descartados: bloquear só no frontend (um
+  `curl` contornaria) e coluna `referencia` com migração 0004 (o código já é único e,
+  com o bloqueio, não pode mais ser trocado). **Testes antigos alterados (2)**:
+  `test_regra_desativada_nao_gera_alerta` (desativava a R1) e
+  `test_regra_desativada_conta_como_inativa` (desativava a R2) passaram a usar regras do
+  usuário com o mesmo papel (R9 `ctr < 1` e R4). **Teste instável achado na 1ª rodada de
+  mutação**: `test_editar_referencia_e_recusado[R1]` reprovava na suíte inteira e passava
+  sozinho (230/231 com o código restaurado). Causa provável (não isolada): a sessão de
+  teste usa `expire_on_commit=False`, e depois do commit o SQLAlchemy guarda os objetos
+  só por referência fraca; o GET devolvia o objeto em memória (limiar `"1.00"`) ou o
+  relido do banco (`"1.000000"`), conforme o coletor de lixo. Correção: `expire_all()` na
+  fixture. O que está provado é o resultado: com ele, 236/236 três vezes seguidas.
+  **A produção também usa `expire_on_commit=False`** (`app/db.py`). Confirmado num teste
+  temporário no `limen_teste` (scratchpad, transação desfeita, apagado depois): o POST
+  respondia `'7.5'` e o GET seguinte `'7.500000'`; o PUT `'8'` e o GET `'8.000000'`.
+  Correção localizada: `_reler_do_banco` (`expire_all()` + `obter_regra`) em
+  `criar_regra` e `atualizar_regra`. O `expire_on_commit` do `sessionmaker` não mudou
+  (afetaria sincronização, semeador e avaliação). Teste novo `test_regras_formato.py`
+  com uma sessão nova por pedido, como em produção (com a sessão única dos outros testes
+  a diferença não apareceria); a fixture guarda e devolve as substituições do conftest.
+  **Mutações** (`servicos/regras.py`; script único com backup, trap, `cmp` após cada uma,
+  sha256 `cf72500f…8aef8a2e` igual antes e depois):
+
+  | Mutação | Reprovaram (de 236) | Quais |
+  |---|---|---|
+  | B1 PUT sem checar o código atual | 3 | renomear R1, R2 e R3 para R7 |
+  | B2 PUT sem checar o código novo | 2 | renomear R9 para R2 e para r2 |
+  | B3 DELETE liberado | 3 | desativar R1, R2 e R3 |
+  | B4 POST liberado | 3 | criar R1, r1 e R3 |
+  | B5 comparação sensível a maiúsculas | 2 | renomear para r2; criar r1 |
+  | B6 sem `_reler_do_banco` | 2 | POST e PUT iguais ao GET seguinte |
+  | B7 `sessao.refresh(regra)` no lugar do `expire_all()` | 0 (sobreviveu) | — |
+
+  Na 1ª rodada a B1 sobreviveu: os testes de PUT mandavam o próprio código no corpo, e a
+  checagem do código novo recusava do mesmo jeito. Faltava o caso "renomear R1 para R7",
+  que foi acrescentado. **B7, previsão refutada pela mutação**: a previsão era que
+  `sessao.refresh(regra)` não bastaria, porque o limiar está nas condições; a mutação
+  mostrou que basta. Mecanismo provável: o `refresh` sobrescreve os objetos já
+  carregados (`populate_existing`) e isso alcança as condições; não foi confirmado no
+  código do SQLAlchemy. Não é falha de teste: é uma correção alternativa equivalente.
+  Mantido o `expire_all()` (decisão do Kauan): é simples de explicar e a sessão é de um
+  pedido só; a docstring registra que o `refresh` também funcionaria. pytest
+  **236/236** (213 + 18 do bloqueio + 3 de renomear + 2 de formato), três vezes seguidas.
+- **Fase 3, etapa 2 — validação das regras e pedido de avaliação (15/11)**: funções puras,
+  sem tela: `src/regras/validacao.ts` (esquema zod do formulário, `lerLimiar`,
+  `erroCodigo`, `erroNome`, `validarRegra`) e `src/avaliacoes/pedido.ts`
+  (`montarPedidoAvaliacao`), mais `ehDataIso` em `visao-geral/dados.ts` (sobre o `lerData`
+  existente; `dados.test.ts` intacto, 62/62). **Regra testada: a tela nunca envia o que
+  o backend recusa.** Onde ela é mais rígida, a diferença é de propósito, listada no
+  teste e conferida contra o oráculo (o Pydantic aceita e a tela recusa): limiar com sinal
+  ou separador sem algarismo dos dois lados (`-0`, `+1`, `.5`, `5.`) e com expoente
+  (`1e3`); nome só com espaços; data com hora (`2026-11-11T00:00:00`; a tela aceita só
+  `AAAA-MM-DD`); `campanha_id` fora da lista de campanhas (o Pydantic aceita 0 e -1).
+  Códigos R1 a R3 (sem distinguir maiúsculas) são recusados na tela como no serviço (409);
+  o Pydantic aceita, e por isso o oráculo deles é a lista `CODIGOS_REFERENCIA`. Espaços
+  nas pontas do nome e do limiar são removidos antes de enviar. O limiar é texto do começo
+  ao fim: sem `Number`/`parseFloat`, normalizado por `lib/decimal.ts`, com casas e
+  algarismos contados como o Pydantic conta (`1.0000000` tem 0 casas, `0.5` tem 0
+  algarismos inteiros). **Vírgula**: o limiar aceita um único separador, vírgula ou ponto
+  (`^\d+(?:[.,]\d+)?$`), e a vírgula vira ponto (`1,5` → `1.5`, que o oráculo aceita com o
+  mesmo valor); separador de milhar não existe, e `1.234,5`, `1,234.5` e `1,2,3` são
+  recusados com `MENSAGENS.limiarFormato`. Consequência: `1.000` digitado como mil vira 1
+  (pendência da etapa 4: mostrar o valor que será salvo). **Oráculo** colhido por script
+  no scratchpad, no venv do backend, só com os esquemas (`app.api.esquemas` e
+  `app.motor`; um `assert` confere que `app.config`, `app.db` e `app.main` não foram
+  importados): sem banco, sem `.env`, sem rede. `model_validate` em 30 limiares, 9
+  métricas, 9 operadores, 12 códigos, 9 nomes, 4 quantidades de condições, 13 datas e 16
+  pedidos de avaliação, e `model_json_schema()` para os limites e enums (o esquema não traz
+  os limites de 12 algarismos inteiros e 6 casas do limiar; eles vêm dos casos). As
+  tabelas dos testes foram **geradas da saída JSON por outro script** e inseridas no lugar
+  de um marcador, sem cópia à mão; antes da mutação, o trecho inserido em cada teste foi
+  comparado com o bloco gerado por `diff` (sem diferença; primeira linha com 1 ocorrência;
+  trecho entre linhas em branco). **Achados no caminho**: (1) tamanho do nome: o Pydantic
+  aceita 120 emojis e recusa 121, mas o `.length` do JavaScript conta um emoji como 2 e a
+  tela recusaria um nome válido; contado com `Array.from(texto).length`, igual ao `len()`
+  do Python. (2) Ano 0000: o `lerData` aceitava `0000-01-01`, que o oráculo (rodado de
+  novo com esse caso) recusa (`date_parsing`); o `ehDataIso` exige ano ≥ 1. (3) A mutação
+  planejada "comparar datas com `new Date`" seria equivalente (datas `AAAA-MM-DD` válidas
+  viram meia-noite UTC e comparam igual ao texto), então nenhum teste a pegaria; trocada
+  por "`>` vira `>=`". Descartado: ligar os erros do servidor aos campos nesta etapa
+  (integração com a API; fica para a etapa 3). **Mutações** (script único para os dois
+  arquivos, com backup, trap, `cmp` após cada uma; sha256 iguais antes e depois:
+  `validacao.ts` `39552a47…ca58d1d8`, `pedido.ts` `52badb44…9e095bc985f`):
+
+  | | Mutação | Previsto | Reprovou (de 130) |
+  |---|---|---|---|
+  | V1 | sem limite de casas | 4 | 4 |
+  | V2 | casas contadas no texto digitado, sem normalizar | 1 | 1 (`1.0000000`) |
+  | V3 | vírgula não convertida | 4 | 4 |
+  | V4 | máximo de condições 11 | 2 | 2 |
+  | V5 | padrão do código aceita espaço | 3 | 3 |
+  | V6 | referência sensível a maiúsculas | 3 | 3 (`r1`, `r2`, `r3`) |
+  | V7 | tamanho com `.length` | 1 | 1 (120 emojis) |
+  | P1 | campo vazio enviado como `""` | 5 | 5 |
+  | P2 | período invertido não bloqueia | 2 | 2 |
+  | P3 | `>` vira `>=` | 1 | 1 (início = fim) |
+  | P4 | `incluir_pausadas` omitido quando falso | 8 | 8 |
+  | P5 | campanha fora da lista enviada | 1 | 1 (`"99"`) |
+
+  Todas as previsões se confirmaram, com os mesmos testes. Testes novos: 91 em
+  `validacao.test.ts` e 39 em `pedido.test.ts`. Vitest **785/785** (21 arquivos;
+  653 + 2 de `erros.test.ts` da etapa 1 + 130), typecheck e lint ok.
+- **Fase 3, etapa 3 — consultas de regras e avaliações e erros nos campos (15/11)**: sem
+  tela (as telas usam isto na etapa 4). **Consultas** (`api/consultas.ts`): chaves novas
+  `regras`, `regra(id)` (fica sob o prefixo `regras`: invalidar a lista atinge as duas),
+  `todasAsAvaliacoes` (prefixo de `avaliacoes(limite)`: a tela de avaliações usa 50, a
+  Visão geral 5) e `alertas` (a tela é da Fase 4; invalidar desde já não custa nada).
+  `useRegras`; `opcoesRegra(id)` desligada com id `null` (a `queryFn` ainda lança, em vez
+  de pedir `/regras/null`). Mutações, todas com `retry: false` explícito e o `onSuccess`
+  devolvendo a promessa (o botão fica ocupado até os dados novos chegarem):
+  `opcoesSalvarRegra` (id `null` → `POST /regras`, endpoint fixo; número → `PUT
+  /regras/{id}`; repetir um POST sem resposta poderia criar a regra e depois receber 409),
+  `opcoesAtivarRegra` (não há PATCH: PUT com a regra inteira montada por
+  `corpoParaAtivar`, em `regras/validacao.ts`, que passa a regra da API pela mesma
+  `validarRegra` do formulário com `ativa = true`; o limiar sai normalizado, `"7.500000"` →
+  `"7.5"`; R1 a R3 não passam na validação e nenhum pedido sai), `opcoesDesativarRegra`
+  (`DELETE /regras/{id}`; a regra não é apagada) e `opcoesExecutarAvaliacao` (`POST
+  /avaliacoes`, endpoint fixo; repetir criaria outra linha no histórico, mesmo sem alerta
+  repetido, IN-11). Sucesso de regra invalida `CHAVES_APOS_REGRA` (lista, a regra e o
+  resumo, que mostra nome e situação em "Alertas por regra"); sucesso de avaliação invalida
+  `CHAVES_APOS_AVALIAR` (histórico de todos os limites, resumo e alertas; não toca em
+  regras, campanhas e `/eu`). Erro não invalida nada; o 401 continua no `MutationCache`
+  global. Testes (`consultas-regras.test.ts`, 19): `QueryClient` de verdade e cliente
+  `openapi-fetch` de verdade com um `fetch` falso que grava método, caminho e corpo, para
+  conferir o pedido que sairia de fato; cliente de teste que repete tudo (`retry: 3`,
+  `retryDelay: 0`), para o `retry: false` ter de vir das opções; invalidação conferida
+  pelo `isInvalidated` de 9 chaves em cache. **Erros nos campos** (`api/campos.ts`,
+  pendência (b) da etapa 2): `errosNosCamposRegra` e `errosNosCamposAvaliacao` devolvem
+  `{ campos, restante }`. 400 `validacao` → campo pelo `local` do Pydantic
+  (`camposInvalidos`, de `erros.ts`, já fazia `["body","condicoes",1,"limiar"]` →
+  `condicoes.1.limiar`, o mesmo caminho do `validarRegra`); no formulário de avaliação o
+  nome é traduzido (`campanha_id` → `campanhaId`). A mensagem do Pydantic vem em inglês e
+  não é usada: o campo recebe "O servidor recusou este valor.". 409 `conflito` (UNIQUE do
+  código) e `regra_referencia` → campo `codigo`, cada um com a sua frase; escolhidos pelo
+  `tipo`, nunca pelo texto. Local que não é campo do formulário (`["body"]` do período
+  invertido, `incluir_pausadas`, que é caixa de marcar) e qualquer outro erro ficam em
+  `restante`: a tela mostra o `EstadoErro`, com a ação que o `tipo` pede. Os locais
+  conhecidos continuam indo para os campos quando há um desconhecido junto. **Oráculo**
+  (`campos.test.ts`, 26 testes): o corpo real de 18 respostas 400/409 de `POST`/`PUT
+  /regras` e `POST /avaliacoes`, colhido por um script temporário com a aplicação de
+  verdade e uma sessão falsa que falha se usada (sem banco); a mensagem em inglês não foi
+  guardada. A tabela foi gerada da saída JSON e entrou no lugar de um marcador, sem cópia à
+  mão; conferida com `diff` contra o bloco gerado (idêntico, primeira linha com 1
+  ocorrência, trecho entre linhas em branco). **Mutações** (script único para os 3
+  arquivos, com backup, trap, `cmp` após cada uma; sha256 iguais antes e depois:
+  `consultas.ts` `a24b6bd5…3ded832d`, `validacao.ts` `e0650c2c…0a1a4796`, `campos.ts`
+  `49308005…ff13a38d`):
+
+  | | Mutação | Previsto | Reprovou (de 830) |
+  |---|---|---|---|
+  | C1 | salvar sempre com POST | 2 | 2 (com id: PUT /regras/7; ativar) |
+  | C2 | `corpoParaAtivar` com `ativa: regra.ativa` | 1 | 1 (ativar) |
+  | C3 | avaliação sem `retry: false` | 2 | 2 (um pedido só: sem resposta e 400) |
+  | C4 | `CHAVES_APOS_REGRA` sem o resumo | 4 | 4 (o que cada mutação invalida; salvar, ativar e desativar) |
+  | C5 | avaliação invalida só `avaliacoes(50)` | 2 | 2 (o que cada mutação invalida; histórico de todos os limites) |
+  | E1 | `conflito` fora do `porTipo` | 1 | 1 (409 conflito vai para o código) |
+  | E2 | local desconhecido vira campo | 3 | 3 (período invertido e `incluir_pausadas` do oráculo; local que não é campo) |
+  | E3 | padrão sem o índice da condição | 4 | 4 (as 4 linhas de condição do oráculo) |
+
+  Todas as previsões se confirmaram, com os mesmos testes. **C2**: a mutação "apagar
+  `ativa: true`" seria pega pelo zod (`ativa` é obrigatório; nenhum pedido sairia), e não
+  pelo teste; `ativa: regra.ativa` manda um PUT válido que não ativa, e quem pega é a
+  comparação do corpo. Vitest **830/830** (23 arquivos; 785 + 26 + 19), typecheck e lint
+  ok; pytest não rodado (backend intocado desde a etapa 1, 236/236).
+- **Pendências da Fase 3 (15/11)**: (a) etapa 4: mostrar abaixo do campo limiar o valor
+  normalizado que será salvo, porque "1.000" digitado como mil vira 1 (o ponto é
+  separador decimal; "1.234,5", "1,234.5" e "1,2,3" já são recusados com
+  `MENSAGENS.limiarFormato`); (b) ~~etapa 3: ligar os erros do servidor aos campos do
+  formulário~~ feito na etapa 3 (`api/campos.ts`); falta usar nas telas (etapa 4).
 - **Pendências visuais da Fase 2 (15/11, plano de corte)**: (a) no celular, a coluna Dia
   da tabela diária some ao rolar para o lado; fixá-la (`sticky`) manteria a data visível;
   (b) o aviso de sucesso da sincronização (sonner) cobre o nome do usuário no topo da

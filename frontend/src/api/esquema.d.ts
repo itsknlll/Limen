@@ -576,6 +576,11 @@ export interface components {
             ativa: boolean;
             /** Condicoes */
             condicoes: components["schemas"]["CondicaoSaida"][];
+            /**
+             * Referencia
+             * @description R1 a R3 (tabela congelada): a API recusa criar, editar ou desativar (409 regra_referencia).
+             */
+            readonly referencia: boolean;
         };
         /** ResumoAlertas */
         ResumoAlertas: {

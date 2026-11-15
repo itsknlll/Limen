@@ -120,10 +120,14 @@ def test_codigo_de_regra_repetido_e_conflito(cliente):
     assert cliente.post("/regras", json=corpo).status_code == 409
 
 
-def test_regra_desativada_nao_gera_alerta(cliente, sessao_teste, usuario_teste, campanhas_teste):
-    criar_regras_padrao(sessao_teste, usuario_teste)
-    r1 = next(r for r in cliente.get("/regras").json() if r["codigo"] == "R1")
-    assert cliente.delete(f"/regras/{r1['id']}").status_code == 204
+def test_regra_desativada_nao_gera_alerta(cliente, campanhas_teste):
+    # Fase 3: R1 a R3 não podem ser desativadas (409 regra_referencia). Uma regra do
+    # usuário com a mesma condição da R1 (CTR < 1%) faz o papel que a R1 fazia aqui.
+    r9 = cliente.post(
+        "/regras",
+        json={"codigo": "R9", "nome": "CTR baixo", "condicoes": [{"metrica": "ctr", "operador": "<", "limiar": "1"}]},
+    ).json()
+    assert cliente.delete(f"/regras/{r9['id']}").status_code == 204
 
     ingerir(cliente, campanhas_teste["A"], [CENARIOS["RA-02"]])  # só viola R1
     avaliacao = cliente.post("/avaliacoes", json={}).json()

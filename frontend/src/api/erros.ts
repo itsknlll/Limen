@@ -160,6 +160,13 @@ export const MENSAGENS: Record<string, Montador> = {
     texto: detailEmTexto(erro) ?? "A operação conflita com dados já gravados.",
     acao: null,
   }),
+  regra_referencia: (erro) => ({
+    titulo: "Regra de referência",
+    texto:
+      detailEmTexto(erro) ??
+      "R1, R2 e R3 são as regras da tabela congelada e não podem ser criadas, alteradas nem desativadas.",
+    acao: null,
+  }),
   token_google_ausente: () => ({
     titulo: "Google Ads não conectado",
     texto: "Conecte sua conta Google para acessar as campanhas.",
