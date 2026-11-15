@@ -106,6 +106,9 @@ pytest 213/213, Vitest 491/491. Evidências: `docs/evidencias/2026-11-14_fase1_v
 ✅ **Fase 1, etapa 5 — limpeza (14/11)**: Vitrine removida; teste do número do KPI ligado à
 constante real (com mutação). Vitest 492/492, typecheck, lint e build ok. Execução real
 aprovada pelo Kauan no navegador (KPIs com 30 px).
+✅ **Fase 2, etapas 1 a 3 — telas Campanhas e Campanha (15/11)**: lista, sincronização e
+métricas diárias. Teste no navegador aprovado pelo Kauan. Vitest 653/653, typecheck, lint e
+build ok. Evidência: `docs/evidencias/2026-11-15_fase2_telas_vitest.txt`.
 
 **Dashboard — plano aprovado (13/11/2026):** React + TypeScript (Vite), Tailwind v4,
 shadcn/ui, lucide, Recharts, TanStack Query, React Router, react-hook-form + zod, sonner.
@@ -846,6 +849,65 @@ Depois: dashboard (React) → testes de desempenho (aba Desempenho: 5 aqueciment
   porque durante as repetições a consulta continua "pending"; sozinho, ele não pegaria o
   C5. O `failureCount` pega sem depender do tempo, porque a 1ª tentativa já falhou antes
   da checagem.
+- **Fase 2, etapas 1 a 3 — telas Campanhas e Campanha (15/11)**: **`Carregando` em
+  `src/componentes/`**: saiu de dentro de `visao-geral/Esqueletos.tsx` (onde era privado)
+  sem mudar o código, porque as telas de campanhas usam o mesmo padrão "um status por
+  consulta" da etapa 4 (`comStatus={false}` dentro de uma região que já anuncia).
+  Alternativa descartada: copiar o componente para `campanhas/` (duas cópias da mesma
+  regra de acessibilidade). **`TabelaRolavel`** (`src/componentes/`): o `<Table>` do shadcn
+  rola para o lado, mas o contêiner não recebe foco, e quem usa teclado não consegue rolar
+  (WCAG 2.1.1). A região tem `tabIndex={0}`, `role="region"` e nome dado pela `<caption>`
+  (`aria-labelledby`), e fica sempre na ordem do Tab, mesmo sem rolagem (detectar a
+  rolagem mudaria o comportamento conforme a largura). Anel com `--ring` opaco (par já
+  testado, ≥ 3:1). Os filhos são `TableHeader`/`TableBody` do shadcn, sem editar
+  `components/ui`. **`SeloStatus`**: reaproveita `rotuloStatus` de `lib/formatar.ts` (a
+  mesma da Visão geral; texto em minúsculas com `capitalize` só na exibição), com caso
+  novo em `formatar.test.ts` (`REMOVED × 1 → removida`). Só as variantes do `Badge` com
+  contraste testado (`default` para ENABLED, `outline` para o resto); cada status tem ícone
+  e texto próprios (a cor não é o único sinal); status desconhecido → ícone de interrogação,
+  com `Object.hasOwn`. **`Sincronizacao`**: `aria-disabled` em vez de `disabled` durante o
+  pedido, porque um botão focado que vira `disabled` perde o foco (vai para o `<body>`); o
+  clique repetido é ignorado no código, e o teste no navegador confirmou um único POST. O
+  `role="status"` existe sempre (vazio fora do pedido): região viva criada junto com o texto
+  nem sempre é anunciada. Erro aparece junto do botão (`EstadoErro`, com a ação que o `tipo`
+  pede), sem esconder a lista. Sucesso: aviso do sonner ("3 campanhas sincronizadas.").
+  **`textoAcessivel`** (`campanhas/dados.ts`, pura): "—" e "N/A" sozinhos não dizem nada ao
+  leitor de tela; o símbolo fica visível com `aria-hidden` (e `title`), e o leitor ouve
+  "sem dado" ou "N/A, indefinido: 0 cliques". 3 testes novos; sem mutação (texto de
+  exibição, fora da lógica crítica). **Página Campanha sem pedido com id inválido**:
+  `lerIdCampanha` → `null` mostra "Campanha não encontrada" sem montar o conteúdo, então
+  `GET /campanhas/{id}/metricas` nem é chamado (conferido no navegador com
+  `/campanhas/abc`: nenhum pedido de métricas). Id válido fora da lista do usuário → a
+  mesma mensagem ("pode não existir ou ser de outra conta"). O h1 fica fora do Suspense e é
+  sempre o mesmo elemento: começa "Campanha" e passa ao nome quando a lista chega (o foco
+  do Layout não se perde). Conteúdo das duas telas por `lazy()`, como a Visão geral; no
+  detalhe, resumo e métricas são consultas separadas (se a lista falhar, a tabela segue).
+  **Texto corrigido antes do commit**: na descrição da tabela diária faltava o ponto entre
+  o período e "CTR e CPC calculados…"; o ponto foi posto no componente (`${periodo}.`), e
+  não em `descricaoPeriodo`, porque a mesma função monta a legenda da tabela.
+  **Build** (JS baixado ao abrir):
+
+  | | Pedaços iniciais | Baixado ao abrir |
+  |---|---|---|
+  | etapa 5 da Fase 1 | principal 556,31 kB | 556,31 kB |
+  | Fase 2 | `index` 365,48 kB + `card` 198,53 kB | 564,01 kB |
+
+  **Mudança de divisão, não melhoria**: o aviso de 500 kB sumiu só porque o Vite separou
+  um pedaço comum (`card`, usado pela Visão geral e pelas telas de campanhas) e nenhum
+  pedaço passa de 500 kB; o que o navegador baixa ao abrir cresceu 7,70 kB. Pedaços das
+  telas novas: `ConteudoCampanhas` 3,51 kB, `ConteudoCampanha` 3,56 kB, `SeloStatus`
+  1,68 kB; `ConteudoVisaoGeral` 383,79 kB. **Teste no navegador (Kauan, 15/11), aprovado**:
+  lista com 3 campanhas, selos e orçamentos certos; sincronizar com um único POST, aviso
+  "3 campanhas sincronizadas." e lista atualizada; erro de servidor junto do botão com a
+  lista visível; campanha A com 30 linhas e CTR/CPC conferidos à mão em 13/10, 17/10 e
+  28/10; `/campanhas/abc` com "Campanha não encontrada" e nenhum pedido de métricas; foco
+  visível na tabela; no celular só a tabela rola; console sem erros. Totais: Vitest
+  **653/653** (19 arquivos), typecheck, lint e build ok; pytest não rodado (backend
+  intocado, 213/213). Evidência: `docs/evidencias/2026-11-15_fase2_telas_vitest.txt`.
+- **Pendências visuais da Fase 2 (15/11, plano de corte)**: (a) no celular, a coluna Dia
+  da tabela diária some ao rolar para o lado; fixá-la (`sticky`) manteria a data visível;
+  (b) o aviso de sucesso da sincronização (sonner) cobre o nome do usuário no topo da
+  tela; mudar a posição ou o deslocamento do `Toaster`.
 - **Pendência visual — rever a Visão geral para ficar mais intuitiva (14/11, baixa
   prioridade)**: entra no **plano de corte**, só depois das Fases 2 a 4, dos testes de
   desempenho, da execução da tabela congelada e da implantação. Itens: (a) ranking

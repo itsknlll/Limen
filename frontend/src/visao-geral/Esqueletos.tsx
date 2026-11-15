@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { Carregando } from "@/componentes/Carregando";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
@@ -9,34 +9,6 @@ import { cn } from "@/lib/utils";
 // Um status por região que carrega: usado sozinho (uma consulta carregando), cada
 // esqueleto anuncia o seu. Dentro do EsqueletoVisaoGeral, os internos recebem
 // comStatus={false} e a página inteira anuncia uma única mensagem.
-
-interface PropsCarregando {
-  texto: string;
-  /** false: só os blocos visuais, sem role="status" (quem anuncia é a região de fora). */
-  comStatus: boolean;
-  className?: string;
-  children: ReactNode;
-}
-
-function Carregando({ texto, comStatus, className, children }: PropsCarregando) {
-  if (!comStatus) {
-    return (
-      <div aria-hidden="true" className={className}>
-        {children}
-      </div>
-    );
-  }
-  return (
-    <div aria-busy="true" className={className}>
-      <span role="status" className="sr-only">
-        {texto}
-      </span>
-      <div aria-hidden="true" className="contents">
-        {children}
-      </div>
-    </div>
-  );
-}
 
 interface PropsEsqueleto {
   comStatus?: boolean;

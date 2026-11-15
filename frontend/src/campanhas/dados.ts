@@ -85,6 +85,15 @@ export function celulaDecimal(valor: string | null): Celula {
   return valor === null ? SEM_DADO : { texto: formatarDecimalCurto(valor), descricao: null };
 }
 
+/**
+ * O que o leitor de tela ouve na célula ("—" e "N/A" sozinhos não dizem nada):
+ * o valor; "sem dado" no lugar de "—"; "N/A, indefinido: 0 cliques".
+ */
+export function textoAcessivel(celula: Celula): string {
+  if (celula.descricao === null) return celula.texto;
+  return celula.texto === SEM_DADO.texto ? celula.descricao : `${celula.texto}, ${celula.descricao}`;
+}
+
 function indefinido(motivo: string): Celula {
   return { texto: "N/A", descricao: `indefinido: ${motivo}` };
 }

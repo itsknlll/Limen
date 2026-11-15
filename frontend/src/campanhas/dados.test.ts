@@ -13,6 +13,7 @@ import {
   lerIdCampanha,
   mensagemSincronizacao,
   rotuloOrigem,
+  textoAcessivel,
   textoSincronizacao,
 } from "./dados";
 
@@ -188,5 +189,22 @@ describe("CTR e CPC indefinidos (mesma ordem do motor)", () => {
   it("cliques 0: CTR é 0,00% e CPC é N/A (a mesma linha tem os dois casos)", () => {
     const linha = { impressoes: 100, cliques: 0, custo: "10.00", ctr: "0E-16", cpc: null };
     expect([celulaCtr(linha).texto, celulaCpc(linha).texto]).toEqual(["0,00%", "N/A"]);
+  });
+});
+
+describe("textoAcessivel (o que o leitor de tela ouve)", () => {
+  it("valor definido: o próprio texto", () => {
+    expect(textoAcessivel(celulaInteiro(1234))).toBe("1.234");
+    expect(textoAcessivel(celulaCtr({ ctr: "0E-16", impressoes: 100, cliques: 0 }))).toBe("0,00%");
+  });
+
+  it("ausente: 'sem dado' no lugar de —", () => {
+    expect(textoAcessivel(celulaInteiro(null))).toBe("sem dado");
+    expect(textoAcessivel(celulaMoeda(null))).toBe("sem dado");
+  });
+
+  it("indefinido: N/A seguido do motivo", () => {
+    expect(textoAcessivel(celulaCpc({ cpc: null, custo: "10.00", cliques: 0 }))).toBe("N/A, indefinido: 0 cliques");
+    expect(textoAcessivel(celulaCtr({ ctr: null, impressoes: null, cliques: 5 }))).toBe("N/A, indefinido: impressões ausentes");
   });
 });

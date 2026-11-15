@@ -142,6 +142,7 @@ describe("rotuloStatus", () => {
     ["ENABLED", 2, "ativas"],
     ["PAUSED", 1, "pausada"],
     ["PAUSED", 0, "pausadas"],
+    ["REMOVED", 1, "removida"],
     ["REMOVED", 3, "removidas"],
     ["UNKNOWN", 1, "desconhecida"],
   ])("%s × %i → %s", (status, quantidade, esperado) => {
