@@ -109,6 +109,10 @@ aprovada pelo Kauan no navegador (KPIs com 30 px).
 ✅ **Fase 2, etapas 1 a 3 — telas Campanhas e Campanha (15/11)**: lista, sincronização e
 métricas diárias. Teste no navegador aprovado pelo Kauan. Vitest 653/653, typecheck, lint e
 build ok. Evidência: `docs/evidencias/2026-11-15_fase2_telas_vitest.txt`.
+✅ **Fase 3, etapa 4 — tela de Regras (15/11)**: lista com ativar e desativar (R1 a R3 só
+leitura), nova regra e edição com "Será salvo como" e erros do servidor nos campos.
+Teste no navegador aprovado pelo Kauan. Vitest 893/893, typecheck, lint e build ok.
+Evidência: `docs/evidencias/2026-11-15_fase3_regras_vitest.txt`.
 
 **Dashboard — plano aprovado (13/11/2026):** React + TypeScript (Vite), Tailwind v4,
 shadcn/ui, lucide, Recharts, TanStack Query, React Router, react-hook-form + zod, sonner.
@@ -1084,11 +1088,114 @@ Depois: dashboard (React) → testes de desempenho (aba Desempenho: 5 aqueciment
   pelo teste; `ativa: regra.ativa` manda um PUT válido que não ativa, e quem pega é a
   comparação do corpo. Vitest **830/830** (23 arquivos; 785 + 26 + 19), typecheck e lint
   ok; pytest não rodado (backend intocado desde a etapa 1, 236/236).
-- **Pendências da Fase 3 (15/11)**: (a) etapa 4: mostrar abaixo do campo limiar o valor
-  normalizado que será salvo, porque "1.000" digitado como mil vira 1 (o ponto é
-  separador decimal; "1.234,5", "1,234.5" e "1,2,3" já são recusados com
-  `MENSAGENS.limiarFormato`); (b) ~~etapa 3: ligar os erros do servidor aos campos do
-  formulário~~ feito na etapa 3 (`api/campos.ts`); falta usar nas telas (etapa 4).
+- **Fase 3, etapa 4 — tela de Regras (15/11)**: rotas `/regras`, `/regras/nova` e
+  `/regras/:id/editar` (`rotas.ts`; teste: `/regras/nova` não casa com a de edição, e
+  "nova" não é id). As três páginas carregam o conteúdo por `lazy()` com o h1 fora do
+  Suspense; nova regra e edição dividem o pedaço `FormularioRegra`. **shadcn**: `input`,
+  `label`, `select`, `checkbox` e `alert-dialog` pelo CLI 4.23.0, um por vez, com
+  `--dry-run`/`--view` antes (imports só de `react`, `radix-ui`, `lucide-react`, `cn` e
+  o `button`), entrada fechada (`</dev/null`, sem `--yes`/`--overwrite`) e sha256 de
+  `package.json`, `package-lock.json` e `button.tsx` conferidos depois de cada um:
+  inalterados (o alert-dialog pulou o `button.tsx`, idêntico). Nenhum pacote novo; o
+  `@hookform/resolvers` 7.0.6 já instalado aceita zod 4.
+  **`regras/textos.ts`** (funções puras): rótulos de métrica e operador (`Object.hasOwn`),
+  `formatarLimiar` sem arredondar (`formatarMoeda` cortaria 0,125 em 0,13),
+  `textoCondicao(es)` com o símbolo na tela e o operador por extenso para o leitor de
+  tela, condições ordenadas por `ordem`, `valoresIniciais` (limiar da API `"7.500000"` →
+  `"7.5"` só com texto, via `normalizarDecimal`; ilegível vai como veio e a validação
+  aponta o campo) e `previaLimiar` (sem separador de milhar, senão "1000" voltaria a
+  parecer "1.000"). Fixture com os limiares reais do banco `limen` (NUMERIC com 6 casas,
+  consulta só de leitura). Oráculo da volta completa: `valoresIniciais` + `validarRegra`
+  devolve o corpo da regra original, escrito por extenso no teste, e o mesmo do
+  `corpoParaAtivar`. 40 testes. **Escape do espaço inseparável**: gravado com o marcador
+  `@@ESC_NBSP@@` trocado por `sed`, conferido com `grep -c` (0 caracteres literais) e
+  `od -c` (6 caracteres do escape). Mutações (`trap`, `cmp`; sha256 do `textos.ts`
+  `9e37b795…77c05bc5a` igual antes e depois), todas como previsto:
+
+  | | Mutação | Reprovou (de 40) |
+  |---|---|---|
+  | T1 | limiar sem normalizar | 2 |
+  | T2 | sem ordenar as condições | 2 |
+  | T3 | `String(Number(limiar))` | 3 |
+  | T4 | prévia com separador de milhar | 2 |
+  | T5 | prévia sem trocar o ponto pela vírgula | 3 |
+
+  A volta completa não pega a T1 (o `validarRegra` normaliza de novo): quem pega é o teste
+  direto do limiar. **Lista** (`ConteudoRegras`): R1 a R3 sem ações (cadeado e texto). Um
+  só botão por linha alterna Desativar/Ativar (o mesmo elemento antes e depois, então o
+  foco fica nele). Desativar pede confirmação num alert-dialog controlado, um para a
+  tabela, com o foco devolvido ao botão da linha no `onCloseAutoFocus`. Descartado: um
+  `AlertDialogTrigger` por linha (o gatilho seria trocado depois do sucesso e o foco iria
+  para o `<body>`). `aria-disabled` durante o pedido; um pedido por vez; `role="status"`
+  sempre presente; sucesso no sonner; erro acima da tabela, com `reset()` da outra
+  mutação. Nome acessível "Editar R4"/"Desativar R4" (código em `sr-only`). Erro de tipo
+  achado no typecheck: o `error` da mutação é `unknown` e não pode ir para o JSX; a
+  condição passou a ser o `isError`. **Formulário** (`FormularioRegra`): `zodResolver`
+  com o mesmo `esquemaRegra` do `validarRegra` (descartado: resolver próprio, que teria de
+  remontar os erros aninhados); erros do servidor por `errosNosCamposRegra`, com foco no
+  primeiro campo recusado; "Será salvo como" abaixo de cada limiar, no `aria-describedby`
+  (lido ao focar, sem região viva, para não falar a cada tecla); rótulo em todo campo,
+  condição num `fieldset` com legenda "Condição N". A dica do Código foi conferida contra
+  o Pydantic e o `PADRAO_CODIGO` (`^[A-Za-z0-9_-]+$`, 1 a 20) e ganhou "(também em
+  minúsculas)". Lint achou `setState` dentro de efeito (foco depois de remover): trocado
+  por `useRef`. **Edição**: id inválido → "Regra não encontrada" sem pedido; 404 decidido
+  pelo `tipo`; R1 a R3 só leitura. As duas decisões com lógica nos componentes saíram para
+  `regras/edicao.ts` (`regraNaoEncontrada`, `focoDaNovaCondicao`; 14 testes), porque
+  dentro do `.tsx` nenhum teste do Vitest reprovaria uma mutação. Mutações (43 testes:
+  `rotas.test.ts` 29 + `edicao.test.ts` 14; `trap`, `cmp` dos dois arquivos após cada uma;
+  sha256 iguais antes e depois: `rotas.ts` `238f402e…28df80770`, `edicao.ts`
+  `05f5bbf9…d66e0b`), todas como previsto:
+
+  | | Mutação | Previsto | Reprovou |
+  |---|---|---|---|
+  | R1 | `regraEditar` sem `/editar` | 2 | 2 (nova não casa; 7/editar casa) |
+  | R2 | `regraNova` = `/regras` | 1 | 1 (caminho repetido) |
+  | E1 | id inválido não decide | 5 | 5 (`abc`, `nova`, `0`, `007`, `undefined`) |
+  | E2 | qualquer `ErroApi` vira "não encontrada" | 3 | 3 (500, sem conexão, 401) |
+  | F1 | foco com índice − 1 | 2 | 2 (1 e 9 condições) |
+  | F2 | foco no Limiar | 2 | 2 (1 e 9 condições) |
+
+  **Teste no navegador (Kauan, 15/11)**: lista; criar com "1.000" → "Será salvo como R$ 1";
+  409 de código repetido no campo Código, com foco; desativar e ativar, com o foco voltando
+  ao botão no Esc e no Cancelar; R1 só leitura; `/regras/abc/editar` sem pedido e
+  `/regras/999/editar` com 404; criação só pelo teclado; tema escuro e celular; console
+  limpo. **Dois defeitos de foco relatados**: (1) **real, corrigido**: "Adicionar
+  condição" focava o Limiar. Causa (lida no react-hook-form 7.92.0): sem `focusName`, o
+  `append` foca o primeiro campo registrado da condição nova com o prefixo `condicoes.N.`,
+  e o Limiar se registra primeiro (o `register` roda no render da linha, antes dos
+  `Controller` filhos). Correção: `focusName` para a Métrica. (2) **erro de medição**:
+  "Remover condição" parecia perder o foco, mas clicar no Console para digitar
+  `document.activeElement` movia o foco; com a expressão ao vivo, o foco estava na Métrica
+  da condição anterior, com anel visível, removendo a 2 e a 1. Código do remover mantido.
+  **Conferido de novo depois da refatoração para `edicao.ts`**: "Adicionar condição" foca
+  a Métrica (`button#…-metrica`) e `/regras/abc/editar` mostra "Regra não encontrada" sem
+  pedido. **Dois GET /regras/999 na aba Rede**: StrictMode do modo dev (monta, desmonta e
+  monta); o TanStack cancela o pedido quando sai o último observador e o `signal` foi usado
+  (o primeiro aparece com 0 kB), e o `deveRepetir` nunca repete 4xx. No build de produção
+  há um pedido só. Totais: Vitest **893/893** (25 arquivos; 830 da etapa 3 + 40 de
+  `textos` + 9 de `rotas` + 14 de `edicao`), typecheck, lint e build ok; pytest não rodado
+  (backend intocado, 236/236). Evidência: `docs/evidencias/2026-11-15_fase3_regras_vitest.txt`
+  (verbose; sem e-mail nem segredo, conferido com `grep -l`).
+- **Pendências da Fase 3 (15/11)**: (a) ~~mostrar abaixo do limiar o valor que será
+  salvo~~ feito na etapa 4 ("Será salvo como", `previaLimiar`); (b) ~~ligar os erros do
+  servidor aos campos~~ feito (etapa 3 em `api/campos.ts`, etapa 4 nas telas);
+  (c) ~~build~~ **decidido no fim da etapa 4: manter e registrar, como na Fase 1**. O que
+  o navegador baixa ao abrir foi de 564,01 kB (Fase 2) para **656,08 kB** (+92,07 kB;
+  `index` 374,69 + `card` 281,39). Duas causas: (1) com a lista de regras, o Vite pôs o
+  Radix do alert-dialog no pedaço comum `card`, que o `index.html` carrega no início
+  (198,53 → 283,25 kB; depois 281,39 kB); (2) com as páginas de nova regra e edição, o
+  `index` foi de 365,18 para 374,69 kB (provável: as páginas entram direto pelo roteador
+  e o `RegraEditar` traz `textos.ts`, `edicao.ts`, `SeloRegra` e o cartão de referência;
+  o pedaço `SeloRegra`, de 2,17 kB, foi absorvido; causa não isolada). O formulário
+  (react-hook-form, resolver, select, checkbox) ficou no pedaço próprio `FormularioRegra`
+  (86,18 kB), baixado só em /regras/nova e na edição. Motivo para manter: nenhum pedaço
+  passa de 500 kB (o aviso não aparece). A piora é real e fica declarada; separar as
+  bibliotecas com `manualChunks` fica como **opcional da limpeza final**.
+- **Pendências visuais da Fase 3 (15/11, plano de corte)**: (a) **primeiro item, por ser
+  questão de uso**: no celular, a coluna Ações fica escondida e o selo "Desativada"
+  aparece cortado até rolar a tabela para o lado (a tabela rola e é focável, mas as
+  ações não ficam à vista); (b) espaço sobrando no topo da coluna Regra (selo + nome) da
+  lista.
 - **Pendências visuais da Fase 2 (15/11, plano de corte)**: (a) no celular, a coluna Dia
   da tabela diária some ao rolar para o lado; fixá-la (`sticky`) manteria a data visível;
   (b) o aviso de sucesso da sincronização (sonner) cobre o nome do usuário no topo da

@@ -6,6 +6,9 @@ import { EmConstrucao } from "./paginas/EmConstrucao";
 import { Entrar } from "./paginas/Entrar";
 import { ErroDeRota } from "./paginas/ErroDeRota";
 import { NaoEncontrada } from "./paginas/NaoEncontrada";
+import { RegraEditar } from "./paginas/RegraEditar";
+import { RegraNova } from "./paginas/RegraNova";
+import { Regras } from "./paginas/Regras";
 import { VisaoGeral } from "./paginas/VisaoGeral";
 import { relativo, ROTAS } from "./rotas";
 import { RotaProtegida } from "./sessao/RotaProtegida";
@@ -30,7 +33,9 @@ export const roteador = createBrowserRouter([
               { index: true, element: <VisaoGeral /> },
               { path: relativo(ROTAS.campanhas), element: <Campanhas /> },
               { path: relativo(ROTAS.campanha), element: <Campanha /> },
-              { path: relativo(ROTAS.regras), element: <EmConstrucao titulo="Regras" previsao="Fase 3" /> },
+              { path: relativo(ROTAS.regras), element: <Regras /> },
+              { path: relativo(ROTAS.regraNova), element: <RegraNova /> },
+              { path: relativo(ROTAS.regraEditar), element: <RegraEditar /> },
               { path: relativo(ROTAS.avaliacoes), element: <EmConstrucao titulo="Avaliações" previsao="Fase 3" /> },
               { path: relativo(ROTAS.alertas), element: <EmConstrucao titulo="Alertas" previsao="Fase 4" /> },
               { path: "*", element: <NaoEncontrada /> },

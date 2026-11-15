@@ -8,6 +8,8 @@ export const ROTAS = {
   campanhas: "/campanhas",
   campanha: "/campanhas/:id",
   regras: "/regras",
+  regraNova: "/regras/nova",
+  regraEditar: "/regras/:id/editar",
   avaliacoes: "/avaliacoes",
   alertas: "/alertas",
 } as const;
