@@ -199,6 +199,22 @@ describe("mensagemDoErro", () => {
     expect(mensagemDoErro(erro("cota_excedida", { status: 503 })).texto).toContain("mais tarde");
   });
 
+  it.each([
+    [120, "em 2 minutos"],
+    [5400, "em cerca de 2 horas"],
+  ])("cota_excedida usa o Retry-After real, não um texto fixo (%i s → %s)", (segundos, trecho) => {
+    const m = mensagemDoErro(erro("cota_excedida", { status: 503, retryAfter: segundos }));
+    expect(m.texto).toContain(trecho);
+    expect(m.texto).not.toContain("1 hora");
+    expect(m.acao).toBeNull();
+  });
+
+  it("cota_excedida: do cabeçalho Retry-After até o texto (lerErro → mensagemDoErro)", () => {
+    const corpo = { detail: "Cota excedida", tipo: "cota_excedida" };
+    const m = mensagemDoErro(lerErro(503, corpo, cabecalhos({ "Retry-After": "5400" })));
+    expect(m.texto).toContain("em cerca de 2 horas");
+  });
+
   it("nao_autenticado leva a entrar", () => {
     expect(mensagemDoErro(erro("nao_autenticado", { status: 401 })).acao).toBe("entrar");
   });

@@ -737,6 +737,115 @@ Depois: dashboard (React) → testes de desempenho (aba Desempenho: 5 aqueciment
   **Execução real (Kauan, 14/11)**: na Visão geral, os números dos KPIs com `font-size`
   30px no DevTools (classe com `group-data-[size=sm]/card:text-3xl`, sem `text-sm`); o
   cartão "Alertas por regra" com a altura do conteúdo (`self-start` da etapa 4). Etapa ✅.
+- **Fase 2 — plano e decisões (14/11)**: telas Campanhas (lista, sincronizar) e Campanha
+  (métricas diárias). Sem `GET /campanhas/{id}` no backend: o detalhe usa a lista de
+  `GET /campanhas` já em cache (nenhum endpoint novo). **CTR zero chega como `"0E-16"`**:
+  a view divide `NUMERIC` sem arredondar e o Pydantic serializa `Decimal` com expoente
+  (conferido no venv: `0.0000000000000000` → `"0E-16"`); o frontend normaliza e arredonda
+  o texto (`lib/decimal.ts`, sem float, empate longe do zero como o `round()` do
+  PostgreSQL). Alternativa descartada: arredondar na view ou no Pydantic (mudaria o
+  contrato e o valor que o motor usa). Cota excedida: a mensagem usa o `Retry-After` real
+  via `formatarEspera` (já era assim em `erros.ts`; testes com outros valores além de
+  3600). **Decisões do Kauan**: (1) erros do Google (cota, indisponível, token revogado)
+  testados no Playwright da Fase 4 com respostas simuladas; sem rota `/dev/` nova e sem
+  revogar o acesso real agora; (2) selos de alerta (R1/R2/R3) na tabela diária ficam para
+  a Fase 4; (3) totais do período (CTR = Σcliques × 100 / Σimpressões, não média dos CTRs
+  diários) entram no plano de corte.
+- **Fase 2 — `lib/decimal.ts` (14/11)**: `normalizarDecimal` (sem expoente nem zeros à
+  direita), `arredondarDecimal(texto, casas)` (empate longe do zero), `formatarPercentual`,
+  `formatarMoeda` (`R$` + espaço inseparável) e `formatarDecimalCurto`. O texto vira
+  dígitos inteiros + escala e as contas são em `BigInt`; nenhum float. Expoente acima de
+  1000 → `null` (evita montar texto gigante); casas inválidas → `RangeError`. **Oráculo**:
+  as respostas do PostgreSQL 16 (`round()` e `trim_scale()` no `limen_teste`), copiadas no
+  teste como vieram, com a consulta no comentário; inclui `0E-16` e um número de 20
+  dígitos que um float estraga (`12345678901234567890.125` → float dá
+  `12345678901234600000`). 79 testes. **Mutações** (script no scratchpad: cópia antes,
+  `trap` que restaura em qualquer saída, `cmp` após cada uma):
+
+  | Mutação | Reprovaram (de 79) | Exemplo |
+  |---|---|---|
+  | M1 truncar (nunca soma 1) | 16 | `round(2.345, 2) = 2.35` |
+  | M2 empate para o par (como o Decimal do Python) | 12 | `round(2.5, 0) = 3` |
+  | M3 ignorar o expoente | 6 | `trim_scale(1.25E-1) = 0.125` |
+  | M4 empate negativo em direção ao zero (como `Math.round`) | 2 | `round(-2.5, 0) = -3` |
+  | M5 passar os dígitos por float | 4 | `round(12345678901234567890.125, 2)` |
+  | M6 zero com sinal | 3 | `round(-0.004, 2) = 0.00` |
+
+  M4 só é pega pelos dois empates negativos do oráculo (`-2.345` e `-2.5`): sem eles,
+  sobreviveria. **Caractere invisível**: a ferramenta de escrita gravou o espaço
+  inseparável literal onde o código mostrado tinha o escape barra-invertida u00A0 (1 vez
+  no `decimal.ts`, 4 no `decimal.test.ts`, 1 no `dados.test.ts`); o lint pegou o do
+  `decimal.ts` (`no-irregular-whitespace`, dentro de template literal). Trocados pelo
+  escape com `sed` e conferidos com `grep -c` (0 ocorrências); lint ok. Como o arquivo
+  mudou, as 6 mutações foram refeitas: números idênticos. Prova da restauração: sha256
+  do `decimal.ts` igual antes e depois (`16d36fb2…6aa06e5c`, 2ª rodada; o
+  `72b7deb5…061cceed` da 1ª era do arquivo com o caractere literal); o `git diff` sai
+  vazio de qualquer jeito, porque o arquivo ainda não está no git.
+- **Fase 2 — `campanhas/dados.ts` (14/11)**: funções puras das telas. `lerIdCampanha`
+  (só inteiro positivo sem zero à esquerda; inválido → `null` e a tela não chama a API),
+  `encontrarCampanha` (o detalhe usa a lista), `formatarOrcamento` (micros viram o texto
+  `"50000000E-6"` e passam pelo `decimal.ts`; `null` → "sem orçamento", diferente de
+  `R$ 0,00`), `textoSincronizacao`, `mensagemSincronizacao`, `rotuloOrigem`
+  (`Object.hasOwn`), `descricaoPeriodo` (ordena as datas ISO como texto) e as células
+  da tabela diária: ausente → "—" ("sem dado"); CTR/CPC nulo → "N/A" com o motivo, na
+  mesma ordem de verificação de `calcular_ctr`/`calcular_cpc` do motor (ausência antes do
+  zero). O CTR zero (`0E-16`) é 0,00%, não N/A; com 0 cliques a mesma linha tem CTR
+  0,00% e CPC N/A. Oráculo: 4 linhas reais da campanha A no banco `limen`, com o
+  esperado tirado de `round(ctr, 2)`/`round(cpc, 2)` no PostgreSQL; orçamentos reais de
+  A, B e C. Os dados do IN-02b não têm CTR nem CPC nulos (0 de 90): o N/A só é coberto
+  por teste, não aparece no navegador. 58 testes. **Mutações** (mesmo script: cópia,
+  `trap`, `cmp`, sha256 `1f2c4fd0…6d64a9a8` antes e depois):
+
+  | Mutação | Reprovaram (de 58) | Quais |
+  |---|---|---|
+  | D1 ausente vira zero (`valor ?? 0`) | 1 | ausente vira — |
+  | D2 orçamento por float (`toFixed`) | 1 | 1.005.000 micros → R$ 1,01 (float dá 1,00) |
+  | D3 id frouxo (`/^\d+$/`) | 2 | `"0"` e `"007"` |
+  | D4 zero antes da ausência no CTR | 1 | impressões 0 e cliques ausentes → "cliques ausentes" |
+  | D5 período sem ordenar | 2 | lista invertida e virada de ano fora de ordem |
+  | D6 origem sem `Object.hasOwn` | 2 | `toString` e `__proto__` |
+- **Fase 2 — consultas de campanhas (14/11)**: `useCampanhas`, `useMetricas` e
+  `useSincronizar` em `api/consultas.ts`; chaves novas `campanhas`, `metricas(id)` e o
+  prefixo `todasAsMetricas`. As opções ficam em funções (`opcoesMetricas`,
+  `opcoesSincronizar`) que recebem a chamada à API como parâmetro, para o teste usar um
+  `QueryClient` de verdade sem React e sem rede. `useMetricas` só roda com id válido
+  (`enabled: campanhaId !== null`; a `queryFn` ainda lança se receber null, em vez de
+  pedir `/campanhas/null`). `useSincronizar`: `retry: false` explícito (o backend já
+  repete o transitório, IN-05, e não repete a cota, IN-06); no sucesso invalida
+  campanhas, métricas (de todas as campanhas) e resumo, e o `onSuccess` devolve a
+  promessa para o botão seguir em "Sincronizando…" até os dados novos chegarem; em
+  `token_google_ausente`/`token_google_revogado` invalida `/eu` (o 401 continua com o
+  `MutationCache` global). Alternativa descartada: testar só funções auxiliares soltas
+  (provaria as listas, não que a mutação as usa). Testes: 17 em `consultas.test.ts`
+  (cliente de teste com `retry: 3` e `retryDelay: 0` nas consultas e mutações, para o
+  `retry: false` ter de vir da mutação) e 3 novos em `erros.test.ts` (cota com
+  `Retry-After` de 120 e 5400 s e o caminho cabeçalho → `lerErro` → `mensagemDoErro`;
+  16 linhas acrescentadas, 0 removidas). **Mutações** (cópia dos dois arquivos, `trap`,
+  `cmp`; sha256 iguais antes e depois: `consultas.ts` `7313a11f…06616895`, `erros.ts`
+  `70499756…4ce26367`):
+
+  | Mutação | Reprovaram | Testes reprovados |
+  |---|---|---|
+  | C1 sem `retry: false` | 3 de 17 | os 3 "sem repetição automática" |
+  | C2 sucesso não invalida métricas | 2 de 17 | chaves exatas; sucesso invalida… |
+  | C3 qualquer erro invalida `/eu` | 6 de 17 | os 6 "não invalida nada" |
+  | C4 só o revogado invalida `/eu` | 1 de 17 | `token_google_ausente` |
+  | C5 métricas sempre ligadas | 1 de 17 | id inválido: `expected 'fetching' to be 'idle'` |
+  | E1 cota com espera fixa (3600) | 4 de 103 | os 3 novos + "sem Retry-After diz 'mais tarde'" |
+
+  Duas previsões erradas, conferidas com a lista dos reprovados: E1 reprovou também um
+  teste antigo (com 3600 fixo o texto nunca diz "mais tarde"); C5, que eu esperava que
+  sobrevivesse, foi pego pelo `fetchStatus`. **C5 dependia do tempo**: com a consulta
+  ligada, a `queryFn` lança e o TanStack repete; no instante da checagem a consulta ainda
+  está em "fetching", mas se as repetições acabassem antes, ela voltaria a "idle" e a
+  mutação sobreviveria. Reforço no teste: também `status === "pending"` e
+  `failureCount === 0` (a consulta nunca rodou). **Rodada extra**: C5 aplicada e, numa
+  cópia de trabalho do teste, sem o `expect` do `fetchStatus` (sha256 dos dois arquivos
+  iguais antes e depois; `consultas.test.ts` `56a1e5c9…86ef4477`). Reprovou o mesmo
+  teste, com `expected 1 to be +0`: quem pegou foi o `failureCount`. O `status` passou,
+  porque durante as repetições a consulta continua "pending"; sozinho, ele não pegaria o
+  C5. O `failureCount` pega sem depender do tempo, porque a 1ª tentativa já falhou antes
+  da checagem.
 - **Pendência visual — rever a Visão geral para ficar mais intuitiva (14/11, baixa
   prioridade)**: entra no **plano de corte**, só depois das Fases 2 a 4, dos testes de
   desempenho, da execução da tabela congelada e da implantação. Itens: (a) ranking
