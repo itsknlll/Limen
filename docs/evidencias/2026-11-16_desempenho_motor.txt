@@ -1,0 +1,133 @@
+Desempenho — motor isolado (DM)
+===============================
+Script: execucao/desempenho/medir_motor.py
+Data e hora: 2026-11-16T20:07:52-03:00 (America/Fortaleza) = 2026-11-16T23:07:52+00:00
+Commit do código (git rev-parse HEAD): 970049d31bb48e56665f50d365ddd1a15a44826a
+Código fora do commit (git status, fora de docs/evidencias/): 0
+Evidências ainda não commitadas (docs/evidencias/):
+  ?? docs/evidencias/2026-11-16_desempenho_preparar.txt
+Planilha: docs/avaliacao/Tabela_limiares_TCC_motor_de_regras.xlsx
+  sha256 fbbea2ec0298dfcf20e0d6cba3a364611740d7e2efd86e56d3dad010025d6653 (igual ao do commit 29de91d)
+Banco: não usado (motor em memória)
+Dados: gerar_metricas, semente 20261116, 2024-01-01 a 2026-09-26 (1000 dias por campanha), IDs de campanha fictícios a partir de 900001
+
+Ambiente:
+  CPU: AMD Ryzen 5 5625U with Radeon Graphics
+  Núcleos lógicos: 12
+  Memória total: 15.0 GiB
+  Governor da CPU: powersave
+  Energia: na tomada
+  Carga média no início (1, 5, 15 min): 0.65, 0.57, 0.59
+  SO: Zorin OS 18.1
+  Kernel: 7.0.0-43-generic
+  Python: 3.12.3
+  Pacote fastapi: 0.162.5
+  Pacote starlette: 1.10.0
+  Pacote sqlalchemy: 2.1.8
+  Pacote pydantic: 2.14.3
+  Pacote psycopg: 3.3.9
+  Pacote uvicorn: 0.54.0
+  Pacote httpx: 0.28.1
+  Pacote google-ads: 35.1.0
+  Pacote openpyxl: 3.1.5
+  Servidor do banco (SHOW server_version, no Docker): não consultado
+  Relógio: perf_counter (clock_gettime(CLOCK_MONOTONIC), resolução 1e-09 s, monotônico True)
+Plano (planilha): 5 aquecimentos descartados, 30 repetições
+Medido: só `[motor.avaliar(r, regras) for r in registros]`; montar registros, converter regras, gc.collect() e contar disparos ficam fora.
+
+Ordem de execução:
+  1. DM-01  2026-11-16T20:07:52-03:00 → 2026-11-16T20:07:53-03:00
+  2. DM-02  2026-11-16T20:07:53-03:00 → 2026-11-16T20:07:54-03:00
+  3. DM-03  2026-11-16T20:07:54-03:00 → 2026-11-16T20:08:00-03:00
+  4. DM-04  2026-11-16T20:08:00-03:00 → 2026-11-16T20:08:04-03:00
+  5. DM-05  2026-11-16T20:08:04-03:00 → 2026-11-16T20:08:18-03:00
+  6. DM-06  2026-11-16T20:08:18-03:00 → 2026-11-16T20:09:31-03:00
+  7. DM-07  2026-11-16T20:09:31-03:00 → 2026-11-16T20:10:26-03:00
+  8. DM-08  2026-11-16T20:10:26-03:00 → 2026-11-16T20:13:04-03:00
+  9. DM-09  2026-11-16T20:13:04-03:00 → 2026-11-16T20:25:00-03:00
+Pico de memória do processo (ru_maxrss): 2455.8 MiB
+
+ID     Registros Regras  Média(ms) Mediana(ms) Desvio(ms)  p95(ms)   Mín(ms)   Máx(ms)  CV      µs/reg  Falhas
+DM-01       1000      3      7.301      7.298      0.042      7.376      7.208      7.419  0.0057    7.301  0
+DM-02       1000     10     24.499     24.435      0.311     25.220     24.054     25.390  0.0127   24.499  0
+DM-03       1000     50    154.313    154.123      0.969    155.542    153.181    158.372  0.0063  154.313  0
+DM-04      10000      3     81.162     80.984      0.737     82.321     80.469     84.530  0.0091    8.116  0
+DM-05      10000     10    324.953    324.453      1.877    328.829    322.579    331.416  0.0058   32.495  0
+DM-06      10000     50   1932.343   1933.707      9.282   1947.817   1916.323   1948.938  0.0048  193.234  0
+DM-07     100000      3   1350.585   1350.061      3.282   1357.184   1345.100   1360.614  0.0024   13.506  0
+DM-08     100000     10   4065.014   4063.890      6.352   4075.272   4053.010   4076.359  0.0016   40.650  0
+DM-09     100000     50  18857.019  18858.836     40.291  18917.606  18765.169  18932.646  0.0021  188.570  0
+
+Oráculo de R1 a R3 (perfis do gerador): DM-01 ok, DM-02 ok, DM-03 ok, DM-04 ok, DM-05 ok, DM-06 ok, DM-07 ok, DM-08 ok, DM-09 ok
+
+Disparos por regra (passada de referência; vazio = regra fora da combinação):
+Regra     DM-01     DM-02     DM-03     DM-04     DM-05     DM-06     DM-07     DM-08     DM-09
+   R1         3         3         3        30        30        30       300       300       300
+   R2         3         3         3        30        30        30       300       300       300
+   R3         3         3         3        30        30        30       300       300       300
+   R4                 147       147                1421      1421               14260     14260
+   R5                   0         0                   3         3                  15        15
+   R6                  51        51                 505       505                5027      5027
+   R7                 997       997                9970      9970               99700     99700
+   R8                   2         2                  13        13                 122       122
+   R9                  81        81                 700       700                7273      7273
+  R10                 853       853                8578      8578               85723     85723
+  R11                           323                          3175                         31797
+  R12                            27                           209                          2387
+  R13                           120                          1065                         10291
+  R14                           571                          5920                         59323
+  R15                             0                             0                             0
+  R16                           520                          5070                         50038
+  R17                             3                            19                           145
+  R18                           331                          3246                         32333
+  R19                           784                          7934                         79504
+  R20                             3                            15                            71
+  R21                             0                             4                            29
+  R22                           480                          4929                         49947
+  R23                           325                          3446                         34127
+  R24                             1                            15                           111
+  R25                           305                          3074                         30389
+  R26                           740                          7490                         74313
+  R27                           360                          3365                         33128
+  R28                           861                          8614                         85557
+  R29                           808                          8280                         83042
+  R30                             0                             4                            91
+  R31                           486                          4933                         49646
+  R32                           564                          6004                         60069
+  R33                           402                          3884                         39184
+  R34                           139                          1386                         14432
+  R35                             0                             0                             0
+  R36                           231                          2200                         22685
+  R37                           621                          6109                         60340
+  R38                            42                           479                          4828
+  R39                             0                             0                             0
+  R40                           147                          1422                         14277
+  R41                           321                          3157                         31604
+  R42                            84                           776                          7518
+  R43                             3                            30                           300
+  R44                             2                            14                           124
+  R45                             0                             0                             0
+  R46                           853                          8579                         85740
+  R47                             0                             3                            14
+  R48                            30                           240                          2702
+  R49                           880                          8935                         89709
+  R50                           574                          5964                         59721
+Total         9      2140     14081        90     21280    141269       900    213020   1412536
+
+Regras que nunca disparam (mantidas de propósito: condições contraditórias nas faixas do gerador):
+  DM-01: nenhuma
+  DM-02: R5
+  DM-03: R5, R15, R21, R30, R35, R39, R45, R47
+  DM-04: nenhuma
+  DM-05: nenhuma
+  DM-06: R15, R35, R39, R45
+  DM-07: nenhuma
+  DM-08: nenhuma
+  DM-09: R15, R35, R39, R45
+
+Dados por volume (sha256 de base.sha256_dados):
+    1000: 393fdcd792dabba79eafff09b2d696c915d09735b352bfe23e630ef196e8d45f
+   10000: a18a636c6ff4a92152bbe54a17566d36f8bd9cb378f95224eebf1b290bd7305d
+  100000: 2ce278e4a9db5abe74a9669f281e2f4f21e470199f5ad243be47300e7417418b
+
+Resultado: sem falhas

@@ -1,0 +1,1397 @@
+{
+  "ambiente": {
+    "CPU": "AMD Ryzen 5 5625U with Radeon Graphics",
+    "Núcleos lógicos": "12",
+    "Memória total": "15.0 GiB",
+    "Governor da CPU": "powersave",
+    "Energia": "na tomada",
+    "Carga média no início (1, 5, 15 min)": "0.80, 0.92, 0.89",
+    "SO": "Zorin OS 18.1",
+    "Kernel": "7.0.0-43-generic",
+    "Python": "3.12.3",
+    "Pacote fastapi": "0.162.5",
+    "Pacote starlette": "1.10.0",
+    "Pacote sqlalchemy": "2.1.8",
+    "Pacote pydantic": "2.14.3",
+    "Pacote psycopg": "3.3.9",
+    "Pacote uvicorn": "0.54.0",
+    "Pacote httpx": "0.28.1",
+    "Pacote google-ads": "35.1.0",
+    "Pacote openpyxl": "3.1.5",
+    "Servidor do banco (SHOW server_version, no Docker)": "16.15 (Debian 16.15-1.pgdg13+2)"
+  },
+  "resumo_ambiente_b5": "CPU AMD Ryzen 5 5625U with Radeon Graphics (12 núcleos lógicos), 15.0 GiB, Zorin OS 18.1 (kernel 7.0.0-43-generic), Python 3.12.3, FastAPI 0.162.5, SQLAlchemy 2.1.8, banco 16.15 (Debian 16.15-1.pgdg13+2); energia na tomada, governor powersave; cliente, servidor e banco na mesma máquina",
+  "ordem": [
+    {
+      "id": "DE-01",
+      "inicio": "2026-11-16T20:26:54-03:00",
+      "fim": "2026-11-16T20:26:54-03:00"
+    },
+    {
+      "id": "DE-02",
+      "inicio": "2026-11-16T20:26:54-03:00",
+      "fim": "2026-11-16T20:26:56-03:00"
+    },
+    {
+      "id": "DE-03",
+      "inicio": "2026-11-16T20:26:56-03:00",
+      "fim": "2026-11-16T20:26:56-03:00"
+    },
+    {
+      "id": "DE-04",
+      "inicio": "2026-11-16T20:26:56-03:00",
+      "fim": "2026-11-16T20:28:45-03:00"
+    }
+  ],
+  "total_alertas": 21280,
+  "endpoints": {
+    "DE-01": {
+      "endpoint": "GET /campanhas/{id}/metricas",
+      "descricao": "campanha id 1 (900001), 2026-08-28 a 2026-09-26, esperado 30 linhas",
+      "aquecimentos_ns": [
+        5170873,
+        2814141,
+        2790818,
+        2743661,
+        2449403
+      ],
+      "amostras_ns": [
+        2579265,
+        2486212,
+        2482675,
+        2552445,
+        2778276,
+        2554910,
+        2370928,
+        2643144,
+        2452780,
+        2367021,
+        2461696,
+        2505518,
+        2521007,
+        2431310,
+        2501580,
+        2410561,
+        2414218,
+        2481884,
+        2461596,
+        2499096,
+        2532208,
+        2489088,
+        2510046,
+        2453792,
+        2491542,
+        2372802,
+        2821145,
+        2718524,
+        2444965,
+        2495729
+      ],
+      "execucoes": [
+        {
+          "n": 1,
+          "medida": false,
+          "ok": true,
+          "status": 200,
+          "itens": 30
+        },
+        {
+          "n": 2,
+          "medida": false,
+          "ok": true,
+          "status": 200,
+          "itens": 30
+        },
+        {
+          "n": 3,
+          "medida": false,
+          "ok": true,
+          "status": 200,
+          "itens": 30
+        },
+        {
+          "n": 4,
+          "medida": false,
+          "ok": true,
+          "status": 200,
+          "itens": 30
+        },
+        {
+          "n": 5,
+          "medida": false,
+          "ok": true,
+          "status": 200,
+          "itens": 30
+        },
+        {
+          "n": 6,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 30
+        },
+        {
+          "n": 7,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 30
+        },
+        {
+          "n": 8,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 30
+        },
+        {
+          "n": 9,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 30
+        },
+        {
+          "n": 10,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 30
+        },
+        {
+          "n": 11,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 30
+        },
+        {
+          "n": 12,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 30
+        },
+        {
+          "n": 13,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 30
+        },
+        {
+          "n": 14,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 30
+        },
+        {
+          "n": 15,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 30
+        },
+        {
+          "n": 16,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 30
+        },
+        {
+          "n": 17,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 30
+        },
+        {
+          "n": 18,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 30
+        },
+        {
+          "n": 19,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 30
+        },
+        {
+          "n": 20,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 30
+        },
+        {
+          "n": 21,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 30
+        },
+        {
+          "n": 22,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 30
+        },
+        {
+          "n": 23,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 30
+        },
+        {
+          "n": 24,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 30
+        },
+        {
+          "n": 25,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 30
+        },
+        {
+          "n": 26,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 30
+        },
+        {
+          "n": 27,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 30
+        },
+        {
+          "n": 28,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 30
+        },
+        {
+          "n": 29,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 30
+        },
+        {
+          "n": 30,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 30
+        },
+        {
+          "n": 31,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 30
+        },
+        {
+          "n": 32,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 30
+        },
+        {
+          "n": 33,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 30
+        },
+        {
+          "n": 34,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 30
+        },
+        {
+          "n": 35,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 30
+        }
+      ],
+      "falhas_medidas": 0,
+      "falhas_aquecimento": 0,
+      "estatisticas": {
+        "media_ms": "2.5095321",
+        "mediana_ms": "2.490315",
+        "desvio_ms": "0.10855036571178408040765530478657917231385474544814",
+        "minimo_ms": "2.367021",
+        "maximo_ms": "2.821145",
+        "p95_ms": "2.778276",
+        "n": 30,
+        "coef_variacao": "0.04325522104769414203056231271"
+      }
+    },
+    "DE-02": {
+      "endpoint": "GET /alertas",
+      "descricao": "sem filtros, limite padrão 500: esperado 500 de 21280 alertas",
+      "aquecimentos_ns": [
+        43089398,
+        39930444,
+        39912241,
+        39635066,
+        39709975
+      ],
+      "amostras_ns": [
+        40167676,
+        40338683,
+        39957154,
+        39838283,
+        39947366,
+        40434631,
+        40084601,
+        40222207,
+        40061959,
+        39783962,
+        39492550,
+        39977141,
+        40048894,
+        41654720,
+        42493489,
+        39477984,
+        39565806,
+        39936395,
+        40237575,
+        40212228,
+        40249176,
+        39687933,
+        39825008,
+        39977632,
+        39479515,
+        40271879,
+        39728228,
+        39926616,
+        39605540,
+        39729530
+      ],
+      "execucoes": [
+        {
+          "n": 1,
+          "medida": false,
+          "ok": true,
+          "status": 200,
+          "itens": 500
+        },
+        {
+          "n": 2,
+          "medida": false,
+          "ok": true,
+          "status": 200,
+          "itens": 500
+        },
+        {
+          "n": 3,
+          "medida": false,
+          "ok": true,
+          "status": 200,
+          "itens": 500
+        },
+        {
+          "n": 4,
+          "medida": false,
+          "ok": true,
+          "status": 200,
+          "itens": 500
+        },
+        {
+          "n": 5,
+          "medida": false,
+          "ok": true,
+          "status": 200,
+          "itens": 500
+        },
+        {
+          "n": 6,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 500
+        },
+        {
+          "n": 7,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 500
+        },
+        {
+          "n": 8,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 500
+        },
+        {
+          "n": 9,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 500
+        },
+        {
+          "n": 10,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 500
+        },
+        {
+          "n": 11,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 500
+        },
+        {
+          "n": 12,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 500
+        },
+        {
+          "n": 13,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 500
+        },
+        {
+          "n": 14,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 500
+        },
+        {
+          "n": 15,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 500
+        },
+        {
+          "n": 16,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 500
+        },
+        {
+          "n": 17,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 500
+        },
+        {
+          "n": 18,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 500
+        },
+        {
+          "n": 19,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 500
+        },
+        {
+          "n": 20,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 500
+        },
+        {
+          "n": 21,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 500
+        },
+        {
+          "n": 22,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 500
+        },
+        {
+          "n": 23,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 500
+        },
+        {
+          "n": 24,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 500
+        },
+        {
+          "n": 25,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 500
+        },
+        {
+          "n": 26,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 500
+        },
+        {
+          "n": 27,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 500
+        },
+        {
+          "n": 28,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 500
+        },
+        {
+          "n": 29,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 500
+        },
+        {
+          "n": 30,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 500
+        },
+        {
+          "n": 31,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 500
+        },
+        {
+          "n": 32,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 500
+        },
+        {
+          "n": 33,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 500
+        },
+        {
+          "n": 34,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 500
+        },
+        {
+          "n": 35,
+          "medida": true,
+          "ok": true,
+          "status": 200,
+          "itens": 500
+        }
+      ],
+      "falhas_medidas": 0,
+      "falhas_aquecimento": 0,
+      "estatisticas": {
+        "media_ms": "40.0804787",
+        "mediana_ms": "39.9671475",
+        "desvio_ms": "0.61310963924655827220277637403128950735902179737301",
+        "minimo_ms": "39.477984",
+        "maximo_ms": "42.493489",
+        "p95_ms": "41.65472",
+        "n": 30,
+        "coef_variacao": "0.01529696398677389729386581338"
+      }
+    },
+    "DE-03": {
+      "endpoint": "POST /regras",
+      "descricao": "P001 a P035, inativas (não mudam as 10 regras ativas)",
+      "aquecimentos_ns": [
+        15054517,
+        5700258,
+        4696962,
+        5025553,
+        4987212
+      ],
+      "amostras_ns": [
+        4858593,
+        4633895,
+        4761402,
+        4546643,
+        4412854,
+        4773485,
+        4887386,
+        4565849,
+        4720456,
+        4963217,
+        4418294,
+        4402765,
+        4942589,
+        5188776,
+        4581066,
+        4461033,
+        4728170,
+        4807598,
+        4539299,
+        4641939,
+        4601715,
+        4614198,
+        4614679,
+        4714605,
+        4536975,
+        4630719,
+        4535923,
+        4555529,
+        4413655,
+        4395171
+      ],
+      "execucoes": [
+        {
+          "n": 1,
+          "medida": false,
+          "ok": true,
+          "status": 201,
+          "codigo": "P001"
+        },
+        {
+          "n": 2,
+          "medida": false,
+          "ok": true,
+          "status": 201,
+          "codigo": "P002"
+        },
+        {
+          "n": 3,
+          "medida": false,
+          "ok": true,
+          "status": 201,
+          "codigo": "P003"
+        },
+        {
+          "n": 4,
+          "medida": false,
+          "ok": true,
+          "status": 201,
+          "codigo": "P004"
+        },
+        {
+          "n": 5,
+          "medida": false,
+          "ok": true,
+          "status": 201,
+          "codigo": "P005"
+        },
+        {
+          "n": 6,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "codigo": "P006"
+        },
+        {
+          "n": 7,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "codigo": "P007"
+        },
+        {
+          "n": 8,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "codigo": "P008"
+        },
+        {
+          "n": 9,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "codigo": "P009"
+        },
+        {
+          "n": 10,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "codigo": "P010"
+        },
+        {
+          "n": 11,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "codigo": "P011"
+        },
+        {
+          "n": 12,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "codigo": "P012"
+        },
+        {
+          "n": 13,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "codigo": "P013"
+        },
+        {
+          "n": 14,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "codigo": "P014"
+        },
+        {
+          "n": 15,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "codigo": "P015"
+        },
+        {
+          "n": 16,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "codigo": "P016"
+        },
+        {
+          "n": 17,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "codigo": "P017"
+        },
+        {
+          "n": 18,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "codigo": "P018"
+        },
+        {
+          "n": 19,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "codigo": "P019"
+        },
+        {
+          "n": 20,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "codigo": "P020"
+        },
+        {
+          "n": 21,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "codigo": "P021"
+        },
+        {
+          "n": 22,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "codigo": "P022"
+        },
+        {
+          "n": 23,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "codigo": "P023"
+        },
+        {
+          "n": 24,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "codigo": "P024"
+        },
+        {
+          "n": 25,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "codigo": "P025"
+        },
+        {
+          "n": 26,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "codigo": "P026"
+        },
+        {
+          "n": 27,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "codigo": "P027"
+        },
+        {
+          "n": 28,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "codigo": "P028"
+        },
+        {
+          "n": 29,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "codigo": "P029"
+        },
+        {
+          "n": 30,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "codigo": "P030"
+        },
+        {
+          "n": 31,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "codigo": "P031"
+        },
+        {
+          "n": 32,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "codigo": "P032"
+        },
+        {
+          "n": 33,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "codigo": "P033"
+        },
+        {
+          "n": 34,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "codigo": "P034"
+        },
+        {
+          "n": 35,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "codigo": "P035"
+        }
+      ],
+      "falhas_medidas": 0,
+      "falhas_aquecimento": 0,
+      "estatisticas": {
+        "media_ms": "4.6482826",
+        "mediana_ms": "4.6144385",
+        "desvio_ms": "0.18974655002571738185715592101601734602953330003321",
+        "minimo_ms": "4.395171",
+        "maximo_ms": "5.188776",
+        "p95_ms": "4.963217",
+        "n": 30,
+        "coef_variacao": "0.04082078615997172414972272147"
+      }
+    },
+    "DE-04": {
+      "endpoint": "POST /avaliacoes",
+      "descricao": "corpo vazio: esperado 10000 avaliados, 0 rejeitados, 0 gerados, 21280 já existentes",
+      "aquecimentos_ns": [
+        3132279393,
+        3028499609,
+        3094162177,
+        3008605208,
+        3062334232
+      ],
+      "amostras_ns": [
+        3058961043,
+        3094020066,
+        3091266417,
+        3115072730,
+        3165190568,
+        3061466660,
+        3123216662,
+        3165875263,
+        3078240698,
+        3225472206,
+        3076802994,
+        3145804415,
+        3190244894,
+        3070712099,
+        3153302533,
+        3167399817,
+        3061055746,
+        3230575487,
+        3077429891,
+        3149356969,
+        3188110775,
+        3078293114,
+        3173986803,
+        3198624735,
+        3083196227,
+        3260414100,
+        3110161376,
+        3164257027,
+        3211660230,
+        3092142580
+      ],
+      "execucoes": [
+        {
+          "n": 1,
+          "medida": false,
+          "ok": true,
+          "status": 201,
+          "registros_avaliados": 10000,
+          "registros_rejeitados": 0,
+          "alertas_gerados": 0,
+          "alertas_ja_existentes": 21280,
+          "duracao_motor_ms": "389.713"
+        },
+        {
+          "n": 2,
+          "medida": false,
+          "ok": true,
+          "status": 201,
+          "registros_avaliados": 10000,
+          "registros_rejeitados": 0,
+          "alertas_gerados": 0,
+          "alertas_ja_existentes": 21280,
+          "duracao_motor_ms": "458.316"
+        },
+        {
+          "n": 3,
+          "medida": false,
+          "ok": true,
+          "status": 201,
+          "registros_avaliados": 10000,
+          "registros_rejeitados": 0,
+          "alertas_gerados": 0,
+          "alertas_ja_existentes": 21280,
+          "duracao_motor_ms": "392.681"
+        },
+        {
+          "n": 4,
+          "medida": false,
+          "ok": true,
+          "status": 201,
+          "registros_avaliados": 10000,
+          "registros_rejeitados": 0,
+          "alertas_gerados": 0,
+          "alertas_ja_existentes": 21280,
+          "duracao_motor_ms": "443.647"
+        },
+        {
+          "n": 5,
+          "medida": false,
+          "ok": true,
+          "status": 201,
+          "registros_avaliados": 10000,
+          "registros_rejeitados": 0,
+          "alertas_gerados": 0,
+          "alertas_ja_existentes": 21280,
+          "duracao_motor_ms": "440.717"
+        },
+        {
+          "n": 6,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "registros_avaliados": 10000,
+          "registros_rejeitados": 0,
+          "alertas_gerados": 0,
+          "alertas_ja_existentes": 21280,
+          "duracao_motor_ms": "441.842"
+        },
+        {
+          "n": 7,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "registros_avaliados": 10000,
+          "registros_rejeitados": 0,
+          "alertas_gerados": 0,
+          "alertas_ja_existentes": 21280,
+          "duracao_motor_ms": "450.601"
+        },
+        {
+          "n": 8,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "registros_avaliados": 10000,
+          "registros_rejeitados": 0,
+          "alertas_gerados": 0,
+          "alertas_ja_existentes": 21280,
+          "duracao_motor_ms": "449.357"
+        },
+        {
+          "n": 9,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "registros_avaliados": 10000,
+          "registros_rejeitados": 0,
+          "alertas_gerados": 0,
+          "alertas_ja_existentes": 21280,
+          "duracao_motor_ms": "383.160"
+        },
+        {
+          "n": 10,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "registros_avaliados": 10000,
+          "registros_rejeitados": 0,
+          "alertas_gerados": 0,
+          "alertas_ja_existentes": 21280,
+          "duracao_motor_ms": "394.094"
+        },
+        {
+          "n": 11,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "registros_avaliados": 10000,
+          "registros_rejeitados": 0,
+          "alertas_gerados": 0,
+          "alertas_ja_existentes": 21280,
+          "duracao_motor_ms": "449.990"
+        },
+        {
+          "n": 12,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "registros_avaliados": 10000,
+          "registros_rejeitados": 0,
+          "alertas_gerados": 0,
+          "alertas_ja_existentes": 21280,
+          "duracao_motor_ms": "456.211"
+        },
+        {
+          "n": 13,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "registros_avaliados": 10000,
+          "registros_rejeitados": 0,
+          "alertas_gerados": 0,
+          "alertas_ja_existentes": 21280,
+          "duracao_motor_ms": "389.439"
+        },
+        {
+          "n": 14,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "registros_avaliados": 10000,
+          "registros_rejeitados": 0,
+          "alertas_gerados": 0,
+          "alertas_ja_existentes": 21280,
+          "duracao_motor_ms": "394.515"
+        },
+        {
+          "n": 15,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "registros_avaliados": 10000,
+          "registros_rejeitados": 0,
+          "alertas_gerados": 0,
+          "alertas_ja_existentes": 21280,
+          "duracao_motor_ms": "390.356"
+        },
+        {
+          "n": 16,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "registros_avaliados": 10000,
+          "registros_rejeitados": 0,
+          "alertas_gerados": 0,
+          "alertas_ja_existentes": 21280,
+          "duracao_motor_ms": "453.728"
+        },
+        {
+          "n": 17,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "registros_avaliados": 10000,
+          "registros_rejeitados": 0,
+          "alertas_gerados": 0,
+          "alertas_ja_existentes": 21280,
+          "duracao_motor_ms": "383.091"
+        },
+        {
+          "n": 18,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "registros_avaliados": 10000,
+          "registros_rejeitados": 0,
+          "alertas_gerados": 0,
+          "alertas_ja_existentes": 21280,
+          "duracao_motor_ms": "394.370"
+        },
+        {
+          "n": 19,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "registros_avaliados": 10000,
+          "registros_rejeitados": 0,
+          "alertas_gerados": 0,
+          "alertas_ja_existentes": 21280,
+          "duracao_motor_ms": "448.844"
+        },
+        {
+          "n": 20,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "registros_avaliados": 10000,
+          "registros_rejeitados": 0,
+          "alertas_gerados": 0,
+          "alertas_ja_existentes": 21280,
+          "duracao_motor_ms": "459.917"
+        },
+        {
+          "n": 21,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "registros_avaliados": 10000,
+          "registros_rejeitados": 0,
+          "alertas_gerados": 0,
+          "alertas_ja_existentes": 21280,
+          "duracao_motor_ms": "391.668"
+        },
+        {
+          "n": 22,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "registros_avaliados": 10000,
+          "registros_rejeitados": 0,
+          "alertas_gerados": 0,
+          "alertas_ja_existentes": 21280,
+          "duracao_motor_ms": "396.560"
+        },
+        {
+          "n": 23,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "registros_avaliados": 10000,
+          "registros_rejeitados": 0,
+          "alertas_gerados": 0,
+          "alertas_ja_existentes": 21280,
+          "duracao_motor_ms": "395.337"
+        },
+        {
+          "n": 24,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "registros_avaliados": 10000,
+          "registros_rejeitados": 0,
+          "alertas_gerados": 0,
+          "alertas_ja_existentes": 21280,
+          "duracao_motor_ms": "461.041"
+        },
+        {
+          "n": 25,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "registros_avaliados": 10000,
+          "registros_rejeitados": 0,
+          "alertas_gerados": 0,
+          "alertas_ja_existentes": 21280,
+          "duracao_motor_ms": "385.484"
+        },
+        {
+          "n": 26,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "registros_avaliados": 10000,
+          "registros_rejeitados": 0,
+          "alertas_gerados": 0,
+          "alertas_ja_existentes": 21280,
+          "duracao_motor_ms": "393.135"
+        },
+        {
+          "n": 27,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "registros_avaliados": 10000,
+          "registros_rejeitados": 0,
+          "alertas_gerados": 0,
+          "alertas_ja_existentes": 21280,
+          "duracao_motor_ms": "448.710"
+        },
+        {
+          "n": 28,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "registros_avaliados": 10000,
+          "registros_rejeitados": 0,
+          "alertas_gerados": 0,
+          "alertas_ja_existentes": 21280,
+          "duracao_motor_ms": "464.529"
+        },
+        {
+          "n": 29,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "registros_avaliados": 10000,
+          "registros_rejeitados": 0,
+          "alertas_gerados": 0,
+          "alertas_ja_existentes": 21280,
+          "duracao_motor_ms": "392.263"
+        },
+        {
+          "n": 30,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "registros_avaliados": 10000,
+          "registros_rejeitados": 0,
+          "alertas_gerados": 0,
+          "alertas_ja_existentes": 21280,
+          "duracao_motor_ms": "396.443"
+        },
+        {
+          "n": 31,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "registros_avaliados": 10000,
+          "registros_rejeitados": 0,
+          "alertas_gerados": 0,
+          "alertas_ja_existentes": 21280,
+          "duracao_motor_ms": "401.564"
+        },
+        {
+          "n": 32,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "registros_avaliados": 10000,
+          "registros_rejeitados": 0,
+          "alertas_gerados": 0,
+          "alertas_ja_existentes": 21280,
+          "duracao_motor_ms": "464.373"
+        },
+        {
+          "n": 33,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "registros_avaliados": 10000,
+          "registros_rejeitados": 0,
+          "alertas_gerados": 0,
+          "alertas_ja_existentes": 21280,
+          "duracao_motor_ms": "390.596"
+        },
+        {
+          "n": 34,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "registros_avaliados": 10000,
+          "registros_rejeitados": 0,
+          "alertas_gerados": 0,
+          "alertas_ja_existentes": 21280,
+          "duracao_motor_ms": "399.052"
+        },
+        {
+          "n": 35,
+          "medida": true,
+          "ok": true,
+          "status": 201,
+          "registros_avaliados": 10000,
+          "registros_rejeitados": 0,
+          "alertas_gerados": 0,
+          "alertas_ja_existentes": 21280,
+          "duracao_motor_ms": "457.522"
+        }
+      ],
+      "falhas_medidas": 0,
+      "falhas_aquecimento": 0,
+      "estatisticas": {
+        "media_ms": "3135.4104708333333333333333333333333333333333333333",
+        "mediana_ms": "3134.5105385",
+        "desvio_ms": "58.126794490847910262629457999194079303082520924784",
+        "minimo_ms": "3058.961043",
+        "maximo_ms": "3260.4141",
+        "p95_ms": "3230.575487",
+        "n": 30,
+        "coef_variacao": "0.01853881494354992627477932295"
+      }
+    }
+  }
+}

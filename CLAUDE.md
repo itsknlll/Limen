@@ -134,9 +134,11 @@ Evidências: `docs/evidencias/2026-11-16_execucao_*` e `_IN-01_*`, `_IN-02_*`, `
 ✅ **Desempenho — scripts e testes (16/11, antes de medir)**: `backend/execucao/desempenho/`
 (preparar, medir_motor, medir_endpoints, medir_google_ads, preencher_planilha) e 202 testes
 novos; pytest **438/438**; 32 mutações, todas como previsto. Evidência:
-`docs/evidencias/2026-11-16_desempenho_scripts_pytest.txt`. Medição pendente (ordem: preparar →
-medir_motor → medir_endpoints → login OAuth → medir_google_ads → preencher_planilha → H no
-LibreOffice).
+`docs/evidencias/2026-11-16_desempenho_scripts_pytest.txt`.
+✅ **Desempenho — medição (16/11)**: commit `970049d` em todas as medições (código fora do
+commit: 0). Motor (DM) 9/9 e endpoints (DE) 4/4 sem falhas; Google Ads à parte, 30/30.
+Planilha preenchida (66 células), coluna H recalculada no LibreOffice e conferida nas 13
+linhas, sem salvar por cima. Evidências: `docs/evidencias/2026-11-16_desempenho_*`.
 
 **Dashboard — plano aprovado (13/11/2026):** React + TypeScript (Vite), Tailwind v4,
 shadcn/ui, lucide, Recharts, TanStack Query, React Router, react-hook-form + zod, sonner.
@@ -180,9 +182,7 @@ tabela.
   semeadura_resposta, semeadura_idempotente, metricas_banco, avaliacao_ativas,
   alertas_ativas, avaliacao_com_pausadas, alertas_com_pausadas).
 
-Depois: testes de desempenho (aba Desempenho: 5 aquecimentos, 30 repetições,
-9 combinações volume × regras, 4 endpoints; tempo do motor medido isolado) → README →
-relatório técnico. (Dashboard e execução completa da planilha concluídos.)
+Depois: README → relatório técnico. (Dashboard, execução da planilha e desempenho concluídos.)
 
 ## Registro de decisões (para o relatório técnico)
 
@@ -1520,6 +1520,61 @@ relatório técnico. (Dashboard e execução completa da planilha concluídos.)
   alertas; um único perfil sintético; log de acesso desligado; a latência do Google inclui
   a rede e a renovação do token; 4 regras nunca disparam; o DM-09 guarda os 100.000
   resultados, como o serviço (pico de memória registrado na evidência).
+- **Desempenho — medição (16/11)**: rodado pelo Kauan no próprio terminal, na ordem
+  preparar → medir_motor → medir_endpoints → login OAuth → medir_google_ads →
+  preencher_planilha; todos saíram com 0. Commit `970049d` em todas as evidências.
+  **Base** (`limen_desempenho`): 10.000 métricas, sha256 dos dados `a18a636c…bd7305d`;
+  R1 a R10 relidas do banco e iguais às definições; avaliação não medida com 21.280
+  alertas, igual ao motor puro regra a regra. **Motor (DM)**, ms, 5 aquecimentos e 30
+  repetições:
+
+  | ID | Registros | Regras | Média | Mediana | Desvio | p95 | CV | µs/registro |
+  |---|---|---|---|---|---|---|---|---|
+  | DM-01 | 1.000 | 3 | 7,301 | 7,298 | 0,042 | 7,376 | 0,57% | 7,3 |
+  | DM-02 | 1.000 | 10 | 24,499 | 24,435 | 0,311 | 25,220 | 1,27% | 24,5 |
+  | DM-03 | 1.000 | 50 | 154,313 | 154,123 | 0,969 | 155,542 | 0,63% | 154,3 |
+  | DM-04 | 10.000 | 3 | 81,162 | 80,984 | 0,737 | 82,321 | 0,91% | 8,1 |
+  | DM-05 | 10.000 | 10 | 324,953 | 324,453 | 1,877 | 328,829 | 0,58% | 32,5 |
+  | DM-06 | 10.000 | 50 | 1.932,343 | 1.933,707 | 9,282 | 1.947,817 | 0,48% | 193,2 |
+  | DM-07 | 100.000 | 3 | 1.350,585 | 1.350,061 | 3,282 | 1.357,184 | 0,24% | 13,5 |
+  | DM-08 | 100.000 | 10 | 4.065,014 | 4.063,890 | 6,352 | 4.075,272 | 0,16% | 40,7 |
+  | DM-09 | 100.000 | 50 | 18.857,019 | 18.858,836 | 40,291 | 18.917,606 | 0,21% | 188,6 |
+
+  Oráculo de R1 a R3 ok nas 9; disparos iguais à passada de referência; R15, R35, R39 e
+  R45 sem disparo (previsto). **Endpoints (DE)**, uvicorn em 127.0.0.1:8091, ms:
+
+  | ID | Endpoint | Média | Mediana | Desvio | p95 | CV |
+  |---|---|---|---|---|---|---|
+  | DE-01 | GET /campanhas/{id}/metricas (30 linhas) | 2,510 | 2,490 | 0,109 | 2,778 | 4,3% |
+  | DE-02 | GET /alertas (500 de 21.280) | 40,080 | 39,967 | 0,613 | 41,655 | 1,5% |
+  | DE-03 | POST /regras (P001 a P035, inativas) | 4,648 | 4,614 | 0,190 | 4,963 | 4,1% |
+  | DE-04 | POST /avaliacoes (10.000 registros) | 3.135,410 | 3.134,511 | 58,127 | 3.230,575 | 1,9% |
+
+  Todos os pedidos com o resultado esperado (30 linhas; 500 itens; 10.000 avaliados,
+  0 gerados, 21.280 já existentes). **Google Ads (à parte, fora da planilha)**:
+  `listar_campanhas`, 30 medidas ok, 3 campanhas em todas; média 1.812,280 ms, mediana
+  1.787,649, desvio 271,452 (CV 15,0%), p95 2.423,349, mín 1.481,097, máx 2.811,816.
+  Nada gravado no banco. **Achados**: (1) no DE-04 o motor (`duracao_motor_ms`) leva
+  419,260 ms na média, **13,4%** do pedido (12,7% na mediana); o resto (cerca de 2,7 s)
+  é leitura das métricas, o `INSERT … ON CONFLICT DO NOTHING` dos 21.280 alertas e a
+  serialização, sem medição separada de cada parte. O gargalo é a persistência, não o
+  motor. (2) Crescimento **aproximadamente linear**: com 10× registros, o tempo foi de
+  9,8× a 16,6×, e o custo por par registro × regra ficou entre 2,43 µs (DM-01) e
+  4,50 µs (DM-07). O DM-07 é o desvio maior (16,6× sobre o DM-04); causa não isolada
+  (hipótese: coletor de lixo com os 100 mil resultados guardados). (3) Medição estável:
+  CV do motor entre 0,16% e 1,27%; dos endpoints, entre 1,5% e 4,3%. **CV do DM-01**:
+  0,0057 no `motor.txt` (amostras em ns) e 0,0058 na coluna H (E ÷ D com as células
+  arredondadas a 3 casas: 0,042 ÷ 7,301 = 0,005753); as outras 12 linhas coincidem.
+  **Conferências**: `grep -l` nas 9 evidências (padrões do `comum.py` + `/home/`,
+  usuário do sistema, hostname, `code=`, `Bearer`, também no XML do `.xlsx`): o único
+  achado é o nome do autor na Leia-me, célula A2, que já está na tabela congelada.
+  sha256: preenchida `a1d262ce…7c9cba55`, congelada `fbbea2ec…25d6653` (inalterada),
+  origem `940cc864…f0cb8b095f`, todos iguais ao registrado. **Limitações (declarar no
+  artigo)**: governor da CPU em `powersave` (frequência não fixada); cliente, servidor e
+  banco (Docker) na mesma máquina; pico de memória do processo de 2.455,8 MiB (2,4 GiB,
+  `ru_maxrss` do processo inteiro, atribuído ao DM-09, que guarda os 100 mil
+  resultados); Google Ads com CV de 15%, porque inclui a rede e a renovação do token;
+  e as já listadas na entrada dos scripts.
 - **Pendências da Fase 3 (15/11)**: (a) ~~mostrar abaixo do limiar o valor que será
   salvo~~ feito na etapa 4 ("Será salvo como", `previaLimiar`); (b) ~~ligar os erros do
   servidor aos campos~~ feito (etapa 3 em `api/campos.ts`, etapa 4 nas telas);

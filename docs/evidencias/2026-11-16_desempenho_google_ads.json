@@ -1,0 +1,262 @@
+{
+  "atencao": "latência da Google Ads API, inclui rede até o Google; não entra na planilha",
+  "intervalo_s": 2.0,
+  "execucoes": [
+    {
+      "n": 1,
+      "medida": false,
+      "latencia_ns": 2603972942,
+      "status": "ok",
+      "campanhas": 3
+    },
+    {
+      "n": 2,
+      "medida": false,
+      "latencia_ns": 2096204266,
+      "status": "ok",
+      "campanhas": 3
+    },
+    {
+      "n": 3,
+      "medida": false,
+      "latencia_ns": 2095278005,
+      "status": "ok",
+      "campanhas": 3
+    },
+    {
+      "n": 4,
+      "medida": false,
+      "latencia_ns": 1685918131,
+      "status": "ok",
+      "campanhas": 3
+    },
+    {
+      "n": 5,
+      "medida": false,
+      "latencia_ns": 1788859764,
+      "status": "ok",
+      "campanhas": 3
+    },
+    {
+      "n": 6,
+      "medida": true,
+      "latencia_ns": 1686317947,
+      "status": "ok",
+      "campanhas": 3
+    },
+    {
+      "n": 7,
+      "medida": true,
+      "latencia_ns": 1481097259,
+      "status": "ok",
+      "campanhas": 3
+    },
+    {
+      "n": 8,
+      "medida": true,
+      "latencia_ns": 1787195665,
+      "status": "ok",
+      "campanhas": 3
+    },
+    {
+      "n": 9,
+      "medida": true,
+      "latencia_ns": 1789933563,
+      "status": "ok",
+      "campanhas": 3
+    },
+    {
+      "n": 10,
+      "medida": true,
+      "latencia_ns": 1684922950,
+      "status": "ok",
+      "campanhas": 3
+    },
+    {
+      "n": 11,
+      "medida": true,
+      "latencia_ns": 1789558340,
+      "status": "ok",
+      "campanhas": 3
+    },
+    {
+      "n": 12,
+      "medida": true,
+      "latencia_ns": 2811815882,
+      "status": "ok",
+      "campanhas": 3
+    },
+    {
+      "n": 13,
+      "medida": true,
+      "latencia_ns": 1583628691,
+      "status": "ok",
+      "campanhas": 3
+    },
+    {
+      "n": 14,
+      "medida": true,
+      "latencia_ns": 1890135650,
+      "status": "ok",
+      "campanhas": 3
+    },
+    {
+      "n": 15,
+      "medida": true,
+      "latencia_ns": 1583947282,
+      "status": "ok",
+      "campanhas": 3
+    },
+    {
+      "n": 16,
+      "medida": true,
+      "latencia_ns": 1993376990,
+      "status": "ok",
+      "campanhas": 3
+    },
+    {
+      "n": 17,
+      "medida": true,
+      "latencia_ns": 1890830215,
+      "status": "ok",
+      "campanhas": 3
+    },
+    {
+      "n": 18,
+      "medida": true,
+      "latencia_ns": 1685886679,
+      "status": "ok",
+      "campanhas": 3
+    },
+    {
+      "n": 19,
+      "medida": true,
+      "latencia_ns": 1890748748,
+      "status": "ok",
+      "campanhas": 3
+    },
+    {
+      "n": 20,
+      "medida": true,
+      "latencia_ns": 1885854050,
+      "status": "ok",
+      "campanhas": 3
+    },
+    {
+      "n": 21,
+      "medida": true,
+      "latencia_ns": 1895552566,
+      "status": "ok",
+      "campanhas": 3
+    },
+    {
+      "n": 22,
+      "medida": true,
+      "latencia_ns": 1993443331,
+      "status": "ok",
+      "campanhas": 3
+    },
+    {
+      "n": 23,
+      "medida": true,
+      "latencia_ns": 1481209809,
+      "status": "ok",
+      "campanhas": 3
+    },
+    {
+      "n": 24,
+      "medida": true,
+      "latencia_ns": 1583666926,
+      "status": "ok",
+      "campanhas": 3
+    },
+    {
+      "n": 25,
+      "medida": true,
+      "latencia_ns": 1788545742,
+      "status": "ok",
+      "campanhas": 3
+    },
+    {
+      "n": 26,
+      "medida": true,
+      "latencia_ns": 1583336886,
+      "status": "ok",
+      "campanhas": 3
+    },
+    {
+      "n": 27,
+      "medida": true,
+      "latencia_ns": 1583902257,
+      "status": "ok",
+      "campanhas": 3
+    },
+    {
+      "n": 28,
+      "medida": true,
+      "latencia_ns": 2423349137,
+      "status": "ok",
+      "campanhas": 3
+    },
+    {
+      "n": 29,
+      "medida": true,
+      "latencia_ns": 1767723148,
+      "status": "ok",
+      "campanhas": 3
+    },
+    {
+      "n": 30,
+      "medida": true,
+      "latencia_ns": 1788102555,
+      "status": "ok",
+      "campanhas": 3
+    },
+    {
+      "n": 31,
+      "medida": true,
+      "latencia_ns": 1890346252,
+      "status": "ok",
+      "campanhas": 3
+    },
+    {
+      "n": 32,
+      "medida": true,
+      "latencia_ns": 2096306785,
+      "status": "ok",
+      "campanhas": 3
+    },
+    {
+      "n": 33,
+      "medida": true,
+      "latencia_ns": 1685576352,
+      "status": "ok",
+      "campanhas": 3
+    },
+    {
+      "n": 34,
+      "medida": true,
+      "latencia_ns": 1687025723,
+      "status": "ok",
+      "campanhas": 3
+    },
+    {
+      "n": 35,
+      "medida": true,
+      "latencia_ns": 1685054378,
+      "status": "ok",
+      "campanhas": 3
+    }
+  ],
+  "estatisticas": {
+    "n": 30,
+    "media_ms": "1812.2797252666666666666666666666666666666666666667",
+    "mediana_ms": "1787.64911",
+    "desvio_ms": "271.45242327178193228717408287100261082815934169822",
+    "p95_ms": "2423.349137",
+    "minimo_ms": "1481.097259",
+    "maximo_ms": "2811.815882"
+  },
+  "interrompido_por": null,
+  "gerado_em": "2026-11-16T20:37:15-03:00"
+}

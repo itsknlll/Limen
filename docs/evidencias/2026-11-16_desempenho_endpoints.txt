@@ -1,0 +1,62 @@
+Desempenho — endpoints (DE)
+===========================
+Script: execucao/desempenho/medir_endpoints.py
+Data e hora: 2026-11-16T20:26:53-03:00 (America/Fortaleza) = 2026-11-16T23:26:53+00:00
+Commit do código (git rev-parse HEAD): 970049d31bb48e56665f50d365ddd1a15a44826a
+Código fora do commit (git status, fora de docs/evidencias/): 0
+Evidências ainda não commitadas (docs/evidencias/):
+  ?? docs/evidencias/2026-11-16_desempenho_motor.json
+  ?? docs/evidencias/2026-11-16_desempenho_motor.txt
+  ?? docs/evidencias/2026-11-16_desempenho_preparar.txt
+Planilha: docs/avaliacao/Tabela_limiares_TCC_motor_de_regras.xlsx
+  sha256 fbbea2ec0298dfcf20e0d6cba3a364611740d7e2efd86e56d3dad010025d6653 (igual ao do commit 29de91d)
+Banco: limen_desempenho
+Dados: gerar_metricas, semente 20261116, 2024-01-01 a 2026-09-26 (1000 dias por campanha), IDs de campanha fictícios a partir de 900001
+
+Ambiente:
+  CPU: AMD Ryzen 5 5625U with Radeon Graphics
+  Núcleos lógicos: 12
+  Memória total: 15.0 GiB
+  Governor da CPU: powersave
+  Energia: na tomada
+  Carga média no início (1, 5, 15 min): 0.80, 0.92, 0.89
+  SO: Zorin OS 18.1
+  Kernel: 7.0.0-43-generic
+  Python: 3.12.3
+  Pacote fastapi: 0.162.5
+  Pacote starlette: 1.10.0
+  Pacote sqlalchemy: 2.1.8
+  Pacote pydantic: 2.14.3
+  Pacote psycopg: 3.3.9
+  Pacote uvicorn: 0.54.0
+  Pacote httpx: 0.28.1
+  Pacote google-ads: 35.1.0
+  Pacote openpyxl: 3.1.5
+  Servidor do banco (SHOW server_version, no Docker): 16.15 (Debian 16.15-1.pgdg13+2)
+Servidor: uvicorn app.main:app --host 127.0.0.1 --port 8091 --workers 1 --log-level warning --no-access-log (sem --reload; logs descartados)
+Cliente: httpx 0.28.1, trust_env=False, só 127.0.0.1:8091, timeout 120 s, uma conexão mantida; sessão por /dev/login fora do cronômetro (cookie e resposta não registrados)
+Plano (planilha): 5 aquecimentos e 30 repetições por endpoint
+Medido: só client.request(...), do envio até o corpo lido.
+
+Ordem de execução:
+  1. DE-01  2026-11-16T20:26:54-03:00 → 2026-11-16T20:26:54-03:00
+  2. DE-02  2026-11-16T20:26:54-03:00 → 2026-11-16T20:26:56-03:00
+  3. DE-03  2026-11-16T20:26:56-03:00 → 2026-11-16T20:26:56-03:00
+  4. DE-04  2026-11-16T20:26:56-03:00 → 2026-11-16T20:28:45-03:00
+
+ID     Endpoint                       Média(ms) Mediana(ms) Desvio(ms)  p95(ms)  Mín(ms)  Máx(ms) Falhas
+DE-01  GET /campanhas/{id}/metricas       2.510     2.490     0.109     2.778     2.367     2.821  0
+DE-02  GET /alertas                      40.080    39.967     0.613    41.655    39.478    42.493  0
+DE-03  POST /regras                       4.648     4.614     0.190     4.963     4.395     5.189  0
+DE-04  POST /avaliacoes                3135.410  3134.511    58.127  3230.575  3058.961  3260.414  0
+
+DE-01: campanha id 1 (900001), 2026-08-28 a 2026-09-26, esperado 30 linhas. Falhas: 0 medidas, 0 no aquecimento; itens devolvidos em todas as execuções: [30]
+DE-02: sem filtros, limite padrão 500: esperado 500 de 21280 alertas. Falhas: 0 medidas, 0 no aquecimento; itens devolvidos em todas as execuções: [500]
+DE-03: P001 a P035, inativas (não mudam as 10 regras ativas). Falhas: 0 medidas, 0 no aquecimento
+DE-04: corpo vazio: esperado 10000 avaliados, 0 rejeitados, 0 gerados, 21280 já existentes. Falhas: 0 medidas, 0 no aquecimento
+  Nota: o DE-02 devolve sempre 500 de 21280 alertas por causa do limite padrão do GET /alertas; o tempo é o de listar 500, não 21280.
+  DE-03 criou 35 regras inativas (P001 a P035); ativas depois: R1, R10, R2, R3, R4, R5, R6, R7, R8, R9
+  DE-04, parte do motor (duracao_motor_ms da resposta, mesmas 30 repetições): média 419.260 ms, mediana 397.806 ms, p95 464.373 ms; o resto do pedido é leitura no banco, INSERT ... ON CONFLICT e serialização.
+
+Encerramento: uvicorn saiu com -15; porta 8091 livre depois: True
+Resultado: sem falhas

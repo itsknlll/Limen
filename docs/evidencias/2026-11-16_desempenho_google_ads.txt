@@ -1,0 +1,87 @@
+Desempenho — latência da Google Ads API (à parte)
+=================================================
+Script: execucao/desempenho/medir_google_ads.py
+Data e hora: 2026-11-16T20:35:02-03:00 (America/Fortaleza) = 2026-11-16T23:35:02+00:00
+Commit do código (git rev-parse HEAD): 970049d31bb48e56665f50d365ddd1a15a44826a
+Código fora do commit (git status, fora de docs/evidencias/): 0
+Evidências ainda não commitadas (docs/evidencias/):
+  ?? docs/evidencias/2026-11-16_desempenho_endpoints.json
+  ?? docs/evidencias/2026-11-16_desempenho_endpoints.txt
+  ?? docs/evidencias/2026-11-16_desempenho_motor.json
+  ?? docs/evidencias/2026-11-16_desempenho_motor.txt
+  ?? docs/evidencias/2026-11-16_desempenho_preparar.txt
+Planilha: docs/avaliacao/Tabela_limiares_TCC_motor_de_regras.xlsx
+  sha256 fbbea2ec0298dfcf20e0d6cba3a364611740d7e2efd86e56d3dad010025d6653 (igual ao do commit 29de91d)
+Banco: limen_desempenho
+Dados: gerar_metricas, semente 20261116, 2024-01-01 a 2026-09-26 (1000 dias por campanha), IDs de campanha fictícios a partir de 900001
+
+Ambiente:
+  CPU: AMD Ryzen 5 5625U with Radeon Graphics
+  Núcleos lógicos: 12
+  Memória total: 15.0 GiB
+  Governor da CPU: powersave
+  Energia: na tomada
+  Carga média no início (1, 5, 15 min): 0.13, 0.49, 0.73
+  SO: Zorin OS 18.1
+  Kernel: 7.0.0-43-generic
+  Python: 3.12.3
+  Pacote fastapi: 0.162.5
+  Pacote starlette: 1.10.0
+  Pacote sqlalchemy: 2.1.8
+  Pacote pydantic: 2.14.3
+  Pacote psycopg: 3.3.9
+  Pacote uvicorn: 0.54.0
+  Pacote httpx: 0.28.1
+  Pacote google-ads: 35.1.0
+  Pacote openpyxl: 3.1.5
+  Servidor do banco (SHOW server_version, no Docker): 16.15 (Debian 16.15-1.pgdg13+2)
+
+ATENÇÃO: latência da Google Ads API medida à parte (A6 da aba Desempenho). Inclui a rede até o
+Google, a renovação do access token (um GoogleAdsClient por chamada, como no app) e a busca GAQL.
+NÃO é o tempo do Limen e NÃO entra na planilha.
+
+Chamada: porta.listar_campanhas (obter_porta_google_ads, a do app), só leitura; conta de teste
+(IDs não registrados); intervalo de 2.0 s entre chamadas; sem repetição automática.
+Plano: 5 aquecimentos + 30 medidas (os mesmos números da planilha)
+
+  n  tipo        latência(ms)  status                         campanhas
+  1  aquec.         2603.973  ok                             3
+  2  aquec.         2096.204  ok                             3
+  3  aquec.         2095.278  ok                             3
+  4  aquec.         1685.918  ok                             3
+  5  aquec.         1788.860  ok                             3
+  6  medida         1686.318  ok                             3
+  7  medida         1481.097  ok                             3
+  8  medida         1787.196  ok                             3
+  9  medida         1789.934  ok                             3
+ 10  medida         1684.923  ok                             3
+ 11  medida         1789.558  ok                             3
+ 12  medida         2811.816  ok                             3
+ 13  medida         1583.629  ok                             3
+ 14  medida         1890.136  ok                             3
+ 15  medida         1583.947  ok                             3
+ 16  medida         1993.377  ok                             3
+ 17  medida         1890.830  ok                             3
+ 18  medida         1685.887  ok                             3
+ 19  medida         1890.749  ok                             3
+ 20  medida         1885.854  ok                             3
+ 21  medida         1895.553  ok                             3
+ 22  medida         1993.443  ok                             3
+ 23  medida         1481.210  ok                             3
+ 24  medida         1583.667  ok                             3
+ 25  medida         1788.546  ok                             3
+ 26  medida         1583.337  ok                             3
+ 27  medida         1583.902  ok                             3
+ 28  medida         2423.349  ok                             3
+ 29  medida         1767.723  ok                             3
+ 30  medida         1788.103  ok                             3
+ 31  medida         1890.346  ok                             3
+ 32  medida         2096.307  ok                             3
+ 33  medida         1685.576  ok                             3
+ 34  medida         1687.026  ok                             3
+ 35  medida         1685.054  ok                             3
+
+Medidas ok: 30 · média 1812.280 ms · mediana 1787.649 ms · desvio 271.452 ms · p95 2423.349 ms · mín 1481.097 ms · máx 2811.816 ms
+Campanhas devolvidas (valores distintos): [3]
+Falhas: 0
+Banco: nada gravado (sem sincronizar).

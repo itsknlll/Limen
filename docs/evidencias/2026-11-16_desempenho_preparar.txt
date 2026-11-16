@@ -1,0 +1,50 @@
+Desempenho — preparação do banco
+================================
+Script: execucao/desempenho/preparar.py
+Data e hora: 2026-11-16T20:06:28-03:00 (America/Fortaleza) = 2026-11-16T23:06:28+00:00
+Commit do código (git rev-parse HEAD): 970049d31bb48e56665f50d365ddd1a15a44826a
+Código fora do commit (git status, fora de docs/evidencias/): 0
+Evidências ainda não commitadas (docs/evidencias/): nenhuma
+Planilha: docs/avaliacao/Tabela_limiares_TCC_motor_de_regras.xlsx
+  sha256 fbbea2ec0298dfcf20e0d6cba3a364611740d7e2efd86e56d3dad010025d6653 (igual ao do commit 29de91d)
+Banco: limen_desempenho
+Dados: gerar_metricas, semente 20261116, 2024-01-01 a 2026-09-26 (1000 dias por campanha), IDs de campanha fictícios a partir de 900001
+
+Banco limen_desempenho criado (não existia).
+Migrações aplicadas: alembic_version = 0003 (head).
+Servidor do banco (SHOW server_version): 16.15 (Debian 16.15-1.pgdg13+2)
+Usuário da base: id 1 (o do /dev/login; e-mail não registrado aqui)
+
+Regras ativas (relidas do banco):
+   R1 ctr < 1.00  → igual (planilha)
+   R2 cpc > 5.00  → igual (planilha)
+   R3 custo > 100.00 E conversoes == 0  → igual (planilha)
+   R4 impressoes < 4000  → igual (definicoes_regras)
+   R5 cliques <= 100 E custo >= 300.00  → igual (definicoes_regras)
+   R6 custo > 100.00 E conversoes < 3 E ctr > 5.0  → igual (definicoes_regras)
+   R7 conversoes >= 1  → igual (definicoes_regras)
+   R8 ctr < 1.0 E cpc > 2.00  → igual (definicoes_regras)
+   R9 cpc <= 1.00 E impressoes >= 6500 E cliques <= 400  → igual (definicoes_regras)
+  R10 impressoes > 4000  → igual (definicoes_regras)
+
+Conta sintética: id 1, customer_id 0000000001 (fictício)
+Campanhas: 10 ENABLED, google_campaign_id 900001 a 900010 (fictícios), ids 1 a 10
+Métricas: 10000 no banco (10000 lidas por campanha); campanhas iguais ao gerador linha a linha: 10 de 10; período 2024-01-01 a 2026-09-26; origem sintetica, lote desempenho-s20261116
+sha256 dos dados (base.sha256_dados(10000)): a18a636c6ff4a92152bbe54a17566d36f8bd9cb378f95224eebf1b290bd7305d
+
+Avaliação NÃO medida (executar_avaliacao, padrões do POST /avaliacoes vazio):
+  id 1: 10000 avaliados, 0 rejeitados, 21280 alertas gerados, 0 já existentes
+  Esperado pelo motor puro (sem banco): 21280 disparos
+     R1: motor    30 · alertas no banco    30
+     R2: motor    30 · alertas no banco    30
+     R3: motor    30 · alertas no banco    30
+     R4: motor  1421 · alertas no banco  1421
+     R5: motor     3 · alertas no banco     3
+     R6: motor   505 · alertas no banco   505
+     R7: motor  9970 · alertas no banco  9970
+     R8: motor    13 · alertas no banco    13
+     R9: motor   700 · alertas no banco   700
+    R10: motor  8578 · alertas no banco  8578
+  Alertas no banco: 21280. O DE-02 (GET /alertas, limite padrão 500) devolve 500 de 21280.
+
+Resultado: base pronta (código 0)

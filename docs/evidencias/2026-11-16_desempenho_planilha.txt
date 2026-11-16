@@ -1,0 +1,46 @@
+Desempenho — planilha preenchida
+================================
+Script: execucao/desempenho/preencher_planilha.py
+Data e hora: 2026-11-16T20:41:37-03:00 (America/Fortaleza) = 2026-11-16T23:41:37+00:00
+Commit do código (git rev-parse HEAD): 970049d31bb48e56665f50d365ddd1a15a44826a
+Código fora do commit (git status, fora de docs/evidencias/): 0
+Evidências ainda não commitadas (docs/evidencias/):
+  ?? docs/evidencias/2026-11-16_desempenho_endpoints.json
+  ?? docs/evidencias/2026-11-16_desempenho_endpoints.txt
+  ?? docs/evidencias/2026-11-16_desempenho_google_ads.json
+  ?? docs/evidencias/2026-11-16_desempenho_google_ads.txt
+  ?? docs/evidencias/2026-11-16_desempenho_motor.json
+  ?? docs/evidencias/2026-11-16_desempenho_motor.txt
+  ?? docs/evidencias/2026-11-16_desempenho_preparar.txt
+Planilha: docs/avaliacao/Tabela_limiares_TCC_motor_de_regras.xlsx
+  sha256 fbbea2ec0298dfcf20e0d6cba3a364611740d7e2efd86e56d3dad010025d6653 (igual ao do commit 29de91d)
+Banco: não usado (lê só planilhas e evidências)
+Dados: gerar_metricas, semente 20261116, 2024-01-01 a 2026-09-26 (1000 dias por campanha), IDs de campanha fictícios a partir de 900001
+
+Medições lidas: motor 2026-11-16, endpoints 2026-11-16; commit 970049d31bb48e56665f50d365ddd1a15a44826a (os dois)
+Origem: 2026-11-16_execucao_tabela_preenchida.xlsx · sha256 940cc864eaedcb45fa6bcc3684f0f382b0e51aa761c181783aa657f0cb8b095f (o registrado em 2026-11-16_execucao_planilha.txt; inalterado)
+Planilha congelada: sha256 fbbea2ec0298dfcf20e0d6cba3a364611740d7e2efd86e56d3dad010025d6653 (inalterada)
+Cópia nova: 2026-11-16_desempenho_tabela_preenchida.xlsx · sha256 a1d262ce4725675bd1e9c5692991321aa112ae0c0b5ed2cc060530f67c9cba55
+Células escritas: 66 (B5 + D, E, F, G, I × 13 linhas); comparadas fora delas: 1064, todas iguais à origem
+
+Estatística recalculada das amostras em ns (igual à registrada no .json):
+Linha ID     Média(D)  Desvio(E)  Mín(F)    Máx(G)    Falhas(I)  CV esperado(H)  Mediana   p95
+   10 DM-01      7.301      0.042     7.208     7.419         0          0.0058     7.298    7.376
+   11 DM-02     24.499      0.311    24.054    25.390         0          0.0127    24.435   25.220
+   12 DM-03    154.313      0.969   153.181   158.372         0          0.0063   154.123  155.542
+   13 DM-04     81.162      0.737    80.469    84.530         0          0.0091    80.984   82.321
+   14 DM-05    324.953      1.877   322.579   331.416         0          0.0058   324.453  328.829
+   15 DM-06   1932.343      9.282  1916.323  1948.938         0          0.0048  1933.707 1947.817
+   16 DM-07   1350.585      3.282  1345.100  1360.614         0          0.0024  1350.061 1357.184
+   17 DM-08   4065.014      6.352  4053.010  4076.359         0          0.0016  4063.890 4075.272
+   18 DM-09  18857.019     40.291 18765.169 18932.646         0          0.0021  18858.836 18917.606
+   22 DE-01      2.510      0.109     2.367     2.821         0          0.0434     2.490    2.778
+   23 DE-02     40.080      0.613    39.478    42.493         0          0.0153    39.967   41.655
+   24 DE-03      4.648      0.190     4.395     5.189         0          0.0409     4.614    4.963
+   25 DE-04   3135.410     58.127  3058.961  3260.414         0          0.0185  3134.511 3230.575
+
+B5: CPU AMD Ryzen 5 5625U with Radeon Graphics (12 núcleos lógicos), 15.0 GiB, Zorin OS 18.1 (kernel 7.0.0-43-generic), Python 3.12.3, FastAPI 0.162.5, SQLAlchemy 2.1.8, banco 16.15 (Debian 16.15-1.pgdg13+2); energia na tomada, governor powersave; cliente, servidor e banco na mesma máquina
+
+Coluna H: fórmula da planilha, não escrita. Abrir a cópia no LibreOffice, Dados → Calcular →
+Recalcular incondicionalmente (Ctrl+Shift+F9), conferir com o 'CV esperado' acima e NÃO salvar
+por cima (o sha256 acima é o da cópia gerada).
