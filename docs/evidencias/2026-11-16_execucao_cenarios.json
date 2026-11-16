@@ -1,0 +1,716 @@
+{
+  "avaliacao": {
+    "id": 1,
+    "iniciada_em": "2026-11-16T12:20:07.051645Z",
+    "concluida_em": "2026-11-16T12:20:07.060182Z",
+    "registros_avaliados": 20,
+    "registros_rejeitados": 0,
+    "alertas_gerados": 13,
+    "alertas_ja_existentes": 0,
+    "duracao_motor_ms": "0.205",
+    "incluir_pausadas": false,
+    "campanha_id": 1,
+    "inicio": null,
+    "fim": null
+  },
+  "casos": [
+    {
+      "id": "RA-01",
+      "descricao": "Condição normal, nenhuma regra violada",
+      "dia": "2026-11-01",
+      "ingestao": "201",
+      "esperado": {
+        "registro": "Aceito",
+        "R1": "Não",
+        "R2": "Não",
+        "R3": "Não"
+      },
+      "observado": {
+        "registro": "Aceito",
+        "R1": "Não",
+        "R2": "Não",
+        "R3": "Não"
+      },
+      "motor": {
+        "registro": "Aceito",
+        "R1": "Não",
+        "R2": "Não",
+        "R3": "Não"
+      },
+      "correto": true,
+      "coerente": true,
+      "indevidos": 0,
+      "omitidos": 0,
+      "indevidos_motor": 0,
+      "omitidos_motor": 0
+    },
+    {
+      "id": "RA-02",
+      "descricao": "CTR abaixo do limite (0,50%)",
+      "dia": "2026-11-02",
+      "ingestao": "201",
+      "esperado": {
+        "registro": "Aceito",
+        "R1": "Sim",
+        "R2": "Não",
+        "R3": "Não"
+      },
+      "observado": {
+        "registro": "Aceito",
+        "R1": "Sim",
+        "R2": "Não",
+        "R3": "Não"
+      },
+      "motor": {
+        "registro": "Aceito",
+        "R1": "Sim",
+        "R2": "Não",
+        "R3": "Não"
+      },
+      "correto": true,
+      "coerente": true,
+      "indevidos": 0,
+      "omitidos": 0,
+      "indevidos_motor": 0,
+      "omitidos_motor": 0
+    },
+    {
+      "id": "RA-03",
+      "descricao": "CPC acima do limite (R$ 8,00)",
+      "dia": "2026-11-03",
+      "ingestao": "201",
+      "esperado": {
+        "registro": "Aceito",
+        "R1": "Não",
+        "R2": "Sim",
+        "R3": "Não"
+      },
+      "observado": {
+        "registro": "Aceito",
+        "R1": "Não",
+        "R2": "Sim",
+        "R3": "Não"
+      },
+      "motor": {
+        "registro": "Aceito",
+        "R1": "Não",
+        "R2": "Sim",
+        "R3": "Não"
+      },
+      "correto": true,
+      "coerente": true,
+      "indevidos": 0,
+      "omitidos": 0,
+      "indevidos_motor": 0,
+      "omitidos_motor": 0
+    },
+    {
+      "id": "RA-04",
+      "descricao": "Custo acima do limite com zero conversões",
+      "dia": "2026-11-04",
+      "ingestao": "201",
+      "esperado": {
+        "registro": "Aceito",
+        "R1": "Não",
+        "R2": "Não",
+        "R3": "Sim"
+      },
+      "observado": {
+        "registro": "Aceito",
+        "R1": "Não",
+        "R2": "Não",
+        "R3": "Sim"
+      },
+      "motor": {
+        "registro": "Aceito",
+        "R1": "Não",
+        "R2": "Não",
+        "R3": "Sim"
+      },
+      "correto": true,
+      "coerente": true,
+      "indevidos": 0,
+      "omitidos": 0,
+      "indevidos_motor": 0,
+      "omitidos_motor": 0
+    },
+    {
+      "id": "RA-05",
+      "descricao": "Três regras violadas no mesmo registro",
+      "dia": "2026-11-05",
+      "ingestao": "201",
+      "esperado": {
+        "registro": "Aceito",
+        "R1": "Sim",
+        "R2": "Sim",
+        "R3": "Sim"
+      },
+      "observado": {
+        "registro": "Aceito",
+        "R1": "Sim",
+        "R2": "Sim",
+        "R3": "Sim"
+      },
+      "motor": {
+        "registro": "Aceito",
+        "R1": "Sim",
+        "R2": "Sim",
+        "R3": "Sim"
+      },
+      "correto": true,
+      "coerente": true,
+      "indevidos": 0,
+      "omitidos": 0,
+      "indevidos_motor": 0,
+      "omitidos_motor": 0
+    },
+    {
+      "id": "RA-06",
+      "descricao": "Custo alto, mas com conversões (R3 não dispara)",
+      "dia": "2026-11-06",
+      "ingestao": "201",
+      "esperado": {
+        "registro": "Aceito",
+        "R1": "Não",
+        "R2": "Não",
+        "R3": "Não"
+      },
+      "observado": {
+        "registro": "Aceito",
+        "R1": "Não",
+        "R2": "Não",
+        "R3": "Não"
+      },
+      "motor": {
+        "registro": "Aceito",
+        "R1": "Não",
+        "R2": "Não",
+        "R3": "Não"
+      },
+      "correto": true,
+      "coerente": true,
+      "indevidos": 0,
+      "omitidos": 0,
+      "indevidos_motor": 0,
+      "omitidos_motor": 0
+    },
+    {
+      "id": "FM-01",
+      "descricao": "CTR exatamente igual ao limite (1,00%)",
+      "dia": "2026-11-07",
+      "ingestao": "201",
+      "esperado": {
+        "registro": "Aceito",
+        "R1": "Não",
+        "R2": "Não",
+        "R3": "Não"
+      },
+      "observado": {
+        "registro": "Aceito",
+        "R1": "Não",
+        "R2": "Não",
+        "R3": "Não"
+      },
+      "motor": {
+        "registro": "Aceito",
+        "R1": "Não",
+        "R2": "Não",
+        "R3": "Não"
+      },
+      "correto": true,
+      "coerente": true,
+      "indevidos": 0,
+      "omitidos": 0,
+      "indevidos_motor": 0,
+      "omitidos_motor": 0
+    },
+    {
+      "id": "FM-02",
+      "descricao": "CTR logo abaixo do limite (0,99%)",
+      "dia": "2026-11-08",
+      "ingestao": "201",
+      "esperado": {
+        "registro": "Aceito",
+        "R1": "Sim",
+        "R2": "Não",
+        "R3": "Não"
+      },
+      "observado": {
+        "registro": "Aceito",
+        "R1": "Sim",
+        "R2": "Não",
+        "R3": "Não"
+      },
+      "motor": {
+        "registro": "Aceito",
+        "R1": "Sim",
+        "R2": "Não",
+        "R3": "Não"
+      },
+      "correto": true,
+      "coerente": true,
+      "indevidos": 0,
+      "omitidos": 0,
+      "indevidos_motor": 0,
+      "omitidos_motor": 0
+    },
+    {
+      "id": "FM-03",
+      "descricao": "CTR logo acima do limite (1,01%)",
+      "dia": "2026-11-09",
+      "ingestao": "201",
+      "esperado": {
+        "registro": "Aceito",
+        "R1": "Não",
+        "R2": "Não",
+        "R3": "Não"
+      },
+      "observado": {
+        "registro": "Aceito",
+        "R1": "Não",
+        "R2": "Não",
+        "R3": "Não"
+      },
+      "motor": {
+        "registro": "Aceito",
+        "R1": "Não",
+        "R2": "Não",
+        "R3": "Não"
+      },
+      "correto": true,
+      "coerente": true,
+      "indevidos": 0,
+      "omitidos": 0,
+      "indevidos_motor": 0,
+      "omitidos_motor": 0
+    },
+    {
+      "id": "FM-04",
+      "descricao": "CPC exatamente igual ao limite (R$ 5,00)",
+      "dia": "2026-11-10",
+      "ingestao": "201",
+      "esperado": {
+        "registro": "Aceito",
+        "R1": "Não",
+        "R2": "Não",
+        "R3": "Não"
+      },
+      "observado": {
+        "registro": "Aceito",
+        "R1": "Não",
+        "R2": "Não",
+        "R3": "Não"
+      },
+      "motor": {
+        "registro": "Aceito",
+        "R1": "Não",
+        "R2": "Não",
+        "R3": "Não"
+      },
+      "correto": true,
+      "coerente": true,
+      "indevidos": 0,
+      "omitidos": 0,
+      "indevidos_motor": 0,
+      "omitidos_motor": 0
+    },
+    {
+      "id": "FM-05",
+      "descricao": "CPC logo acima do limite (R$ 5,01)",
+      "dia": "2026-11-11",
+      "ingestao": "201",
+      "esperado": {
+        "registro": "Aceito",
+        "R1": "Não",
+        "R2": "Sim",
+        "R3": "Não"
+      },
+      "observado": {
+        "registro": "Aceito",
+        "R1": "Não",
+        "R2": "Sim",
+        "R3": "Não"
+      },
+      "motor": {
+        "registro": "Aceito",
+        "R1": "Não",
+        "R2": "Sim",
+        "R3": "Não"
+      },
+      "correto": true,
+      "coerente": true,
+      "indevidos": 0,
+      "omitidos": 0,
+      "indevidos_motor": 0,
+      "omitidos_motor": 0
+    },
+    {
+      "id": "FM-06",
+      "descricao": "CPC logo abaixo do limite (R$ 4,99)",
+      "dia": "2026-11-12",
+      "ingestao": "201",
+      "esperado": {
+        "registro": "Aceito",
+        "R1": "Não",
+        "R2": "Não",
+        "R3": "Não"
+      },
+      "observado": {
+        "registro": "Aceito",
+        "R1": "Não",
+        "R2": "Não",
+        "R3": "Não"
+      },
+      "motor": {
+        "registro": "Aceito",
+        "R1": "Não",
+        "R2": "Não",
+        "R3": "Não"
+      },
+      "correto": true,
+      "coerente": true,
+      "indevidos": 0,
+      "omitidos": 0,
+      "indevidos_motor": 0,
+      "omitidos_motor": 0
+    },
+    {
+      "id": "FM-07",
+      "descricao": "Custo exatamente igual ao limite com zero conversões",
+      "dia": "2026-11-13",
+      "ingestao": "201",
+      "esperado": {
+        "registro": "Aceito",
+        "R1": "Não",
+        "R2": "Não",
+        "R3": "Não"
+      },
+      "observado": {
+        "registro": "Aceito",
+        "R1": "Não",
+        "R2": "Não",
+        "R3": "Não"
+      },
+      "motor": {
+        "registro": "Aceito",
+        "R1": "Não",
+        "R2": "Não",
+        "R3": "Não"
+      },
+      "correto": true,
+      "coerente": true,
+      "indevidos": 0,
+      "omitidos": 0,
+      "indevidos_motor": 0,
+      "omitidos_motor": 0
+    },
+    {
+      "id": "FM-08",
+      "descricao": "Custo logo acima do limite (R$ 100,01) com zero conversões",
+      "dia": "2026-11-14",
+      "ingestao": "201",
+      "esperado": {
+        "registro": "Aceito",
+        "R1": "Não",
+        "R2": "Não",
+        "R3": "Sim"
+      },
+      "observado": {
+        "registro": "Aceito",
+        "R1": "Não",
+        "R2": "Não",
+        "R3": "Sim"
+      },
+      "motor": {
+        "registro": "Aceito",
+        "R1": "Não",
+        "R2": "Não",
+        "R3": "Sim"
+      },
+      "correto": true,
+      "coerente": true,
+      "indevidos": 0,
+      "omitidos": 0,
+      "indevidos_motor": 0,
+      "omitidos_motor": 0
+    },
+    {
+      "id": "FM-09",
+      "descricao": "Campanha sem veiculação: tudo zero",
+      "dia": "2026-11-15",
+      "ingestao": "201",
+      "esperado": {
+        "registro": "Aceito",
+        "R1": "N/A",
+        "R2": "N/A",
+        "R3": "Não"
+      },
+      "observado": {
+        "registro": "Aceito",
+        "R1": "N/A",
+        "R2": "N/A",
+        "R3": "Não"
+      },
+      "motor": {
+        "registro": "Aceito",
+        "R1": "N/A",
+        "R2": "N/A",
+        "R3": "Não"
+      },
+      "correto": true,
+      "coerente": true,
+      "indevidos": 0,
+      "omitidos": 0,
+      "indevidos_motor": 0,
+      "omitidos_motor": 0
+    },
+    {
+      "id": "FM-10",
+      "descricao": "Impressões sem cliques (CTR = 0%, CPC indefinido)",
+      "dia": "2026-11-16",
+      "ingestao": "201",
+      "esperado": {
+        "registro": "Aceito",
+        "R1": "Sim",
+        "R2": "N/A",
+        "R3": "Não"
+      },
+      "observado": {
+        "registro": "Aceito",
+        "R1": "Sim",
+        "R2": "N/A",
+        "R3": "Não"
+      },
+      "motor": {
+        "registro": "Aceito",
+        "R1": "Sim",
+        "R2": "N/A",
+        "R3": "Não"
+      },
+      "correto": true,
+      "coerente": true,
+      "indevidos": 0,
+      "omitidos": 0,
+      "indevidos_motor": 0,
+      "omitidos_motor": 0
+    },
+    {
+      "id": "FM-11",
+      "descricao": "Custo sem cliques (cobrança por impressão)",
+      "dia": "2026-11-17",
+      "ingestao": "201",
+      "esperado": {
+        "registro": "Aceito",
+        "R1": "Sim",
+        "R2": "N/A",
+        "R3": "Sim"
+      },
+      "observado": {
+        "registro": "Aceito",
+        "R1": "Sim",
+        "R2": "N/A",
+        "R3": "Sim"
+      },
+      "motor": {
+        "registro": "Aceito",
+        "R1": "Sim",
+        "R2": "N/A",
+        "R3": "Sim"
+      },
+      "correto": true,
+      "coerente": true,
+      "indevidos": 0,
+      "omitidos": 0,
+      "indevidos_motor": 0,
+      "omitidos_motor": 0
+    },
+    {
+      "id": "FM-12",
+      "descricao": "Conversões ausentes (diferente de zero)",
+      "dia": "2026-11-18",
+      "ingestao": "201",
+      "esperado": {
+        "registro": "Aceito",
+        "R1": "Não",
+        "R2": "Não",
+        "R3": "N/A"
+      },
+      "observado": {
+        "registro": "Aceito",
+        "R1": "Não",
+        "R2": "Não",
+        "R3": "N/A"
+      },
+      "motor": {
+        "registro": "Aceito",
+        "R1": "Não",
+        "R2": "Não",
+        "R3": "N/A"
+      },
+      "correto": true,
+      "coerente": true,
+      "indevidos": 0,
+      "omitidos": 0,
+      "indevidos_motor": 0,
+      "omitidos_motor": 0
+    },
+    {
+      "id": "FM-13",
+      "descricao": "Impressões ausentes",
+      "dia": "2026-11-19",
+      "ingestao": "201",
+      "esperado": {
+        "registro": "Aceito",
+        "R1": "N/A",
+        "R2": "Não",
+        "R3": "Não"
+      },
+      "observado": {
+        "registro": "Aceito",
+        "R1": "N/A",
+        "R2": "Não",
+        "R3": "Não"
+      },
+      "motor": {
+        "registro": "Aceito",
+        "R1": "N/A",
+        "R2": "Não",
+        "R3": "Não"
+      },
+      "correto": true,
+      "coerente": true,
+      "indevidos": 0,
+      "omitidos": 0,
+      "indevidos_motor": 0,
+      "omitidos_motor": 0
+    },
+    {
+      "id": "FM-14",
+      "descricao": "Cliques ausentes, custo alto, zero conversões",
+      "dia": "2026-11-20",
+      "ingestao": "201",
+      "esperado": {
+        "registro": "Aceito",
+        "R1": "N/A",
+        "R2": "N/A",
+        "R3": "Sim"
+      },
+      "observado": {
+        "registro": "Aceito",
+        "R1": "N/A",
+        "R2": "N/A",
+        "R3": "Sim"
+      },
+      "motor": {
+        "registro": "Aceito",
+        "R1": "N/A",
+        "R2": "N/A",
+        "R3": "Sim"
+      },
+      "correto": true,
+      "coerente": true,
+      "indevidos": 0,
+      "omitidos": 0,
+      "indevidos_motor": 0,
+      "omitidos_motor": 0
+    },
+    {
+      "id": "FM-15",
+      "descricao": "Inválido: cliques maiores que impressões",
+      "dia": "2026-11-21",
+      "ingestao": "400 validacao",
+      "esperado": {
+        "registro": "Rejeitado",
+        "R1": "N/A",
+        "R2": "N/A",
+        "R3": "N/A"
+      },
+      "observado": {
+        "registro": "Rejeitado",
+        "R1": "N/A",
+        "R2": "N/A",
+        "R3": "N/A"
+      },
+      "motor": {
+        "registro": "Rejeitado",
+        "R1": "N/A",
+        "R2": "N/A",
+        "R3": "N/A"
+      },
+      "correto": true,
+      "coerente": true,
+      "indevidos": 0,
+      "omitidos": 0,
+      "indevidos_motor": 0,
+      "omitidos_motor": 0
+    },
+    {
+      "id": "FM-16",
+      "descricao": "Inválido: custo negativo",
+      "dia": "2026-11-22",
+      "ingestao": "400 validacao",
+      "esperado": {
+        "registro": "Rejeitado",
+        "R1": "N/A",
+        "R2": "N/A",
+        "R3": "N/A"
+      },
+      "observado": {
+        "registro": "Rejeitado",
+        "R1": "N/A",
+        "R2": "N/A",
+        "R3": "N/A"
+      },
+      "motor": {
+        "registro": "Rejeitado",
+        "R1": "N/A",
+        "R2": "N/A",
+        "R3": "N/A"
+      },
+      "correto": true,
+      "coerente": true,
+      "indevidos": 0,
+      "omitidos": 0,
+      "indevidos_motor": 0,
+      "omitidos_motor": 0
+    },
+    {
+      "id": "FM-17",
+      "descricao": "Inválido: conversões negativas",
+      "dia": "2026-11-23",
+      "ingestao": "400 validacao",
+      "esperado": {
+        "registro": "Rejeitado",
+        "R1": "N/A",
+        "R2": "N/A",
+        "R3": "N/A"
+      },
+      "observado": {
+        "registro": "Rejeitado",
+        "R1": "N/A",
+        "R2": "N/A",
+        "R3": "N/A"
+      },
+      "motor": {
+        "registro": "Rejeitado",
+        "R1": "N/A",
+        "R2": "N/A",
+        "R3": "N/A"
+      },
+      "correto": true,
+      "coerente": true,
+      "indevidos": 0,
+      "omitidos": 0,
+      "indevidos_motor": 0,
+      "omitidos_motor": 0
+    }
+  ],
+  "totais": {
+    "indevidos": 0,
+    "omitidos": 0,
+    "indevidos_motor": 0,
+    "omitidos_motor": 0
+  },
+  "corretos": 23,
+  "executados": 23
+}

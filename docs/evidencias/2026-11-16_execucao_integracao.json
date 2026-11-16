@@ -1,0 +1,234 @@
+{
+  "casos": [
+    {
+      "id": "IN-01",
+      "origem": "Real",
+      "cenario": "Autorização OAuth 2.0 com a conta de teste da Google Ads API",
+      "precondicao": "Usuário logado, sem conta vinculada; projeto do Google Cloud com acesso de teste à Google Ads API (developer token descontinuado em 09/09/2026)",
+      "esperado": "Tokens emitidos e guardados no backend (nunca no frontend); conta de teste vinculada ao usuário",
+      "obtido": [
+        "[ok] refresh token guardado no backend, cifrado (formato Fernet)",
+        "[ok] GET /eu → 200",
+        "[ok] google_conectado = true",
+        "[ok] a resposta ao frontend não traz token (nenhuma chave com 'token', nem o texto cifrado)",
+        "[ok] conta de teste vinculada: customer_id 4327030343, MCC 1137051091",
+        "[nota] a conta fica vinculada na primeira sincronização (IN-02); antes dela, GET /eu traz conta null"
+      ],
+      "confere": true,
+      "pendente": null,
+      "evidencia": "prints do login no navegador (2026-11-16_IN-01_*) e este relatório"
+    },
+    {
+      "id": "IN-02",
+      "origem": "Real",
+      "cenario": "Sincronização das campanhas da conta de teste pela Google Ads API",
+      "precondicao": "IN-01 concluído; campanhas criadas na conta de teste",
+      "esperado": "Campanhas (ID, nome, status) persistidas; métricas devolvidas pela API vazias ou zeradas, como esperado em conta de teste",
+      "obtido": [
+        "[ok] 3 campanhas persistidas",
+        "[ok] campanha A: ID real 24444020070 presente",
+        "[ok] campanha A: 'Limen A - Pesquisa', ENABLED, sincronizada em 2026-11-16",
+        "[ok] campanha B: ID real 24464752468 presente",
+        "[ok] campanha B: 'Limen B - Pesquisa', ENABLED, sincronizada em 2026-11-16",
+        "[ok] campanha C: ID real 24458906837 presente",
+        "[ok] campanha C: 'Limen C - Pesquisa', PAUSED, sincronizada em 2026-11-16",
+        "[ok] métricas de origem google_ads gravadas: 0",
+        "[nota] a sincronização pede à API só a estrutura das campanhas (ID, nome, status, orçamento), não as métricas. A prova de que as métricas da conta de teste vêm zeradas são os prints do Playground de 12/11 (2026-11-12_IN-02_campanhas_api_parte*.png): é propriedade da conta de teste, não do código. Limitação declarada."
+      ],
+      "confere": true,
+      "pendente": null,
+      "evidencia": "print da tela Campanhas após Sincronizar (2026-11-16_IN-02_*), prints do Playground (2026-11-12_IN-02_campanhas_api_parte*.png) e este relatório"
+    },
+    {
+      "id": "IN-02b",
+      "origem": "Real + sintética",
+      "cenario": "Associação de métricas sintéticas às campanhas reais sincronizadas",
+      "precondicao": "IN-02 concluído",
+      "esperado": "Métricas sintéticas gravadas com o ID real da campanha e marcadas como sintéticas; motor avalia normalmente",
+      "obtido": [
+        "[ok] pré-condição: IN-02 com as 3 campanhas",
+        "[ok] POST /dev/metricas-sinteticas → 200",
+        "[ok] lote in02b-s20261112, 2026-10-13 a 2026-11-11: 24444020070 ENABLED 30 inseridos, 24464752468 ENABLED 30 inseridos, 24458906837 PAUSED 30 inseridos",
+        "[ok] campanha A (ID real 24444020070): 30 dias, origem sintetica, lote in02b-s20261112",
+        "[ok] campanha B (ID real 24464752468): 30 dias, origem sintetica, lote in02b-s20261112",
+        "[ok] campanha C (ID real 24458906837): 30 dias, origem sintetica, lote in02b-s20261112",
+        "[ok] POST /avaliacoes {}: 60 avaliados, 0 rejeitados, 18 alertas novos",
+        "[ok] alertas = motor puro com os limiares da planilha (18 = 18); por campanha {'A': 9, 'B': 9, 'C': 0}",
+        "[ok] POST /avaliacoes {incluir_pausadas: true}: 90 avaliados, 9 novos, 18 já existentes",
+        "[ok] com pausadas: 27 = 27; por campanha {'A': 9, 'B': 9, 'C': 9}"
+      ],
+      "confere": true,
+      "pendente": null,
+      "evidencia": "este relatório"
+    },
+    {
+      "id": "IN-03",
+      "origem": "Simulada",
+      "cenario": "Access token expirado",
+      "precondicao": "Token vencido, refresh token válido",
+      "esperado": "Token renovado com o refresh token e a requisição repetida uma vez com sucesso",
+      "obtido": [
+        "[ok] POST /campanhas/sincronizar → 200, 3 campanhas",
+        "[ok] chamadas à porta: 2 (1 falha + 1 repetição)",
+        "[ok] 3 campanhas gravadas; refresh token mantido",
+        "[ok] falha registrada no log (IN-03 token_expirado)",
+        "[nota] renovação simulada: o dublê falha na 1ª chamada e responde na 2ª; a renovação de verdade é feita pela biblioteca google-ads"
+      ],
+      "confere": true,
+      "pendente": null,
+      "evidencia": "este relatório"
+    },
+    {
+      "id": "IN-04",
+      "origem": "Simulada",
+      "cenario": "Refresh token revogado",
+      "precondicao": "Autorização revogada",
+      "esperado": "Erro de autenticação registrado; nenhum dado parcial persistido; usuário sinalizado para reautorizar",
+      "obtido": [
+        "[ok] POST /campanhas/sincronizar → 409, tipo token_google_revogado",
+        "[ok] chamadas à porta: 1",
+        "[ok] nenhum dado parcial: 0 campanhas gravadas",
+        "[ok] usuário sinalizado para reautorizar: refresh token apagado, GET /eu com google_conectado = false",
+        "[ok] erro de autenticação registrado no log (IN-04)"
+      ],
+      "confere": true,
+      "pendente": null,
+      "evidencia": "este relatório"
+    },
+    {
+      "id": "IN-05",
+      "origem": "Simulada",
+      "cenario": "API indisponível (timeout ou 5xx)",
+      "precondicao": "Mock retorna falha",
+      "esperado": "Falha registrada; até 3 novas tentativas com espera crescente; nenhum registro duplicado",
+      "obtido": [
+        "[ok] 4 falhas seguidas: POST → 503, tipo google_ads_indisponivel",
+        "[ok] 4 chamadas (1 + 3 novas tentativas), esperas [1, 2, 4] s, 7.0 s no total",
+        "[ok] falha registrada no log; 0 campanhas gravadas",
+        "[ok] 3 falhas e sucesso na 4ª chamada: POST → 200, 3 campanhas",
+        "[ok] nova sincronização: 3 campanhas (nenhum registro duplicado)"
+      ],
+      "confere": true,
+      "pendente": null,
+      "evidencia": "este relatório"
+    },
+    {
+      "id": "IN-06",
+      "origem": "Simulada",
+      "cenario": "Cota de uso excedida",
+      "precondicao": "Mock retorna erro de cota",
+      "esperado": "Sincronização adiada; erro registrado com o código devolvido pela API",
+      "obtido": [
+        "[ok] POST → 503, tipo cota_excedida, Retry-After 3600 s (sincronização adiada)",
+        "[ok] 1 chamada (sem repetir), 0 campanhas",
+        "[ok] código devolvido pela API registrado no log e na resposta: quota_error=RESOURCE_EXHAUSTED"
+      ],
+      "confere": true,
+      "pendente": null,
+      "evidencia": "este relatório"
+    },
+    {
+      "id": "IN-07",
+      "origem": "Sintética",
+      "cenario": "Ingestão de métricas sintéticas pelo backend",
+      "precondicao": "Banco vazio",
+      "esperado": "Registros persistidos; CTR e CPC no banco iguais aos da aba Cenários de regras",
+      "obtido": [
+        "[ok] pré-condição: campanha nova, sem métricas",
+        "[ok] POST /campanhas/{id}/metricas (lote de 20 casos válidos) → 201, 20 inseridos",
+        "[ok] 20 registros persistidos, origem sintetica",
+        "[nota] RA-01: CTR banco 3 | planilha 3 · CPC banco 2 | planilha 2",
+        "[nota] RA-02: CTR banco 0.5 | planilha 0.5 · CPC banco 2 | planilha 2",
+        "[nota] RA-03: CTR banco 2 | planilha 2 · CPC banco 8 | planilha 8",
+        "[nota] RA-04: CTR banco 3 | planilha 3 · CPC banco 2 | planilha 2",
+        "[nota] RA-05: CTR banco 0.5 | planilha 0.5 · CPC banco 7 | planilha 7",
+        "[nota] RA-06: CTR banco 2.5 | planilha 2.5 · CPC banco 2 | planilha 2",
+        "[nota] FM-01: CTR banco 1 | planilha 1 · CPC banco 2 | planilha 2",
+        "[nota] FM-02: CTR banco 0.99 | planilha 0.99 · CPC banco 2 | planilha 2",
+        "[nota] FM-03: CTR banco 1.01 | planilha 1.01 · CPC banco 2 | planilha 2",
+        "[nota] FM-04: CTR banco 5 | planilha 5 · CPC banco 5 | planilha 5",
+        "[nota] FM-05: CTR banco 5 | planilha 5 · CPC banco 5.01 | planilha 5.01",
+        "[nota] FM-06: CTR banco 5 | planilha 5 · CPC banco 4.99 | planilha 4.99",
+        "[nota] FM-07: CTR banco 2.5 | planilha 2.5 · CPC banco 2 | planilha 2",
+        "[nota] FM-08: CTR banco 2.5 | planilha 2.5 · CPC banco 2.0002 | planilha 2.0002",
+        "[nota] FM-09: CTR banco N/A | planilha N/A · CPC banco N/A | planilha N/A",
+        "[nota] FM-10: CTR banco 0 | planilha 0 · CPC banco N/A | planilha N/A",
+        "[nota] FM-11: CTR banco 0 | planilha 0 · CPC banco N/A | planilha N/A",
+        "[nota] FM-12: CTR banco 3 | planilha 3 · CPC banco 2 | planilha 2",
+        "[nota] FM-13: CTR banco N/A | planilha N/A · CPC banco 2 | planilha 2",
+        "[nota] FM-14: CTR banco N/A | planilha N/A · CPC banco N/A | planilha N/A",
+        "[ok] CTR e CPC do banco (view) = fórmula da planilha = motor: 20 de 20"
+      ],
+      "confere": true,
+      "pendente": null,
+      "evidencia": "este relatório"
+    },
+    {
+      "id": "IN-08",
+      "origem": "Sintética",
+      "cenario": "Criação de regra pelo frontend",
+      "precondicao": "Usuário autenticado",
+      "esperado": "Requisição aceita (201); regra persistida e usada na próxima avaliação",
+      "obtido": [
+        "[ok] POST /regras (R4: CTR < 2%) → 201",
+        "[ok] regra persistida: GET /regras traz R4 ativa, limiar 2.000000",
+        "[ok] usada na próxima avaliação: registro do FM-03 (CTR 1,01%) gerou ['R4']",
+        "[nota] a criação passa pelo mesmo POST /regras que a tela de Regras usa (formulário conferido no navegador na Fase 3)",
+        "[nota] R4 desativada depois do caso (DELETE → 204), para R1 a R3 voltarem a ser as únicas ativas"
+      ],
+      "confere": true,
+      "pendente": null,
+      "evidencia": "este relatório"
+    },
+    {
+      "id": "IN-09",
+      "origem": "Sintética",
+      "cenario": "Criação de regra com limiar inválido (negativo ou vazio)",
+      "precondicao": "Usuário autenticado",
+      "esperado": "Requisição recusada (400) com mensagem de validação; nada persistido",
+      "obtido": [
+        "[ok] limiar '-1': POST /regras → 400, tipo validacao (mensagem de validação presente; texto não reproduzido)",
+        "[ok] limiar '': POST /regras → 400, tipo validacao (mensagem de validação presente; texto não reproduzido)",
+        "[ok] nada persistido: 4 regras antes e 4 depois, nenhuma R5"
+      ],
+      "confere": true,
+      "pendente": null,
+      "evidencia": "este relatório"
+    },
+    {
+      "id": "IN-10",
+      "origem": "Sintética",
+      "cenario": "Alerta gerado aparece no dashboard",
+      "precondicao": "Caso RA-02 avaliado",
+      "esperado": "Endpoint de alertas devolve campanha, regra, valor medido e data; dashboard exibe o alerta",
+      "obtido": [
+        "[ok] pré-condição: campanha A sincronizada",
+        "[ok] RA-02 gravado na campanha A em 2026-11-12 → 201",
+        "[ok] POST /avaliacoes (campanha A, 2026-11-12): 1 avaliado, 1 alerta novo",
+        "[ok] GET /alertas do dia: 1 alerta",
+        "[ok] campanha 'Limen A - Pesquisa', regra R1 'CTR baixo', valor medido CTR 0.5%, data 2026-11-12"
+      ],
+      "confere": true,
+      "pendente": "dashboard: abrir /alertas?campanha=2&inicio=2026-11-12&fim=2026-11-12 e conferir o alerta",
+      "evidencia": "este relatório (API) e print da tela Alertas (2026-11-16_IN-10_*)"
+    },
+    {
+      "id": "IN-11",
+      "origem": "Sintética",
+      "cenario": "Reavaliação sem mudança de dados",
+      "precondicao": "Caso RA-02 já avaliado",
+      "esperado": "Nenhum alerta duplicado",
+      "obtido": [
+        "[ok] pré-condição: campanha A sincronizada",
+        "[ok] reavaliação sem mudança de dados: 0 alertas novos, 1 já existente",
+        "[ok] nenhum alerta duplicado: 1 alerta no dia; 28 alertas do usuário antes e 28 depois"
+      ],
+      "confere": true,
+      "pendente": null,
+      "evidencia": "este relatório"
+    }
+  ],
+  "conferem": 12,
+  "total": 12,
+  "regras_fim_iguais": true
+}

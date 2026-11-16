@@ -70,6 +70,9 @@ pytest -q                                           # 213 testes passando em 14/
 alembic upgrade head
 uvicorn app.main:app --reload --port 8080           # /docs; POST /dev/login (só em desenvolvimento)
 pytest | tee ../docs/evidencias/AAAA-MM-DD_<etapa>_pytest.txt   # evidência antes do commit
+# execução formal (banco limen_execucao; a URL vai no comando, nunca no .env)
+DATABASE_URL=<url do limen_execucao, sem credenciais no documento> python -m execucao.<script>
+python -m execucao.preencher_planilha --in10-dashboard sim   # sem banco; lê os .json
 ```
 
 Commits no padrão `tipo(escopo): descrição` em português, seguidos de `git push`
@@ -122,6 +125,12 @@ regra e período guardados na URL, o que disparou (valor medido e limiar da cóp
 alerta), aviso de limite e "Ver alertas" das Avaliações com campanha e período. Teste no
 navegador aprovado pelo Kauan (8 itens). Vitest 1079/1079, typecheck, lint e build ok.
 Evidência: `docs/evidencias/2026-11-16_fase4_alertas_vitest.txt`. Playwright fica para depois.
+✅ **Execução formal da tabela congelada (16/11)**: banco `limen_execucao`, scripts em
+`backend/execucao/` (commit `2fd5bcf`, código igual ao commit em todas as execuções).
+Cenários: **23/23 corretos, 0 alertas indevidos, 0 omitidos** (aplicação e motor).
+Integração: **12/12 conferem** (IN-01 e IN-02 reais refeitos no navegador; IN-10 conferido
+no dashboard). Resumo da planilha recalculado no LibreOffice: 23 de 23, 0, 0, 12 de 12.
+Evidências: `docs/evidencias/2026-11-16_execucao_*` e `_IN-01_*`, `_IN-02_*`, `_IN-10_*`.
 
 **Dashboard — plano aprovado (13/11/2026):** React + TypeScript (Vite), Tailwind v4,
 shadcn/ui, lucide, Recharts, TanStack Query, React Router, react-hook-form + zod, sonner.
@@ -165,9 +174,9 @@ tabela.
   semeadura_resposta, semeadura_idempotente, metricas_banco, avaliacao_ativas,
   alertas_ativas, avaliacao_com_pausadas, alertas_com_pausadas).
 
-Depois: dashboard (React) → testes de desempenho (aba Desempenho: 5 aquecimentos,
-30 repetições, 9 combinações volume × regras, 4 endpoints; tempo do motor medido isolado)
-→ execução completa da planilha → README → relatório técnico.
+Depois: testes de desempenho (aba Desempenho: 5 aquecimentos, 30 repetições,
+9 combinações volume × regras, 4 endpoints; tempo do motor medido isolado) → README →
+relatório técnico. (Dashboard e execução completa da planilha concluídos.)
 
 ## Registro de decisões (para o relatório técnico)
 
@@ -1376,6 +1385,55 @@ Depois: dashboard (React) → testes de desempenho (aba Desempenho: 5 aqueciment
   pytest não rodado (backend intocado, 236/236). Evidência:
   `docs/evidencias/2026-11-16_fase4_alertas_vitest.txt` (verbose; sem e-mail nem segredo,
   conferido com `grep -l`).
+- **Execução formal da tabela congelada (16/11)**: banco próprio `limen_execucao`
+  (nunca `limen` nem `limen_teste`), criado por `execucao/preparar.py` com usuário
+  próprio, R1 a R3 de `criar_regras_padrao` e uma campanha sintética (IDs fictícios
+  declarados). A `DATABASE_URL` vai no comando (variável de ambiente vale mais que o
+  `.env`); os scripts recusam outro banco pelo nome, conferem que a aplicação vê a mesma
+  URL e perguntam ao PostgreSQL o `current_database()`; a URL nunca é impressa. Toda
+  evidência é montada em memória e verificada antes de gravar (e-mail, `postgresql`,
+  `usuário:senha@`, Fernet, `1//`, `ya29.`, `*_token`; a palavra "token" sozinha não,
+  porque está nos textos do IN-03/IN-04); erro inesperado mostra só tipo e arquivo:linha.
+  Códigos de saída: 0 ok, 1 divergência, 2 regras diferentes da planilha, 3 ambiente,
+  4 evidência sensível, 5 erro inesperado. Cabeçalho de cada saída: commit, código fora
+  do commit (contado; tem de ser 0) separado das evidências não commitadas (só listadas),
+  sha256 da planilha, data e hora. **Método**: scripts commitados (`2fd5bcf`) antes de
+  executar cenários e integração. **Trava**: `conferir_regras` compara `GET /regras` de
+  cada usuário com a aba "Regras e limiares" (nomes, condições, limiares em `Decimal`) no
+  início e no fim; com diferença, sai com 2 sem executar.
+  **Cenários (23)**: um POST por caso, num dia próprio (o lote é tudo ou nada); rejeitado
+  = 400 e dia vazio no GET. Duas camadas: aplicação (alerta gravado = "Sim") e motor
+  (`avaliar()` com as regras do banco; única camada que separa "Não" de "N/A", porque o
+  alerta só existe quando dispara). Observado das colunas O–R = o que o sistema entregou;
+  veredito = fórmula S **e** coerência entre as camadas. Resultado: 23/23, 13 alertas
+  (= soma dos "Sim" esperados), 0 indevidos, 0 omitidos nas duas camadas; avaliação com
+  20 avaliados, 0 rejeitados, motor 0,205 ms.
+  **Integração (12)**: IN-01 e IN-02 refeitos no navegador com o uvicorn no
+  `limen_execucao` (o código mudou desde 12/11); antes do login, Sair, porque o cookie
+  antigo traria um `usuario_id` que, no banco novo, é o usuário da execução. O `limen`
+  ficou intacto (1 usuário, mesmo md5 antes e depois, conferido pelo Kauan). IN-02b com
+  dois oráculos (números do gerador 9/9/0 e 9/9/9; conjunto exato calculado pelo motor
+  puro com os limiares da planilha). IN-03 a IN-06 pelo endpoint real com a porta trocada
+  por dublê, um usuário de apoio por caso (IN-05 esperou 1, 2 e 4 s, 7,0 s no total).
+  IN-07 compara view, fórmula da planilha (H e I, em `Decimal`) e motor nos 20 válidos.
+  IN-08/IN-09 num usuário de apoio; a R4 foi desativada depois (regras não são apagadas).
+  IN-10/IN-11 com o RA-02 na campanha A do usuário Google em 12/11/2026 (fora do período
+  do IN-02b). **Planilha preenchida**: cópia em `docs/evidencias/`, só colunas amarelas
+  (128 células); as outras 1.002 comparadas célula por célula com o original, e o sha256
+  do original inalterado; IN-10 só "Sim" com `--in10-dashboard sim`. Formatação não
+  comparada.
+  **Limitações (declarar no artigo)**: (1) IN-02: a sincronização não pede métricas à
+  API; a prova de que vêm zeradas são os prints do Playground de 12/11 (propriedade da
+  conta de teste, não do código); (2) IN-03: a renovação do token é feita pela biblioteca
+  `google-ads`; o dublê só simula falha temporária seguida de sucesso; (3) IN-08: a regra
+  foi criada pelo mesmo `POST /regras` que a tela usa (o formulário foi conferido no
+  navegador na Fase 3). **Detalhes registrados**: as evidências `preparar` e
+  `conferir_regras` são anteriores ao commit e usam o cabeçalho antigo ("Arquivos fora
+  do commit"); a saída do `preparar` mostra limiares `1.00` (objeto em memória,
+  `expire_on_commit=False`), e a conferência leu `1.000000` do banco; o
+  `executar_cenarios` não imprime a linha "Evidência gravada" e o `preencher_planilha`
+  mostra "Banco: limen_execucao" sem abrir o banco (cosméticos, mantidos para não mudar
+  código depois do commit).
 - **Pendências da Fase 3 (15/11)**: (a) ~~mostrar abaixo do limiar o valor que será
   salvo~~ feito na etapa 4 ("Será salvo como", `previaLimiar`); (b) ~~ligar os erros do
   servidor aos campos~~ feito (etapa 3 em `api/campos.ts`, etapa 4 nas telas);

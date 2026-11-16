@@ -1,0 +1,128 @@
+Execução formal — planilha preenchida
+=====================================
+Script: execucao/preencher_planilha.py
+Data e hora: 2026-11-16T09:34:22-03:00 (America/Fortaleza) = 2026-11-16T12:34:22+00:00
+Commit do código (git rev-parse HEAD): 2fd5bcf92dd15d0eb3363c9f92cf32248ddc81db
+Código fora do commit (git status, fora de docs/evidencias/): 0
+Evidências ainda não commitadas (docs/evidencias/):
+  ?? docs/evidencias/2026-11-16_execucao_cenarios.json
+  ?? docs/evidencias/2026-11-16_execucao_cenarios.txt
+  ?? docs/evidencias/2026-11-16_execucao_integracao.json
+  ?? docs/evidencias/2026-11-16_execucao_integracao.txt
+Planilha: docs/avaliacao/Tabela_limiares_TCC_motor_de_regras.xlsx
+  sha256 fbbea2ec0298dfcf20e0d6cba3a364611740d7e2efd86e56d3dad010025d6653 (igual ao do commit 29de91d)
+Banco: limen_execucao
+Python: 3.12.3
+
+Execução lida: commit 2fd5bcf92dd15d0eb3363c9f92cf32248ddc81db (cenários e integração, código igual ao commit)
+IN-10, parte do dashboard (informada por você): sim
+
+Células escritas: 128 (Cenários O–R: 92; Integração F–H: 36)
+Células comparadas fora das colunas amarelas: 1002 — todas iguais ao original
+Original: sha256 fbbea2ec0298dfcf20e0d6cba3a364611740d7e2efd86e56d3dad010025d6653 (inalterado)
+Cópia: 2026-11-16_execucao_tabela_preenchida.xlsx · sha256 940cc864eaedcb45fa6bcc3684f0f382b0e51aa761c181783aa657f0cb8b095f
+
+  Cenários de regras!O5 = Aceito
+  Cenários de regras!P5 = Não
+  Cenários de regras!Q5 = Não
+  Cenários de regras!R5 = Não
+  Cenários de regras!O6 = Aceito
+  Cenários de regras!P6 = Sim
+  Cenários de regras!Q6 = Não
+  Cenários de regras!R6 = Não
+  Cenários de regras!O7 = Aceito
+  Cenários de regras!P7 = Não
+  Cenários de regras!Q7 = Sim
+  Cenários de regras!R7 = Não
+  Cenários de regras!O8 = Aceito
+  Cenários de regras!P8 = Não
+  Cenários de regras!Q8 = Não
+  Cenários de regras!R8 = Sim
+  Cenários de regras!O9 = Aceito
+  Cenários de regras!P9 = Sim
+  Cenários de regras!Q9 = Sim
+  Cenários de regras!R9 = Sim
+  Cenários de regras!O10 = Aceito
+  Cenários de regras!P10 = Não
+  Cenários de regras!Q10 = Não
+  Cenários de regras!R10 = Não
+  Cenários de regras!O11 = Aceito
+  Cenários de regras!P11 = Não
+  Cenários de regras!Q11 = Não
+  Cenários de regras!R11 = Não
+  Cenários de regras!O12 = Aceito
+  Cenários de regras!P12 = Sim
+  Cenários de regras!Q12 = Não
+  Cenários de regras!R12 = Não
+  Cenários de regras!O13 = Aceito
+  Cenários de regras!P13 = Não
+  Cenários de regras!Q13 = Não
+  Cenários de regras!R13 = Não
+  Cenários de regras!O14 = Aceito
+  Cenários de regras!P14 = Não
+  Cenários de regras!Q14 = Não
+  Cenários de regras!R14 = Não
+  Cenários de regras!O15 = Aceito
+  Cenários de regras!P15 = Não
+  Cenários de regras!Q15 = Sim
+  Cenários de regras!R15 = Não
+  Cenários de regras!O16 = Aceito
+  Cenários de regras!P16 = Não
+  Cenários de regras!Q16 = Não
+  Cenários de regras!R16 = Não
+  Cenários de regras!O17 = Aceito
+  Cenários de regras!P17 = Não
+  Cenários de regras!Q17 = Não
+  Cenários de regras!R17 = Não
+  Cenários de regras!O18 = Aceito
+  Cenários de regras!P18 = Não
+  Cenários de regras!Q18 = Não
+  Cenários de regras!R18 = Sim
+  Cenários de regras!O19 = Aceito
+  Cenários de regras!P19 = N/A
+  Cenários de regras!Q19 = N/A
+  Cenários de regras!R19 = Não
+  Cenários de regras!O20 = Aceito
+  Cenários de regras!P20 = Sim
+  Cenários de regras!Q20 = N/A
+  Cenários de regras!R20 = Não
+  Cenários de regras!O21 = Aceito
+  Cenários de regras!P21 = Sim
+  Cenários de regras!Q21 = N/A
+  Cenários de regras!R21 = Sim
+  Cenários de regras!O22 = Aceito
+  Cenários de regras!P22 = Não
+  Cenários de regras!Q22 = Não
+  Cenários de regras!R22 = N/A
+  Cenários de regras!O23 = Aceito
+  Cenários de regras!P23 = N/A
+  Cenários de regras!Q23 = Não
+  Cenários de regras!R23 = Não
+  Cenários de regras!O24 = Aceito
+  Cenários de regras!P24 = N/A
+  Cenários de regras!Q24 = N/A
+  Cenários de regras!R24 = Sim
+  Cenários de regras!O25 = Rejeitado
+  Cenários de regras!P25 = N/A
+  Cenários de regras!Q25 = N/A
+  Cenários de regras!R25 = N/A
+  Cenários de regras!O26 = Rejeitado
+  Cenários de regras!P26 = N/A
+  Cenários de regras!Q26 = N/A
+  Cenários de regras!R26 = N/A
+  Cenários de regras!O27 = Rejeitado
+  Cenários de regras!P27 = N/A
+  Cenários de regras!Q27 = N/A
+  Cenários de regras!R27 = N/A
+  Integração!G5 = Sim
+  Integração!G6 = Sim
+  Integração!G7 = Sim
+  Integração!G8 = Sim
+  Integração!G9 = Sim
+  Integração!G10 = Sim
+  Integração!G11 = Sim
+  Integração!G12 = Sim
+  Integração!G13 = Sim
+  Integração!G14 = Sim
+  Integração!G15 = Sim
+  Integração!G16 = Sim
