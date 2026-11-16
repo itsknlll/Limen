@@ -1,0 +1,28 @@
+Execução formal — conferência de R1 a R3
+========================================
+Script: execucao/conferir_regras.py
+Data e hora: 2026-11-16T08:58:19-03:00 (America/Fortaleza) = 2026-11-16T11:58:19+00:00
+Commit do código (git rev-parse HEAD): a2fdcafdd6c127479ccffc2f099618ae5e8c9ebc
+Arquivos fora do commit (git status --porcelain): 2
+  ?? backend/execucao/
+  ?? docs/evidencias/2026-11-16_execucao_preparar.txt
+Planilha: docs/avaliacao/Tabela_limiares_TCC_motor_de_regras.xlsx
+  sha256 fbbea2ec0298dfcf20e0d6cba3a364611740d7e2efd86e56d3dad010025d6653 (igual ao do commit 29de91d)
+Banco: limen_execucao
+Python: 3.12.3
+
+Planilha, aba 'Regras e limiares' (ID | Regra | Métrica | Operador | Limiar | Unidade):
+  R1 | CTR baixo | CTR = cliques ÷ impressões × 100 | < | 0.01 | %
+  R2 | CPC alto | CPC = custo ÷ cliques | > | 5 | R$
+  R3 | Custo sem conversão | Custo e conversões | > e conversões = 0 | 100 | R$
+(o limiar do R1 está como fração na planilha: 0,01 = 1%; o motor usa %)
+
+Usuário id 1: 3 regras, 3 ativas (R1, R2, R3)
+  R1 planilha 'CTR baixo': ctr < 1.00
+  R1 banco    'CTR baixo': ctr < 1.000000  → igual
+  R2 planilha 'CPC alto': cpc > 5
+  R2 banco    'CPC alto': cpc > 5.000000  → igual
+  R3 planilha 'Custo sem conversão': custo > 100 E conversoes == 0
+  R3 banco    'Custo sem conversão': custo > 100.000000 E conversoes == 0.000000  → igual
+
+RESULTADO: R1 a R3 iguais à planilha em 1 usuário(s).

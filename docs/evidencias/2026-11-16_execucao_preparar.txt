@@ -1,0 +1,24 @@
+Execução formal — preparação do banco
+=====================================
+Script: execucao/preparar.py
+Data e hora: 2026-11-16T08:47:32-03:00 (America/Fortaleza) = 2026-11-16T11:47:32+00:00
+Commit do código (git rev-parse HEAD): a2fdcafdd6c127479ccffc2f099618ae5e8c9ebc
+Arquivos fora do commit (git status --porcelain): 1
+  ?? backend/execucao/
+Planilha: docs/avaliacao/Tabela_limiares_TCC_motor_de_regras.xlsx
+  sha256 fbbea2ec0298dfcf20e0d6cba3a364611740d7e2efd86e56d3dad010025d6653 (igual ao do commit 29de91d)
+Banco: limen_execucao
+Python: 3.12.3
+
+Banco limen_execucao criado (não existia).
+Migrações aplicadas: alembic_version = 0003 (head).
+
+Usuário da execução: id 1 (e-mail não registrado aqui)
+Conta sintética: id 1, customer_id 0000000000 (fictício)
+Campanha dos cenários: id 1, 'Execução · cenários RA/FM', ENABLED, google_campaign_id 1 (fictício), sem orçamento
+
+Regras criadas por criar_regras_padrao (conferidas contra a planilha no próximo script):
+  R1 'CTR baixo' ativa=True: ctr < 1.00
+  R2 'CPC alto' ativa=True: cpc > 5.00
+  R3 'Custo sem conversão' ativa=True: custo > 100.00 E conversoes == 0
+Total de regras no banco: 3
