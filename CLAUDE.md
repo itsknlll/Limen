@@ -66,7 +66,7 @@ docs/evidencias/            prints e saídas do pytest (nome: AAAA-MM-DD_caso_de
 ```bash
 cd ~/projetos/limen && docker compose up -d        # banco (após reiniciar o PC)
 cd backend && source .venv/bin/activate
-pytest -q                                           # 213 testes passando em 14/11
+pytest -q                                           # 438 testes passando em 16/11
 alembic upgrade head
 uvicorn app.main:app --reload --port 8080           # /docs; POST /dev/login (só em desenvolvimento)
 pytest | tee ../docs/evidencias/AAAA-MM-DD_<etapa>_pytest.txt   # evidência antes do commit
@@ -131,6 +131,12 @@ Cenários: **23/23 corretos, 0 alertas indevidos, 0 omitidos** (aplicação e mo
 Integração: **12/12 conferem** (IN-01 e IN-02 reais refeitos no navegador; IN-10 conferido
 no dashboard). Resumo da planilha recalculado no LibreOffice: 23 de 23, 0, 0, 12 de 12.
 Evidências: `docs/evidencias/2026-11-16_execucao_*` e `_IN-01_*`, `_IN-02_*`, `_IN-10_*`.
+✅ **Desempenho — scripts e testes (16/11, antes de medir)**: `backend/execucao/desempenho/`
+(preparar, medir_motor, medir_endpoints, medir_google_ads, preencher_planilha) e 202 testes
+novos; pytest **438/438**; 32 mutações, todas como previsto. Evidência:
+`docs/evidencias/2026-11-16_desempenho_scripts_pytest.txt`. Medição pendente (ordem: preparar →
+medir_motor → medir_endpoints → login OAuth → medir_google_ads → preencher_planilha → H no
+LibreOffice).
 
 **Dashboard — plano aprovado (13/11/2026):** React + TypeScript (Vite), Tailwind v4,
 shadcn/ui, lucide, Recharts, TanStack Query, React Router, react-hook-form + zod, sonner.
@@ -1434,6 +1440,86 @@ relatório técnico. (Dashboard e execução completa da planilha concluídos.)
   `executar_cenarios` não imprime a linha "Evidência gravada" e o `preencher_planilha`
   mostra "Banco: limen_execucao" sem abrir o banco (cosméticos, mantidos para não mudar
   código depois do commit).
+- **Desempenho — scripts e testes (16/11, antes de medir)**: pacote
+  `backend/execucao/desempenho/` no mesmo padrão do `execucao/`, **sem alterar o `comum.py`**
+  do commit `2fd5bcf` (reaproveita `Parada`, `Relatorio`, `gravar_juntos` e `rodar`;
+  `_fora_do_commit` e `_git` importados). Banco próprio `limen_desempenho`: recusa `limen`,
+  `limen_teste` e `limen_execucao` pelo nome, confere o `current_database()` e que o
+  `app.config` vê a mesma URL; a URL nunca é impressa. O cabeçalho **para com 3** se houver
+  código fora do commit (no `comum.py` ele só contava). Evidências: os padrões do `comum.py`
+  mais hostname, usuário do sistema, pasta pessoal, `/home/`, `?code=` e `Bearer`, lidos na
+  hora (`base.gravar` checa antes de gravar e relê depois). A versão do banco vem por
+  `SHOW server_version`, porque o texto do `version()` traz "PostgreSQL", que o verificador
+  recusa. O plano (B3 = 5, B4 = 30, DM, DE) é lido da planilha, nunca repetido no código.
+  **Dados**: `gerar_metricas` do IN-02b (já testado, com `validar_registro`), semente
+  20261116, de 01/01/2024 a 26/09/2026 (1.000 dias por campanha), IDs de campanha fictícios
+  a partir de 900001; o volume N usa N/1000 campanhas; o sha256 dos 10.000 registros fica
+  fixo no teste.
+  **Regras R4 a R50 por fórmula, sem sorteio.** A 1ª versão tinha limiares fora das faixas
+  do gerador (regras que disparavam em 100% ou em 0% dos registros) e, pela conferência em
+  memória, R40 a R50 eram cópias de R4 a R14 (a fórmula se repetia a cada 36). Corrigido
+  com os limiares dentro das faixas, limiar `(i // 12 + j) % 3` e operador
+  `(i + 2j + i // 36) % 4`: 0 regras repetidas. Disparos em memória: DM-01 9 · DM-02 2.140 ·
+  DM-03 14.081 · DM-04 90 · DM-05 21.280 · DM-06 141.269 · DM-07 900 · DM-08 213.020 ·
+  DM-09 1.412.536. R15, R35, R39 e R45 nunca disparam (condições contraditórias dentro das
+  faixas); ficam de propósito e vão listadas na evidência.
+  **Estatística** em `Decimal` sobre ns inteiros (`perf_counter_ns`): média, mediana,
+  desvio amostral (n − 1), mínimo, máximo e p95 por nearest-rank (o 29º de 30). Oráculo: o
+  módulo `statistics` (float só no teste).
+  **Motor (DM)**: em memória, sem banco. Dentro do cronômetro fica só
+  `[motor.avaliar(r, regras) for r in registros]`; montar os registros, converter as
+  regras, o `gc.collect()` e contar os disparos ficam fora. O coletor fica ligado, como no
+  serviço (descartado: `gc.disable()`). Falha = exceção ou disparos diferentes da passada
+  de referência. Oráculo de R1 a R3 pelos perfis do gerador.
+  **Endpoints (DE)**: uvicorn real como subprocesso em 127.0.0.1:8091 (nunca a 8080; porta
+  ocupada → 3), sem `--reload`, `--workers 1` e `--no-access-log` (com o log ligado, cada
+  amostra pagaria a escrita de uma linha). A saída vai para `/dev/null`; o servidor roda em
+  sessão própria e é encerrado no `finally` (terminate e, se preciso, kill; SIGTERM e
+  SIGHUP viram interrupção), e a porta é conferida livre no fim. Cliente httpx com
+  `trust_env=False` e um gancho que só aceita 127.0.0.1. Login por `/dev/login` fora do
+  cronômetro; cookie e resposta não vão para a evidência, e o valor do cookie é procurado
+  no texto antes de gravar. Prova de que o servidor está no banco certo: `GET /campanhas`
+  (as 10 fictícias) e `GET /regras` (R1 a R10). Descartado: `TestClient` (não passa pelo
+  servidor HTTP). Ordem da planilha, 5 + 30 pedidos por endpoint. Esperado em cada pedido:
+  DE-01, 30 linhas (28/08 a 26/09/2026); DE-02, 500 de 21.280 (limite padrão); DE-03, P001
+  a P035 inativas, que não mudam as regras ativas; DE-04 `{}` (sem período padrão: avalia
+  todas as campanhas ENABLED) → 10.000 avaliados, 0 gerados e 21.280 já existentes, em
+  estado estável, porque o `preparar` faz uma avaliação não medida antes.
+  **Google Ads**: medido à parte e fora da planilha. Chama `porta.listar_campanhas` (a
+  mesma do app, só leitura, sem `sincronizar`), 5 + 30 vezes, com 2 s entre as chamadas, e
+  para na `CotaExcedida` ou no `TokenRevogado`. Exige o login OAuth no navegador, com o
+  uvicorn na 8080 apontando para o `limen_desempenho`: isso cria um usuário Google com R1 a
+  R3 e não muda mais nada. Sem conta conectada, sai com 3. A evidência não leva token,
+  e-mail, IDs da conta (procurados como número isolado), `code=` nem `Bearer`. A latência
+  inclui a rede e a renovação do access token (um `GoogleAdsClient` por chamada, como no
+  app).
+  **Planilha**: parte da cópia da execução formal (sha256 `940cc864…` registrado) e
+  escreve só as 66 células amarelas (B5 mais D, E, F, G e I × 13 linhas). Recalcula a
+  estatística a partir das amostras do `.json` e confere com a que ele registrou. A coluna H
+  fica fórmula: recalcular no LibreOffice com Ctrl+Shift+F9, comparar com o "CV esperado"
+  da evidência e não salvar por cima. Qualquer falha impede o preenchimento; a coluna I
+  recebe as falhas das repetições medidas. O `base.cabecalho` ganhou o parâmetro
+  `motivo_sem_banco`.
+  **Testes**: 202 novos (base 110, endpoints 41, Google Ads 20, planilha 25, motor 6);
+  pytest **438/438**. **Mutações**: script no scratchpad com backup, `trap` em EXIT, INT,
+  TERM e HUP, `cmp` e sha256 depois de cada restauração, e "NÃO APLICADA" se o trecho não
+  aparecer exatamente 1 vez. Foram 32, todas como previsto:
+
+  | Arquivo | Mutações | Pegas |
+  |---|---|---|
+  | `base.py` | M1 desvio com n · M2 p95 arredondando para baixo · M3 mediana sem média · M4 sem `i // 36` · M5 `gravar` sem checagem local · M5b sem a checagem antes de gravar · M6 `achados` sem os locais · B1 trava aceitando outro nome · B2 cabeçalho sem parar | 8 de 9: a M5b sobreviveu, como previsto (a releitura depois de gravar basta sozinha) |
+  | `medir_endpoints.py` | E1 `trust_env` · E2 porta 8080 · E3 DE-04 sem os avaliados · E4 sem o cookie · E5 um aquecimento a menos · E6 DE-03 só com o prefixo · E7 sem `--no-access-log` | 7 de 7 |
+  | `medir_google_ads.py` | G1 sem interrupção · G2 sem o token · G3 sem os IDs · G4 ID como substring · G5 sem a ordem · G6 mensagem no status · G7 espera antes da 1ª | 7 de 7; a previsão da G6 foi corrigida de 2 para 5 antes de rodar |
+  | `preencher_planilha.py` | P1 escreve H · P2 sem recalcular · P3 commit · P4 sha256 da cópia · P5 `_igual` direto · P6 código fora do commit · P7 resultado | 7 de 7 |
+  | `medir_motor.py` | MM1 disparos diferentes não contam · MM2 oráculo sempre verdadeiro | 2 de 2 |
+
+  A mutação "coluna I com todas as falhas" seria equivalente, porque qualquer falha já
+  impede o preenchimento, e foi trocada por um teste direto de `celulas`. **Limitações
+  (declarar no artigo)**: cliente, servidor e banco na mesma máquina (banco no Docker);
+  DE-04 medido em estado estável, sem inserir alertas novos; o DE-02 lista 500 de 21.280
+  alertas; um único perfil sintético; log de acesso desligado; a latência do Google inclui
+  a rede e a renovação do token; 4 regras nunca disparam; o DM-09 guarda os 100.000
+  resultados, como o serviço (pico de memória registrado na evidência).
 - **Pendências da Fase 3 (15/11)**: (a) ~~mostrar abaixo do limiar o valor que será
   salvo~~ feito na etapa 4 ("Será salvo como", `previaLimiar`); (b) ~~ligar os erros do
   servidor aos campos~~ feito (etapa 3 em `api/campos.ts`, etapa 4 nas telas);
