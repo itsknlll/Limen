@@ -70,7 +70,7 @@ export interface Celula {
   descricao: string | null;
 }
 
-const SEM_DADO: Celula = { texto: "—", descricao: "sem dado" };
+export const SEM_DADO: Celula ={ texto: "—", descricao: "sem dado" };
 
 export function celulaInteiro(valor: number | null): Celula {
   return valor === null ? SEM_DADO : { texto: formatarInteiro(valor), descricao: null };

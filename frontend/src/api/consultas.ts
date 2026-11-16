@@ -9,6 +9,7 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
+import type { ConsultaAlertas } from "@/alertas/filtros";
 import type { CorpoAvaliacao } from "@/avaliacoes/pedido";
 import { corpoParaAtivar, type CorpoRegra } from "@/regras/validacao";
 import { api, type Esquemas, exigir } from "./cliente";
@@ -28,8 +29,10 @@ export const chaves = {
   /** Lista de regras. Também é o prefixo de `regra(id)`: invalidar a lista atinge as duas. */
   regras: ["regras"] as const,
   regra: (id: number | null) => ["regras", id] as const,
-  /** Prefixo dos alertas (a tela é da Fase 4; invalidar desde já não custa nada). */
+  /** Prefixo dos alertas de qualquer filtro: avaliar, sincronizar e mudar regra o invalidam. */
   alertas: ["alertas"] as const,
+  /** Alertas de um filtro; sob o prefixo `alertas` (invalidar o prefixo atinge todos). */
+  alertasFiltrados: (consulta: ConsultaAlertas | null) => ["alertas", consulta] as const,
 };
 
 export function ehNaoAutenticado(erro: unknown): boolean {
@@ -119,8 +122,11 @@ export function useMetricas(campanhaId: number | null) {
   return useQuery(opcoesMetricas(campanhaId));
 }
 
-/** O que a sincronização pode ter mudado: lista, métricas (campanha removida) e números da visão geral. */
-export const CHAVES_APOS_SINCRONIZAR = [chaves.campanhas, chaves.todasAsMetricas, chaves.resumo] as const;
+/**
+ * O que a sincronização pode ter mudado: lista, métricas (campanha removida), números da
+ * visão geral e alertas (o nome da campanha chega em GET /alertas por JOIN).
+ */
+export const CHAVES_APOS_SINCRONIZAR = [chaves.campanhas, chaves.todasAsMetricas, chaves.resumo, chaves.alertas] as const;
 
 /** Erros em que o backend mudou (ou constatou) a conexão com o Google: /eu.google_conectado muda. */
 const TIPOS_DA_CONEXAO_GOOGLE = new Set(["token_google_ausente", "token_google_revogado"]);
@@ -197,8 +203,31 @@ export function useRegra(id: number | null) {
   return useQuery(opcoesRegra(id));
 }
 
-/** O que mudar uma regra pode ter mudado: a lista, a própria regra e o resumo (nome e situação em "Alertas por regra"). */
-export const CHAVES_APOS_REGRA = [chaves.regras, chaves.resumo] as const;
+/**
+ * GET /alertas (endpoint fixo) com os filtros da tela. Consulta null (URL inválida ou lista
+ * de campanhas/regras ainda carregando, de montarConsultaAlertas) → desligada, nenhum pedido.
+ */
+export function opcoesAlertas(consulta: ConsultaAlertas | null, cliente: ClienteApi = api) {
+  return queryOptions({
+    queryKey: chaves.alertasFiltrados(consulta),
+    queryFn: ({ signal }) => {
+      // Não deveria rodar com null (enabled: false); se rodar, falha em vez de pedir sem filtros.
+      if (consulta === null) throw new Error("consulta de alertas sem filtros válidos");
+      return exigir(cliente.GET("/alertas", { params: { query: consulta }, signal }));
+    },
+    enabled: consulta !== null,
+  });
+}
+
+export function useAlertas(consulta: ConsultaAlertas | null) {
+  return useQuery(opcoesAlertas(consulta));
+}
+
+/**
+ * O que mudar uma regra pode ter mudado: a lista, a própria regra, o resumo (nome e situação
+ * em "Alertas por regra") e os alertas (o nome da regra chega em GET /alertas por JOIN).
+ */
+export const CHAVES_APOS_REGRA = [chaves.regras, chaves.resumo, chaves.alertas] as const;
 /** O que uma avaliação muda: o histórico (de qualquer limite), o resumo e os alertas. */
 export const CHAVES_APOS_AVALIAR = [chaves.todasAsAvaliacoes, chaves.resumo, chaves.alertas] as const;
 

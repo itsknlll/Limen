@@ -41,7 +41,7 @@ function doMapa(mapa: Record<string, string>, chave: string): string {
 export const rotuloMetrica = (metrica: string) => doMapa(ROTULOS_METRICA, metrica);
 export const rotuloOperador = (operador: string) => doMapa(ROTULOS_OPERADOR, operador);
 
-function comUnidade(metrica: string, numero: string): string {
+export function comUnidade(metrica: string, numero: string): string {
   const unidade = Object.hasOwn(UNIDADES, metrica) ? UNIDADES[metrica as Metrica] : undefined;
   if (unidade === "%") return `${numero}%`;
   if (unidade === "R$") return `R$\u00A0${numero}`;

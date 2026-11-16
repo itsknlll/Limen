@@ -24,6 +24,7 @@ const EM_CACHE: QueryKey[] = [
   chaves.campanhas,
   chaves.metricas(1),
   chaves.metricas(2),
+  [...chaves.alertas, { limite: 500 }],
 ];
 
 function comCache(cliente: QueryClient): QueryClient {
@@ -45,16 +46,16 @@ const falhaCom = (tipo: string, status: number | null) =>
   vi.fn<() => Promise<Saida>>().mockRejectedValue(new ErroApi({ status, tipo }));
 
 describe("useSincronizar (opcoesSincronizar)", () => {
-  it("as chaves invalidadas no sucesso são exatamente campanhas, métricas e resumo", () => {
-    expect(CHAVES_APOS_SINCRONIZAR).toEqual([["campanhas"], ["metricas"], ["resumo"]]);
+  it("as chaves invalidadas no sucesso são exatamente campanhas, métricas, resumo e alertas", () => {
+    expect(CHAVES_APOS_SINCRONIZAR).toEqual([["campanhas"], ["metricas"], ["resumo"], ["alertas"]]);
   });
 
-  it("sucesso invalida campanhas, as métricas de todas as campanhas e o resumo; não toca em /eu nem avaliações", async () => {
+  it("sucesso invalida campanhas, as métricas de todas as campanhas, o resumo e os alertas; não toca em /eu nem avaliações", async () => {
     const cliente = comCache(clienteQueRepete());
     const resultado = await sincronizarCom(cliente, () => Promise.resolve({ campanhas_sincronizadas: 3 }));
     expect(resultado.status).toBe("success");
     expect(resultado.data).toEqual({ campanhas_sincronizadas: 3 });
-    expect(invalidadas(cliente)).toEqual(['["resumo"]', '["campanhas"]', '["metricas",1]', '["metricas",2]']);
+    expect(invalidadas(cliente)).toEqual(['["resumo"]', '["campanhas"]', '["metricas",1]', '["metricas",2]', '["alertas",{"limite":500}]']);
   });
 
   it.each([

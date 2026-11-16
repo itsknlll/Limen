@@ -118,7 +118,7 @@ describe("chaves", () => {
     expect(chaves.regra(7)).toEqual(["regras", 7]);
   });
   it("o que cada mutação invalida", () => {
-    expect(CHAVES_APOS_REGRA).toEqual([["regras"], ["resumo"]]);
+    expect(CHAVES_APOS_REGRA).toEqual([["regras"], ["resumo"], ["alertas"]]);
     expect(CHAVES_APOS_AVALIAR).toEqual([["avaliacoes"], ["resumo"], ["alertas"]]);
   });
 });
@@ -136,12 +136,12 @@ describe("salvar regra (opcoesSalvarRegra)", () => {
     expect(pedidos).toEqual([{ metodo: "PUT", caminho: "/regras/7", corpo: CORPO }]);
   });
 
-  it("sucesso invalida a lista, a regra e o resumo, e mais nada", async () => {
+  it("sucesso invalida a lista, a regra, o resumo e os alertas, e mais nada", async () => {
     const consultas = comCache(clienteQueRepete());
     const { cliente } = apiFalsa(() => json(200, REGRA_API));
     const resultado = await rodar(consultas, opcoesSalvarRegra(consultas, cliente), { id: 7, corpo: CORPO });
     expect(resultado.status).toBe("success");
-    expect(invalidadas(consultas)).toEqual(['["resumo"]', '["regras"]', '["regras",7]']);
+    expect(invalidadas(consultas)).toEqual(['["resumo"]', '["regras"]', '["regras",7]', '["alertas",{"limite":500}]']);
   });
 
   it.each([
@@ -171,7 +171,7 @@ describe("ativar regra (opcoesAtivarRegra)", () => {
     const consultas = comCache(clienteQueRepete());
     await rodar(consultas, opcoesAtivarRegra(consultas, cliente), REGRA_API);
     expect(pedidos).toEqual([{ metodo: "PUT", caminho: "/regras/7", corpo: CORPO }]);
-    expect(invalidadas(consultas)).toEqual(['["resumo"]', '["regras"]', '["regras",7]']);
+    expect(invalidadas(consultas)).toEqual(['["resumo"]', '["regras"]', '["regras",7]', '["alertas",{"limite":500}]']);
   });
 
   it("regra que não passa na validação (R1) não gera pedido", async () => {
@@ -187,13 +187,13 @@ describe("ativar regra (opcoesAtivarRegra)", () => {
 });
 
 describe("desativar regra (opcoesDesativarRegra)", () => {
-  it("DELETE /regras/7 sem corpo; sucesso invalida a lista, a regra e o resumo", async () => {
+  it("DELETE /regras/7 sem corpo; sucesso invalida a lista, a regra, o resumo e os alertas", async () => {
     const { cliente, pedidos } = apiFalsa(() => new Response(null, { status: 204 }));
     const consultas = comCache(clienteQueRepete());
     const resultado = await rodar(consultas, opcoesDesativarRegra(consultas, cliente), 7);
     expect(resultado.status).toBe("success");
     expect(pedidos).toEqual([{ metodo: "DELETE", caminho: "/regras/7", corpo: null }]);
-    expect(invalidadas(consultas)).toEqual(['["resumo"]', '["regras"]', '["regras",7]']);
+    expect(invalidadas(consultas)).toEqual(['["resumo"]', '["regras"]', '["regras",7]', '["alertas",{"limite":500}]']);
   });
 
   it("409 regra_referencia: um pedido só e nada invalidado", async () => {

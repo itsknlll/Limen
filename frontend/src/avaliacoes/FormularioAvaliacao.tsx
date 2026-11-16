@@ -1,6 +1,7 @@
 import { Bell, Play } from "lucide-react";
 import { useId, useRef, useState } from "react";
 import { Link } from "react-router";
+import { linkAlertas } from "@/alertas/filtros";
 import { useCampanhas, useExecutarAvaliacao } from "@/api/consultas";
 import { EstadoErro } from "@/componentes/EstadoErro";
 import { Button } from "@/components/ui/button";
@@ -9,7 +10,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { ROTAS } from "@/rotas";
 import {
   avisoAtual,
   campanhaDoSelect,
@@ -174,7 +174,7 @@ export function FormularioAvaliacao() {
         <div className="flex max-w-xl flex-col gap-3 rounded-xl border bg-card p-4 text-sm">
           <p>{textoResultado(estado.saida)}</p>
           <Button asChild variant="outline" size="sm" className="self-start">
-            <Link to={ROTAS.alertas}>
+            <Link to={linkAlertas(estado.saida)}>
               <Bell aria-hidden />
               Ver alertas
             </Link>

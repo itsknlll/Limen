@@ -97,7 +97,7 @@ export function textoResultado(s: Resultado): string {
 export type EstadoExecucao =
   | { fase: "ocioso" }
   | { fase: "executando" }
-  | { fase: "concluida"; saida: Resultado }
+  | { fase: "concluida"; saida: Resultado & Pick<Avaliacao, "campanha_id" | "inicio" | "fim"> }
   | { fase: "erro" };
 
 /** Texto da região role="status", que existe sempre e fica vazia fora do pedido. */

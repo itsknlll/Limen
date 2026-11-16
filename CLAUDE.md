@@ -117,6 +117,11 @@ Evidência: `docs/evidencias/2026-11-15_fase3_regras_vitest.txt`.
 incluir pausadas, aviso de pausada) e histórico com "não registrado" para os parâmetros
 anteriores à 0003. Teste no navegador aprovado pelo Kauan. Vitest 950/950, typecheck, lint
 e build ok. Evidência: `docs/evidencias/2026-11-15_fase3_avaliacoes_vitest.txt`.
+✅ **Fase 4 — tela de Alertas (16/11)**: lista de `GET /alertas` com filtros por campanha,
+regra e período guardados na URL, o que disparou (valor medido e limiar da cópia gravada no
+alerta), aviso de limite e "Ver alertas" das Avaliações com campanha e período. Teste no
+navegador aprovado pelo Kauan (8 itens). Vitest 1079/1079, typecheck, lint e build ok.
+Evidência: `docs/evidencias/2026-11-16_fase4_alertas_vitest.txt`. Playwright fica para depois.
 
 **Dashboard — plano aprovado (13/11/2026):** React + TypeScript (Vite), Tailwind v4,
 shadcn/ui, lucide, Recharts, TanStack Query, React Router, react-hook-form + zod, sonner.
@@ -1260,6 +1265,117 @@ Depois: dashboard (React) → testes de desempenho (aba Desempenho: 5 aqueciment
   e build ok; pytest não rodado (backend intocado, 236/236). Evidência:
   `docs/evidencias/2026-11-15_fase3_avaliacoes_vitest.txt` (verbose; sem e-mail nem
   segredo, conferido com `grep -l`).
+- **Fase 4 — tela de Alertas (16/11)**: rota `/alertas` (saiu do `EmConstrucao`, removido
+  por não ter mais uso); página com o h1 fora do Suspense e o conteúdo por `lazy()`
+  (`ConteudoAlertas`); o fallback `EsqueletoAlertas` anuncia um único status, e depois a
+  tela tem um só `role="status"` (`textoStatusAlertas`). Nenhum endpoint novo e nenhum
+  componente novo do shadcn. **O que o backend oferece** (lido antes): `GET /alertas` filtra
+  por `campanha_id`, `regra_id`, `inicio` e `fim` (pela **data do registro**) e tem `limite`
+  de 1 a 5000 (padrão 500); **não há paginação** (nem `offset` nem filtro por avaliação);
+  ordem: data mais recente, depois o código da regra (sem desempate entre campanhas no
+  mesmo dia). `valores_medidos` traz só as métricas das condições, como `str(Decimal)`;
+  `condicoes` é a cópia gravada na avaliação. **Oráculo**: consulta só leitura no `limen`
+  (`default_transaction_read_only=on`, `BEGIN READ ONLY`/`ROLLBACK`, colunas explícitas,
+  sem `usuario_id`, e-mail nem ID do Google), com `count(DISTINCT usuario_id) = 1` conferido
+  antes: 27 alertas de 13/10 a 11/11, 3 por par campanha × regra; ids 1 = A, 2 = C, 3 = B
+  (procurar pela posição erraria); CTR com 28 casas; limiares com 6; a R3 com 2 condições.
+  4 linhas reais (alertas 45, 9, 18 e 16) viraram a fixture de `tabela.test.ts`; os casos
+  de regra editada e de valor perto do limiar são sintéticos e marcados.
+  **Filtros** (`src/alertas/filtros.ts`): a URL é a única fonte (`?campanha=&regra=&inicio=
+  &fim=`): enviar grava a URL, e a consulta e os erros saem dela; o link das Avaliações, o
+  Voltar/Avançar e uma URL editada passam pelo mesmo caminho. Descartado: validar no envio
+  e só gravar a URL válida (duas fontes de erro). Mesmas regras do `POST /avaliacoes`:
+  campo vazio omitido, ids só da lista (o FastAPI aceitaria 0 e -1), datas pelo
+  `validarPeriodo`, **extraído do `pedido.ts`** sem mudar comportamento (`pedido.test.ts`
+  com o mesmo sha256 `7c6771e5…eb81404`, 39/39); o teste de datas dos filtros compara com
+  `montarPedidoAvaliacao`, cujo oráculo é o Pydantic. O `limite` (500) vai sempre
+  explícito. `montarConsultaAlertas` só espera a lista se o filtro dela estiver preenchido
+  (o `/alertas` puro pede tudo em paralelo); erro vence a espera; lista que falhou chega
+  como `[]` (`listaParaFiltro`) e o campo mostra o erro, em vez de esperar para sempre.
+  Na tela: o foco no primeiro erro é calculado no próprio envio (`envioDosFiltros`), com as
+  mesmas listas, porque a troca de URL do React Router pode chegar num render posterior; o
+  rascunho acompanha a URL pelo padrão do React de ajustar o estado durante o render, sem
+  remontar o formulário (remontar mandaria o foco ao `<body>`; um efeito com `setState` o
+  lint recusa); o erro some do campo editado até o próximo envio (`errosVisiveis`).
+  **Achado no navegador**: com `?inicio=ontem`, o `<input type="date">` recebia "ontem" e o
+  navegador avisava no console ("does not conform to the required format"); o campo só
+  aceita "" ou data válida. `valorDoCampoData` entrega "" nesse caso, e o rascunho guarda o
+  texto da URL, para o erro continuar até a pessoa corrigir (descartado: limpar o rascunho,
+  que apagaria o erro sem correção). Só no `FiltrosAlertas`: no `FormularioAvaliacao` a
+  data só vem do próprio campo. **Tabela** (`src/alertas/tabela.ts`): o que disparou vem da
+  **cópia das condições do alerta**, não da regra atual (que pode ter sido editada); a regra
+  atual só decide o aviso "a regra mudou depois deste alerta" (`regraMudou`, com limiar
+  normalizado e condições pela `ordem`; regra fora da lista → sem aviso). O banco não tem
+  alertas de regra do usuário: o aviso só é coberto por teste. **Valor medido com casas
+  adaptativas** (`formatarMedido`): com 2 casas, CTR `0.996` contra `< 1%` apareceria como
+  "1,00% < 1%"; arredonda com pelo menos as casas do limiar (o arredondamento é monotônico,
+  o valor não passa para o outro lado) e acrescenta casas enquanto parecer igual ao limiar
+  sem ser (o laço termina nas casas do próprio valor). Descartado: sempre 2 casas. Uma
+  previsão errada no teste: para `0.9951` contra `0.996`, o esperado escrito era "0,9951%",
+  mas a função mostra "0,995%" (3 casas do limiar), já do lado certo; corrigido só o valor
+  esperado. Ausente → "—" com "sem dado"; o leitor de tela ouve o operador por extenso
+  ("CTR 0,57%, menor que 1%"). `textoContagem`: com 500 itens, "Mostrando os 500 alertas
+  mais recentes. Use os filtros para ver os anteriores." `estadoVazioAlertas`: sem filtro
+  leva às Avaliações; com filtro, "Limpar filtros". `faseAlertas` decide o que a tela
+  mostra, com os filtros antes da consulta (a consulta desligada ficaria "pending" para
+  sempre). `comUnidade` (`regras/textos.ts`) e `SEM_DADO` (`campanhas/dados.ts`) passaram
+  a ser exportados (uma palavra em cada; testes deles intactos). **Consultas**:
+  `opcoesAlertas` desligada com consulta `null` (URL inválida ou lista carregando);
+  `alertasFiltrados(consulta)` fica sob o prefixo `alertas`. `chaves.alertas` entrou em
+  `CHAVES_APOS_SINCRONIZAR` e `CHAVES_APOS_REGRA`, porque nome da campanha e da regra chegam
+  por JOIN. **Testes antigos alterados (2 arquivos, só acréscimos)**: `consultas.test.ts` e
+  `consultas-regras.test.ts`, 10 linhas trocadas pela mesma com a chave ou o texto "e
+  alertas" acrescentado, mais a chave de alertas no `EM_CACHE` do primeiro (sem ela, a
+  invalidação não seria vista; os testes de erro passam a provar que os alertas não são
+  invalidados). **"Ver alertas"** usa `linkAlertas(estado.saida)`, com os parâmetros que o
+  servidor gravou; mostra os alertas do período, inclusive os que já existiam (a API não
+  filtra por avaliação). O typecheck pegou que o `EstadoExecucao` (`avaliacoes/historico.ts`)
+  guardava só um `Pick` sem `campanha_id`/`inicio`/`fim`; uma linha de tipo, sem mudar
+  comportamento nem o `historico.test.ts`. Descartado: guardar o corpo enviado (usaria o
+  pedido, não o gravado). **Mutações** (dois scripts no scratchpad com backup, `trap`, troca
+  recusada se o trecho não aparecer exatamente 1 vez, `cmp` após cada uma, sem `set -e`;
+  suíte inteira em cada uma; `sha256sum -c` com SUCESSO no fim), todas como previsto:
+
+  | | Mutação | Reprovou (de 1046; M7/M8 de 1070) |
+  |---|---|---|
+  | M1 | campo vazio enviado como `""` | 8 |
+  | M2 | id fora da lista enviado | 4 |
+  | M3 | espera as listas mesmo sem filtro | 1 |
+  | M4 | espera vence o erro | 1 |
+  | M5 | `>` vira `>=` no `validarPeriodo` | 2 (`filtros.test` e `pedido.test`) |
+  | M6 | `linkAlertas` sem a campanha | 2 |
+  | T1 | disparos montados com a regra atual | 2 |
+  | T2 | valor medido sem normalizar nem arredondar | 6 |
+  | T3 | aviso de limite nunca aparece | 2 |
+  | T4 | `enabled: true` no `opcoesAlertas` | 1 (pelo `failureCount`) |
+  | M7 | `listaParaFiltro` devolve `undefined` com erro | 1 |
+  | M8 | `faseAlertas` olha a consulta antes dos filtros | 2 |
+
+  Na M5, os casos de período dos filtros não pegam (comparam com o `pedido.ts`, que usa a
+  mesma função mutada): quem pega são os testes explícitos de início igual ao fim. Na T4,
+  "nenhum pedido" sozinho não pegaria (a `queryFn` lança antes do `fetch`). A previsão da
+  M8 foi corrigida de 1 para 2 antes de rodar. **Build** (baixado ao abrir): **658,50 kB**
+  (`index` 375,76 + `card` 282,74), +1,21 kB sobre os 657,29 kB da Fase 3 (causa não
+  isolada; provável: algo agora comum às telas foi para o `card`). `ConteudoAlertas`
+  9,84 kB. O pedaço `campos` (30,77 kB) virou `select` 25,79 + `checkbox` 5,10 + `filtros`
+  3,46 (este comum a Avaliações e Alertas, pelo `linkAlertas`). **Teste no navegador
+  (Kauan, 16/11), 8 itens aprovados**: (1) 27 alertas, com o CTR da C em 11/11 = 0,57% e o
+  CPC de 13/10 = R$ 10,93, o mesmo conferido à mão na Fase 2; (2) filtro de campanha com a
+  URL `?campanha=2`, 9 alertas, e Voltar/Avançar restaurando os filtros; (3) período
+  invertido com erro e foco na Data final, sem pedido; (4) `?campanha=99` e `?inicio=ontem`
+  com erro no campo e sem pedido de alertas; (5) estado vazio com "Limpar filtros" voltando
+  aos 27; (6) "Ver alertas" das Avaliações abrindo `?campanha=2&inicio=2026-11-01&fim=
+  2026-11-11` com os filtros preenchidos e os 5 alertas; (7) esqueleto com rede 3G e foco
+  no h1; (8) teclado, tema escuro e celular; painel Issues "No issues". O único ajuste foi o
+  aviso do `?inicio=ontem`, corrigido depois com `valorDoCampoData` (coberto por teste e
+  conferido no navegador pelo Kauan em 16/11: erro no campo e console sem o aviso de formato). **Limitações
+  (declarar no artigo)**: sem paginação, a tela mostra no máximo os 500 alertas mais
+  recentes por filtro (avisa quando chega ao limite); o link "Ver alertas" filtra por
+  campanha e período, não pela avaliação. Totais: Vitest **1079/1079** (30 arquivos; 950 +
+  79 de `filtros` + 46 de `tabela` + 4 de `consultas-alertas`), typecheck, lint e build ok;
+  pytest não rodado (backend intocado, 236/236). Evidência:
+  `docs/evidencias/2026-11-16_fase4_alertas_vitest.txt` (verbose; sem e-mail nem segredo,
+  conferido com `grep -l`).
 - **Pendências da Fase 3 (15/11)**: (a) ~~mostrar abaixo do limiar o valor que será
   salvo~~ feito na etapa 4 ("Será salvo como", `previaLimiar`); (b) ~~ligar os erros do
   servidor aos campos~~ feito (etapa 3 em `api/campos.ts`, etapa 4 nas telas);
@@ -1279,6 +1395,13 @@ Depois: dashboard (React) → testes de desempenho (aba Desempenho: 5 aqueciment
   `src/avaliacoes/historico.ts` tem uma cópia de 5 linhas do trecho de período do
   `textoParametros` (`src/visao-geral/dados.ts`), para não alterar aquele arquivo na etapa.
   As duas cópias têm teste. Limpeza: exportar a função de `dados.ts` e usá-la nos dois.
+- **Limpeza opcional — campos de data repetidos (16/11, Fase 4, tela de Alertas)**:
+  `CampoData`, `descritor` e `Erro` (cerca de 25 linhas) existem em
+  `src/avaliacoes/FormularioAvaliacao.tsx` (privados) e de novo em
+  `src/alertas/FiltrosAlertas.tsx`, para não mexer no formulário já aprovado no navegador.
+  Limpeza: extrair para `src/componentes/` e usar nos dois. O select de regras reaproveita
+  `valorDoSelect`/`campanhaDoSelect` (`avaliacoes/formulario.ts`), que só convertem
+  "todas" ↔ "" apesar do nome; renomear entra na mesma limpeza.
 - **Pendências visuais da Fase 3 (15/11, plano de corte)**: (a) **primeiro item, por ser
   questão de uso**: no celular, a coluna Ações fica escondida e o selo "Desativada"
   aparece cortado até rolar a tabela para o lado (a tabela rola e é focável, mas as
@@ -1286,6 +1409,11 @@ Depois: dashboard (React) → testes de desempenho (aba Desempenho: 5 aqueciment
   lista; (c) no celular, as colunas da direita do histórico de Avaliações ("Incluiu
   pausadas", "Alertas novos", "Já existentes") ficam cortadas até rolar a tabela para o
   lado (mesmo caso do item (a)).
+- **Pendência visual da Fase 4 (16/11, plano de corte)**: no celular, a coluna "O que
+  disparou" da tabela de Alertas só aparece rolando a tabela para o lado (a tabela rola e
+  é focável, mas a informação principal do alerta não fica à vista). Mesmo caso da coluna
+  Ações em Regras e do histórico de Avaliações (Fase 3, itens (a) e (c)); a solução pode
+  ser a mesma para as três tabelas.
 - **Pendências visuais da Fase 2 (15/11, plano de corte)**: (a) no celular, a coluna Dia
   da tabela diária some ao rolar para o lado; fixá-la (`sticky`) manteria a data visível;
   (b) o aviso de sucesso da sincronização (sonner) cobre o nome do usuário no topo da

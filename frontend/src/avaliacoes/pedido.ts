@@ -36,6 +36,28 @@ export const MENSAGENS_PEDIDO = {
   periodo: "A data final deve ser igual ou posterior à inicial.",
 } as const;
 
+export interface PeriodoValidado {
+  /** Só as datas válidas; campo vazio é omitido. */
+  periodo: Pick<CorpoAvaliacao, "inicio" | "fim">;
+  erros: Partial<Record<"inicio" | "fim", string>>;
+}
+
+/** Datas só "AAAA-MM-DD", comparadas como texto. Usada também pelos filtros de Alertas. */
+export function validarPeriodo(inicio: string, fim: string): PeriodoValidado {
+  const periodo: PeriodoValidado["periodo"] = {};
+  const erros: PeriodoValidado["erros"] = {};
+  for (const [campo, valor] of [
+    ["inicio", inicio],
+    ["fim", fim],
+  ] as const) {
+    if (valor === "") continue;
+    if (ehDataIso(valor)) periodo[campo] = valor;
+    else erros[campo] = MENSAGENS_PEDIDO.data;
+  }
+  if (periodo.inicio && periodo.fim && periodo.inicio > periodo.fim) erros.fim = MENSAGENS_PEDIDO.periodo;
+  return { periodo, erros };
+}
+
 export function montarPedidoAvaliacao(
   form: FormularioAvaliacao,
   campanhas: readonly Pick<Campanha, "id" | "nome" | "status">[],
@@ -51,13 +73,9 @@ export function montarPedidoAvaliacao(
     else corpo.campanha_id = campanha.id;
   }
 
-  for (const campo of ["inicio", "fim"] as const) {
-    const valor = form[campo];
-    if (valor === "") continue;
-    if (ehDataIso(valor)) corpo[campo] = valor;
-    else erros[campo] = MENSAGENS_PEDIDO.data;
-  }
-  if (corpo.inicio && corpo.fim && corpo.inicio > corpo.fim) erros.fim = MENSAGENS_PEDIDO.periodo;
+  const { periodo, erros: errosPeriodo } = validarPeriodo(form.inicio, form.fim);
+  Object.assign(corpo, periodo);
+  Object.assign(erros, errosPeriodo);
 
   if (Object.keys(erros).length > 0) return { ok: false, erros };
 
