@@ -1,5 +1,6 @@
 import { createBrowserRouter } from "react-router";
 import { Layout } from "./layout/Layout";
+import { Avaliacoes } from "./paginas/Avaliacoes";
 import { Campanha } from "./paginas/Campanha";
 import { Campanhas } from "./paginas/Campanhas";
 import { EmConstrucao } from "./paginas/EmConstrucao";
@@ -36,7 +37,7 @@ export const roteador = createBrowserRouter([
               { path: relativo(ROTAS.regras), element: <Regras /> },
               { path: relativo(ROTAS.regraNova), element: <RegraNova /> },
               { path: relativo(ROTAS.regraEditar), element: <RegraEditar /> },
-              { path: relativo(ROTAS.avaliacoes), element: <EmConstrucao titulo="Avaliações" previsao="Fase 3" /> },
+              { path: relativo(ROTAS.avaliacoes), element: <Avaliacoes /> },
               { path: relativo(ROTAS.alertas), element: <EmConstrucao titulo="Alertas" previsao="Fase 4" /> },
               { path: "*", element: <NaoEncontrada /> },
             ],

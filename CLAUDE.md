@@ -113,6 +113,10 @@ build ok. Evidência: `docs/evidencias/2026-11-15_fase2_telas_vitest.txt`.
 leitura), nova regra e edição com "Será salvo como" e erros do servidor nos campos.
 Teste no navegador aprovado pelo Kauan. Vitest 893/893, typecheck, lint e build ok.
 Evidência: `docs/evidencias/2026-11-15_fase3_regras_vitest.txt`.
+✅ **Fase 3, etapa 5 — tela de Avaliações (15/11)**: executar avaliação (campanha, período,
+incluir pausadas, aviso de pausada) e histórico com "não registrado" para os parâmetros
+anteriores à 0003. Teste no navegador aprovado pelo Kauan. Vitest 950/950, typecheck, lint
+e build ok. Evidência: `docs/evidencias/2026-11-15_fase3_avaliacoes_vitest.txt`.
 
 **Dashboard — plano aprovado (13/11/2026):** React + TypeScript (Vite), Tailwind v4,
 shadcn/ui, lucide, Recharts, TanStack Query, React Router, react-hook-form + zod, sonner.
@@ -1176,6 +1180,86 @@ Depois: dashboard (React) → testes de desempenho (aba Desempenho: 5 aqueciment
   `textos` + 9 de `rotas` + 14 de `edicao`), typecheck, lint e build ok; pytest não rodado
   (backend intocado, 236/236). Evidência: `docs/evidencias/2026-11-15_fase3_regras_vitest.txt`
   (verbose; sem e-mail nem segredo, conferido com `grep -l`).
+- **Fase 3, etapa 5 — tela de Avaliações (15/11)**: rota `/avaliacoes` (saiu do
+  `EmConstrucao`); página com o h1 fora do Suspense e o conteúdo por `lazy()`
+  (`ConteudoAvaliacoes`), com o fallback `EsqueletoAvaliacoes` anunciando um único status.
+  Formulário e histórico são independentes (erro em um não esconde o outro). Nenhum
+  componente novo do shadcn e nenhuma consulta nova: o histórico é `useAvaliacoes(50)`
+  (`todasAsAvaliacoes` é só o prefixo da chave) e o nome da campanha vem de
+  `useCampanhas()`. **Funções puras**: `avaliacoes/historico.ts` (`celulasHistorico`,
+  `textoResultado`, `textoStatus`) e `avaliacoes/formulario.ts` (`decidirEnvio`,
+  `depoisDoErro`, `primeiroCampoComErro`, `semErroNoCampo`, `opcoesCampanha`,
+  `avisoAtual`, `valorDoSelect`/`campanhaDoSelect`); o `.tsx` só liga estado e tela.
+  **Histórico**: `incluir_pausadas` NULL é o sinal de avaliação anterior à 0003 (mesma regra
+  do `textoParametros`): Período, Campanha e Incluiu pausadas mostram "não registrado", em
+  itálico, e nunca "não"/"todas" (ausente ≠ falso). Depois da 0003, `campanha_id` NULL é
+  "todas"; id fora da lista → "campanha nº N (fora da lista)"; lista não carregada → só o
+  número. Limitação: a FK de `campanha_id` é `ON DELETE SET NULL`, então uma campanha
+  apagada depois da 0003 apareceria como "todas" (campanhas não são apagadas; a
+  sincronização marca REMOVED). Alertas em duas colunas, "Alertas novos" e "Já existentes"
+  (descartado: as duas na mesma célula). `celulasHistorico` recebe um `Pick` com os 7
+  campos que usa, para a fixture não precisar de valores inventados. **Resultado**: zero
+  alertas novos é "nenhum alerta novo" (não parece falha); zero registros avaliados ganha
+  a dica "confira o período e se a campanha está pausada". O link "Ver alertas" vai para
+  `/alertas` sem filtro: `GET /alertas` não filtra por avaliação (só campanha, regra e
+  período), e a tela é da Fase 4. **Formulário**: `useState` + `montarPedidoAvaliacao`
+  (descartado: react-hook-form + zod, que duplicaria a validação do `pedido.ts`). Um estado
+  de erros só, trocado inteiro a cada envio: o cliente valida antes e o servidor só
+  responde se o cliente deixou passar, então os dois nunca aparecem juntos (o `juntarErros`
+  do plano saiu). `decidirEnvio` decide ignorar (pedido em andamento), corrigir (com foco
+  no primeiro campo da tela) ou enviar; o botão usa `aria-disabled` e o `role="status"`
+  existe sempre. Erros do servidor por `errosNosCamposAvaliacao`; o resto (período
+  invertido no servidor, Google, rede) vai para o `EstadoErro`. Sem a lista de campanhas,
+  o select só tem "Todas". **Select do Radix com `value="todas"`**: no Radix instalado,
+  `value === ""` significa "nada escolhido" e mostra o placeholder (`shouldShowPlaceholder`,
+  linha 1207 de `@radix-ui/react-select/dist/index.mjs`); "Todas as campanhas" usa o valor
+  `"todas"` no select e vira `""` no formulário (`campanhaDoSelect`). **Oráculo**: consulta
+  só de leitura no `limen` (transação READ ONLY, `default_transaction_read_only=on`,
+  colunas explícitas, sem `usuario_id`, e-mail, conta nem ID do Google), com
+  `count(DISTINCT usuario_id) = 1` conferido antes; a coluna Data foi comparada com o
+  `to_char(... AT TIME ZONE 'America/Fortaleza')` do PostgreSQL, e não com o Intl. As 2
+  avaliações reais são do IN-02b (parâmetros NULL); os casos depois da 0003 são sintéticos.
+  Nas campanhas, o id 2 é a C: procurar pela posição na lista erraria. Testes: 29 em
+  `historico.test.ts` e 28 em `formulario.test.ts`. **Mutações** (script único com backup,
+  `trap`, `cmp` após cada uma, sem `set -e`; troca de trecho recusada se não aparecer
+  exatamente 1 vez; sha256 iguais antes e depois: `historico.ts` `c90753d9…5eadaa18`,
+  `formulario.ts` `41739153…f7d0e224`), todas como previsto:
+
+  | | Mutação | Previsto | Reprovou (de 57) |
+  |---|---|---|---|
+  | H1 | NULL tratado como `false` | 3 | 3 (as 2 linhas reais; sem a lista) |
+  | H2 | `campanha_id` NULL depois da 0003 vira "não registrado" | 1 | 1 ("todas") |
+  | H3 | coluna de novos soma os já existentes | 3 | 3 (nº 2 real; "nunca 27"; milhar) |
+  | F1 | ordem dos campos com fim antes de início | 2 | 2 (`{inicio, fim}` e `{fim, inicio}`) |
+  | F2 | `decidirEnvio` sem checar `pendente` | 2 | 2 (os dois "ignora") |
+  | F3 | `depoisDoErro` com `restante: false` fixo | 4 | 4 (período invertido; rede; cota; não `ErroApi`) |
+  | F4 | `campanhaDoSelect` sem converter `"todas"` | 2 | 2 (ida e volta; pedido sem `campanha_id`) |
+
+  Na H3, a linha real nº 1 não pega a mutação (0 já existentes); quem pega é a nº 2 e o
+  teste "9 e 18, nunca 27". Na F1, os testes de `depoisDoErro` passam, porque o `toEqual`
+  ignora a ordem das chaves. **Campos escondidos do Radix**: o painel Issues do navegador
+  acusava "form field should have an id or name" no `<select>` escondido (1×1,
+  `aria-hidden`) do Select e no `<input>` do Checkbox. Correção sem editar
+  `src/components/ui`: `name` no `<Select>` e no `<Checkbox>` do `FormularioAvaliacao`
+  (`campanhaId`, `incluirPausadas`) e no `<Checkbox>` de "Regra ativa" do `FormularioRegra`
+  (`field.name`; o Select dele já passava `name`). Os dois formulários não fazem envio
+  nativo, então o `name` não muda o comportamento. **Build** (baixado ao abrir): **657,29
+  kB** (`index` 375,75 + `card` 281,54), +1,21 kB sobre os 656,08 kB da etapa 4 (a página
+  e o esqueleto entram direto pelo roteador). `ConteudoAvaliacoes` 9,20 kB. Mudou a
+  divisão: o `FormularioRegra` foi de 86,18 para 55,63 kB e surgiu o pedaço comum
+  `campos` (30,77 kB; select, checkbox, `api/campos.ts`), usado pelos dois formulários e
+  baixado só neles. **Teste no navegador (Kauan, 15/11), aprovado**: histórico com as 2
+  avaliações reais em "não registrado" e itálico; execução sem filtros com um único POST,
+  resultado "nenhum alerta novo, 18 já existiam, 60 registros" e linha nova com "período
+  todo/todas/não"; campanha C pausada com o aviso antes de executar e 0 registros com a
+  dica; período invertido com erro e foco na Data final (`input#…-fim`) e nenhum POST;
+  com rede 3G (pedido de 2 s), vários cliques geraram um único POST (sem lentidão o pedido
+  leva 20 ms, e um clique duplo gera duas execuções legítimas, porque a primeira já
+  terminou); avaliação só pelo teclado, tema escuro, celular com rolagem só na tabela,
+  console limpo. Totais: Vitest **950/950** (27 arquivos; 893 + 29 + 28), typecheck, lint
+  e build ok; pytest não rodado (backend intocado, 236/236). Evidência:
+  `docs/evidencias/2026-11-15_fase3_avaliacoes_vitest.txt` (verbose; sem e-mail nem
+  segredo, conferido com `grep -l`).
 - **Pendências da Fase 3 (15/11)**: (a) ~~mostrar abaixo do limiar o valor que será
   salvo~~ feito na etapa 4 ("Será salvo como", `previaLimiar`); (b) ~~ligar os erros do
   servidor aos campos~~ feito (etapa 3 em `api/campos.ts`, etapa 4 nas telas);
@@ -1191,11 +1275,17 @@ Depois: dashboard (React) → testes de desempenho (aba Desempenho: 5 aqueciment
   (86,18 kB), baixado só em /regras/nova e na edição. Motivo para manter: nenhum pedaço
   passa de 500 kB (o aviso não aparece). A piora é real e fica declarada; separar as
   bibliotecas com `manualChunks` fica como **opcional da limpeza final**.
+- **Limpeza opcional — `textoPeriodo` duplicado (15/11, Fase 3 etapa 5)**:
+  `src/avaliacoes/historico.ts` tem uma cópia de 5 linhas do trecho de período do
+  `textoParametros` (`src/visao-geral/dados.ts`), para não alterar aquele arquivo na etapa.
+  As duas cópias têm teste. Limpeza: exportar a função de `dados.ts` e usá-la nos dois.
 - **Pendências visuais da Fase 3 (15/11, plano de corte)**: (a) **primeiro item, por ser
   questão de uso**: no celular, a coluna Ações fica escondida e o selo "Desativada"
   aparece cortado até rolar a tabela para o lado (a tabela rola e é focável, mas as
   ações não ficam à vista); (b) espaço sobrando no topo da coluna Regra (selo + nome) da
-  lista.
+  lista; (c) no celular, as colunas da direita do histórico de Avaliações ("Incluiu
+  pausadas", "Alertas novos", "Já existentes") ficam cortadas até rolar a tabela para o
+  lado (mesmo caso do item (a)).
 - **Pendências visuais da Fase 2 (15/11, plano de corte)**: (a) no celular, a coluna Dia
   da tabela diária some ao rolar para o lado; fixá-la (`sticky`) manteria a data visível;
   (b) o aviso de sucesso da sincronização (sonner) cobre o nome do usuário no topo da

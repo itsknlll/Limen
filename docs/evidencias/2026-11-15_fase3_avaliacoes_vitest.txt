@@ -1,0 +1,959 @@
+
+ RUN  v5.1.0 /home/kauan/projetos/limen/frontend
+
+ ✓ src/campanhas/dados.test.ts > lerIdCampanha > "1" → 1 3ms
+ ✓ src/campanhas/dados.test.ts > lerIdCampanha > "42" → 42 0ms
+ ✓ src/campanhas/dados.test.ts > lerIdCampanha > "9007199254740991" → 9007199254740991 1ms
+ ✓ src/campanhas/dados.test.ts > lerIdCampanha > undefined → null (não chama a API) 0ms
+ ✓ src/campanhas/dados.test.ts > lerIdCampanha > "" → null (não chama a API) 0ms
+ ✓ src/campanhas/dados.test.ts > lerIdCampanha > "abc" → null (não chama a API) 0ms
+ ✓ src/campanhas/dados.test.ts > lerIdCampanha > "0" → null (não chama a API) 0ms
+ ✓ src/campanhas/dados.test.ts > lerIdCampanha > "-1" → null (não chama a API) 0ms
+ ✓ src/campanhas/dados.test.ts > lerIdCampanha > "1.5" → null (não chama a API) 1ms
+ ✓ src/campanhas/dados.test.ts > lerIdCampanha > "007" → null (não chama a API) 0ms
+ ✓ src/campanhas/dados.test.ts > lerIdCampanha > " 1" → null (não chama a API) 0ms
+ ✓ src/campanhas/dados.test.ts > lerIdCampanha > "1e3" → null (não chama a API) 0ms
+ ✓ src/campanhas/dados.test.ts > lerIdCampanha > "0x1" → null (não chama a API) 0ms
+ ✓ src/campanhas/dados.test.ts > lerIdCampanha > "9007199254740993" → null (não chama a API) 0ms
+ ✓ src/campanhas/dados.test.ts > encontrarCampanha > acha pelo id do banco, não pela posição 0ms
+ ✓ src/campanhas/dados.test.ts > encontrarCampanha > id que não está na lista → null 0ms
+ ✓ src/campanhas/dados.test.ts > formatarOrcamento > os três orçamentos reais (A, B, C) 2ms
+ ✓ src/campanhas/dados.test.ts > formatarOrcamento > 0 micros → R$ 0,00 0ms
+ ✓ src/campanhas/dados.test.ts > formatarOrcamento > 1234567 micros → R$ 1,23 0ms
+ ✓ src/campanhas/dados.test.ts > formatarOrcamento > 1005000 micros → R$ 1,01 0ms
+ ✓ src/campanhas/dados.test.ts > formatarOrcamento > 123456789000000 micros → R$ 123.456.789,00 0ms
+ ✓ src/campanhas/dados.test.ts > formatarOrcamento > null (sem orçamento vinculado) não vira R$ 0,00 0ms
+ ✓ src/campanhas/dados.test.ts > formatarOrcamento > -1 → orçamento inválido 0ms
+ ✓ src/campanhas/dados.test.ts > formatarOrcamento > 1.5 → orçamento inválido 0ms
+ ✓ src/campanhas/dados.test.ts > formatarOrcamento > NaN → orçamento inválido 0ms
+ ✓ src/campanhas/dados.test.ts > formatarOrcamento > 9007199254740992 → orçamento inválido 0ms
+ ✓ src/campanhas/dados.test.ts > textoSincronizacao > hora local a partir do UTC da API (Fortaleza = UTC−3) 25ms
+ ✓ src/campanhas/dados.test.ts > textoSincronizacao > null → nunca 0ms
+ ✓ src/campanhas/dados.test.ts > mensagemSincronizacao > 0 → Nenhuma campanha encontrada no Google Ads. 0ms
+ ✓ src/campanhas/dados.test.ts > mensagemSincronizacao > 1 → 1 campanha sincronizada. 0ms
+ ✓ src/campanhas/dados.test.ts > mensagemSincronizacao > 3 → 3 campanhas sincronizadas. 0ms
+ ✓ src/campanhas/dados.test.ts > mensagemSincronizacao > 1000 → 1.000 campanhas sincronizadas. 0ms
+ ✓ src/campanhas/dados.test.ts > rotuloOrigem > sintetica → sintética 1ms
+ ✓ src/campanhas/dados.test.ts > rotuloOrigem > google_ads → Google Ads 0ms
+ ✓ src/campanhas/dados.test.ts > rotuloOrigem > outra → outra 0ms
+ ✓ src/campanhas/dados.test.ts > rotuloOrigem > toString → toString 0ms
+ ✓ src/campanhas/dados.test.ts > rotuloOrigem > __proto__ → __proto__ 0ms
+ ✓ src/campanhas/dados.test.ts > descricaoPeriodo > os 30 dias do IN-02b 0ms
+ ✓ src/campanhas/dados.test.ts > descricaoPeriodo > não depende da ordem que a API mandou 0ms
+ ✓ src/campanhas/dados.test.ts > descricaoPeriodo > um dia, virada de ano e lista vazia 0ms
+ ✓ src/campanhas/dados.test.ts > células com as linhas reais da campanha A > 2026-10-13 1ms
+ ✓ src/campanhas/dados.test.ts > células com as linhas reais da campanha A > 2026-10-14 0ms
+ ✓ src/campanhas/dados.test.ts > células com as linhas reais da campanha A > 2026-10-15 0ms
+ ✓ src/campanhas/dados.test.ts > células com as linhas reais da campanha A > 2026-10-16 0ms
+ ✓ src/campanhas/dados.test.ts > ausente ≠ zero nas células > ausente vira — com descrição; zero continua zero 1ms
+ ✓ src/campanhas/dados.test.ts > CTR e CPC indefinidos (mesma ordem do motor) > CTR zero chega como 0E-16 e é 0,00%, não N/A 0ms
+ ✓ src/campanhas/dados.test.ts > CTR e CPC indefinidos (mesma ordem do motor) > CTR com impressões null e cliques null → N/A (indefinido: impressões e cliques ausentes) 0ms
+ ✓ src/campanhas/dados.test.ts > CTR e CPC indefinidos (mesma ordem do motor) > CTR com impressões null e cliques 5 → N/A (indefinido: impressões ausentes) 0ms
+ ✓ src/campanhas/dados.test.ts > CTR e CPC indefinidos (mesma ordem do motor) > CTR com impressões 100 e cliques null → N/A (indefinido: cliques ausentes) 0ms
+ ✓ src/campanhas/dados.test.ts > CTR e CPC indefinidos (mesma ordem do motor) > CTR com impressões 0 e cliques null → N/A (indefinido: cliques ausentes) 0ms
+ ✓ src/campanhas/dados.test.ts > CTR e CPC indefinidos (mesma ordem do motor) > CTR com impressões 0 e cliques 0 → N/A (indefinido: 0 impressões) 0ms
+ ✓ src/campanhas/dados.test.ts > CTR e CPC indefinidos (mesma ordem do motor) > CTR com impressões 0 e cliques 5 → N/A (indefinido: 0 impressões) 0ms
+ ✓ src/campanhas/dados.test.ts > CTR e CPC indefinidos (mesma ordem do motor) > CPC com custo null e cliques null → N/A (indefinido: custo e cliques ausentes) 0ms
+ ✓ src/campanhas/dados.test.ts > CTR e CPC indefinidos (mesma ordem do motor) > CPC com custo null e cliques 5 → N/A (indefinido: custo ausente) 0ms
+ ✓ src/campanhas/dados.test.ts > CTR e CPC indefinidos (mesma ordem do motor) > CPC com custo 10.00 e cliques null → N/A (indefinido: cliques ausentes) 0ms
+ ✓ src/campanhas/dados.test.ts > CTR e CPC indefinidos (mesma ordem do motor) > CPC com custo 0.00 e cliques null → N/A (indefinido: cliques ausentes) 0ms
+ ✓ src/campanhas/dados.test.ts > CTR e CPC indefinidos (mesma ordem do motor) > CPC com custo 10.00 e cliques 0 → N/A (indefinido: 0 cliques) 0ms
+ ✓ src/campanhas/dados.test.ts > CTR e CPC indefinidos (mesma ordem do motor) > cliques 0: CTR é 0,00% e CPC é N/A (a mesma linha tem os dois casos) 0ms
+ ✓ src/campanhas/dados.test.ts > textoAcessivel (o que o leitor de tela ouve) > valor definido: o próprio texto 1ms
+ ✓ src/campanhas/dados.test.ts > textoAcessivel (o que o leitor de tela ouve) > ausente: 'sem dado' no lugar de — 0ms
+ ✓ src/campanhas/dados.test.ts > textoAcessivel (o que o leitor de tela ouve) > indefinido: N/A seguido do motivo 0ms
+ ✓ src/api/erros.test.ts > oráculo: tipos de erro do backend > o leitor encontra as chamadas e não deixa nenhuma sem ler 3ms
+ ✓ src/api/erros.test.ts > oráculo: tipos de erro do backend > encontra pelo menos os tipos registrados na Fase 0 (o leitor não está vazio) 1ms
+ ✓ src/api/erros.test.ts > oráculo: tipos de erro do backend > o tipo conflito tem mensagem própria 0ms
+ ✓ src/api/erros.test.ts > oráculo: tipos de erro do backend > o tipo cota_excedida tem mensagem própria 0ms
+ ✓ src/api/erros.test.ts > oráculo: tipos de erro do backend > o tipo erro_google_ads tem mensagem própria 0ms
+ ✓ src/api/erros.test.ts > oráculo: tipos de erro do backend > o tipo erro_http tem mensagem própria 0ms
+ ✓ src/api/erros.test.ts > oráculo: tipos de erro do backend > o tipo google_ads_indisponivel tem mensagem própria 0ms
+ ✓ src/api/erros.test.ts > oráculo: tipos de erro do backend > o tipo google_autenticacao_temporaria tem mensagem própria 0ms
+ ✓ src/api/erros.test.ts > oráculo: tipos de erro do backend > o tipo nao_autenticado tem mensagem própria 0ms
+ ✓ src/api/erros.test.ts > oráculo: tipos de erro do backend > o tipo nao_encontrado tem mensagem própria 0ms
+ ✓ src/api/erros.test.ts > oráculo: tipos de erro do backend > o tipo regra_referencia tem mensagem própria 0ms
+ ✓ src/api/erros.test.ts > oráculo: tipos de erro do backend > o tipo requisicao_invalida tem mensagem própria 0ms
+ ✓ src/api/erros.test.ts > oráculo: tipos de erro do backend > o tipo token_google_ausente tem mensagem própria 0ms
+ ✓ src/api/erros.test.ts > oráculo: tipos de erro do backend > o tipo token_google_revogado tem mensagem própria 0ms
+ ✓ src/api/erros.test.ts > oráculo: tipos de erro do backend > o tipo validacao tem mensagem própria 0ms
+ ✓ src/api/erros.test.ts > oráculo: tipos de erro do backend > toda mensagem corresponde a um tipo do backend ou do frontend (sem chave esquecida ou com erro de digitação) 0ms
+ ✓ src/api/erros.test.ts > oráculo: tipos de erro do backend > o frontend não reaproveita um nome que o backend já usa 0ms
+ ✓ src/api/erros.test.ts > lerErro > usa o tipo do corpo no formato do backend 1ms
+ ✓ src/api/erros.test.ts > lerErro > lê o Retry-After da cota excedida 30ms
+ ✓ src/api/erros.test.ts > lerErro > 502 sem tipo (proxy do Vite com o backend parado) vira sem_conexao 7ms
+ ✓ src/api/erros.test.ts > lerErro > 502 do próprio backend continua erro_google_ads 0ms
+ ✓ src/api/erros.test.ts > lerErro > corpo fora do formato (texto puro) vira desconhecido 0ms
+ ✓ src/api/erros.test.ts > lerErro > corpo fora do formato (sem corpo) vira desconhecido 0ms
+ ✓ src/api/erros.test.ts > lerErro > corpo fora do formato (tipo vazio) vira desconhecido 0ms
+ ✓ src/api/erros.test.ts > lerErro > corpo fora do formato (tipo que não é texto) vira desconhecido 0ms
+ ✓ src/api/erros.test.ts > lerErro > corpo fora do formato (lista) vira desconhecido 0ms
+ ✓ src/api/erros.test.ts > lerRetryAfter > "3600" → 3600 0ms
+ ✓ src/api/erros.test.ts > lerRetryAfter > " 60 " → 60 0ms
+ ✓ src/api/erros.test.ts > lerRetryAfter > "0" → 0 0ms
+ ✓ src/api/erros.test.ts > lerRetryAfter > "Wed, 21 Oct 2026 07:28:00 GMT" → null 0ms
+ ✓ src/api/erros.test.ts > lerRetryAfter > "-1" → null 0ms
+ ✓ src/api/erros.test.ts > lerRetryAfter > "1.5" → null 0ms
+ ✓ src/api/erros.test.ts > lerRetryAfter > "" → null 0ms
+ ✓ src/api/erros.test.ts > lerRetryAfter > null → null 0ms
+ ✓ src/api/erros.test.ts > lerRetryAfter > undefined → null 0ms
+ ✓ src/api/erros.test.ts > erroDeRede > falha do fetch vira sem_conexao sem status 0ms
+ ✓ src/api/erros.test.ts > erroDeRede > cancelamento (AbortError) sai como veio: não é erro de conexão 0ms
+ ✓ src/api/erros.test.ts > mensagemDoErro > conflito tem título e texto em português 0ms
+ ✓ src/api/erros.test.ts > mensagemDoErro > cota_excedida tem título e texto em português 0ms
+ ✓ src/api/erros.test.ts > mensagemDoErro > erro_google_ads tem título e texto em português 0ms
+ ✓ src/api/erros.test.ts > mensagemDoErro > erro_http tem título e texto em português 0ms
+ ✓ src/api/erros.test.ts > mensagemDoErro > google_ads_indisponivel tem título e texto em português 0ms
+ ✓ src/api/erros.test.ts > mensagemDoErro > google_autenticacao_temporaria tem título e texto em português 0ms
+ ✓ src/api/erros.test.ts > mensagemDoErro > nao_autenticado tem título e texto em português 0ms
+ ✓ src/api/erros.test.ts > mensagemDoErro > nao_encontrado tem título e texto em português 0ms
+ ✓ src/api/erros.test.ts > mensagemDoErro > regra_referencia tem título e texto em português 0ms
+ ✓ src/api/erros.test.ts > mensagemDoErro > requisicao_invalida tem título e texto em português 0ms
+ ✓ src/api/erros.test.ts > mensagemDoErro > token_google_ausente tem título e texto em português 0ms
+ ✓ src/api/erros.test.ts > mensagemDoErro > token_google_revogado tem título e texto em português 0ms
+ ✓ src/api/erros.test.ts > mensagemDoErro > validacao tem título e texto em português 0ms
+ ✓ src/api/erros.test.ts > mensagemDoErro > sem_conexao tem título e texto em português 0ms
+ ✓ src/api/erros.test.ts > mensagemDoErro > desconhecido tem título e texto em português 0ms
+ ✓ src/api/erros.test.ts > mensagemDoErro > token_google_revogado pede reconexão com o Google 0ms
+ ✓ src/api/erros.test.ts > mensagemDoErro > token_google_ausente também pede reconexão (outro 409, outra ação que conflito) 0ms
+ ✓ src/api/erros.test.ts > mensagemDoErro > cota_excedida diz quanto esperar e não oferece repetir 0ms
+ ✓ src/api/erros.test.ts > mensagemDoErro > cota_excedida sem Retry-After diz 'mais tarde' 0ms
+ ✓ src/api/erros.test.ts > mensagemDoErro > cota_excedida usa o Retry-After real, não um texto fixo (120 s → em 2 minutos) 0ms
+ ✓ src/api/erros.test.ts > mensagemDoErro > cota_excedida usa o Retry-After real, não um texto fixo (5400 s → em cerca de 2 horas) 0ms
+ ✓ src/api/erros.test.ts > mensagemDoErro > cota_excedida: do cabeçalho Retry-After até o texto (lerErro → mensagemDoErro) 0ms
+ ✓ src/api/erros.test.ts > mensagemDoErro > nao_autenticado leva a entrar 0ms
+ ✓ src/api/erros.test.ts > mensagemDoErro > sem_conexao fala do backend na porta 8080 e oferece repetir 0ms
+ ✓ src/api/erros.test.ts > mensagemDoErro > conflito e requisicao_invalida mostram o detail (o backend o escreve em português) 0ms
+ ✓ src/api/erros.test.ts > mensagemDoErro > validacao cita os campos, não a mensagem em inglês do Pydantic 0ms
+ ✓ src/api/erros.test.ts > mensagemDoErro > detalhe técnico só quando o detail é texto 0ms
+ ✓ src/api/erros.test.ts > mensagemDoErro > tipo desconhecido (tipo_que_nao_existe) cai na mensagem genérica 0ms
+ ✓ src/api/erros.test.ts > mensagemDoErro > tipo desconhecido (toString) cai na mensagem genérica 0ms
+ ✓ src/api/erros.test.ts > mensagemDoErro > tipo desconhecido (__proto__) cai na mensagem genérica 0ms
+ ✓ src/api/erros.test.ts > mensagemDoErro > tipo desconhecido (constructor) cai na mensagem genérica 0ms
+ ✓ src/api/erros.test.ts > mensagemDoErro > erro que não é da API (bug no frontend) também tem mensagem 0ms
+ ✓ src/api/erros.test.ts > camposInvalidos > tira o lugar (body/query/path) e repete cada campo uma vez 0ms
+ ✓ src/api/erros.test.ts > camposInvalidos > local com um só elemento é o próprio campo 0ms
+ ✓ src/api/erros.test.ts > camposInvalidos > formato inesperado (undefined) → nenhum campo 0ms
+ ✓ src/api/erros.test.ts > camposInvalidos > formato inesperado ("texto") → nenhum campo 0ms
+ ✓ src/api/erros.test.ts > camposInvalidos > formato inesperado ({}) → nenhum campo 0ms
+ ✓ src/api/erros.test.ts > camposInvalidos > formato inesperado ({"sem_local":1}) → nenhum campo 0ms
+ ✓ src/api/erros.test.ts > camposInvalidos > formato inesperado (null) → nenhum campo 0ms
+ ✓ src/api/erros.test.ts > formatarEspera > null s → mais tarde 0ms
+ ✓ src/api/erros.test.ts > formatarEspera > 0 s → em alguns segundos 0ms
+ ✓ src/api/erros.test.ts > formatarEspera > 59 s → em alguns segundos 0ms
+ ✓ src/api/erros.test.ts > formatarEspera > 60 s → em 1 minuto 0ms
+ ✓ src/api/erros.test.ts > formatarEspera > 61 s → em 2 minutos 0ms
+ ✓ src/api/erros.test.ts > formatarEspera > 300 s → em 5 minutos 0ms
+ ✓ src/api/erros.test.ts > formatarEspera > 3599 s → em cerca de 1 hora 0ms
+ ✓ src/api/erros.test.ts > formatarEspera > 3600 s → em cerca de 1 hora 0ms
+ ✓ src/api/erros.test.ts > formatarEspera > 5400 s → em cerca de 2 horas 0ms
+ ✓ src/api/erros.test.ts > deveRepetir > sem_conexao (proxy 502), 1ª falha (falhas=0) → ErroApi: sem_conexao (HTTP 502) 0ms
+ ✓ src/api/erros.test.ts > deveRepetir > sem_conexao (proxy 502), 2ª falha (falhas=1) → ErroApi: sem_conexao (HTTP 502) 0ms
+ ✓ src/api/erros.test.ts > deveRepetir > sem_conexao (proxy 502), 3ª falha (falhas=2) → ErroApi: sem_conexao (HTTP 502) 0ms
+ ✓ src/api/erros.test.ts > deveRepetir > sem_conexao (fetch lançou), 1ª falha (falhas=0) → ErroApi: sem_conexao 0ms
+ ✓ src/api/erros.test.ts > deveRepetir > google_ads_indisponivel (falhas=0) → ErroApi: google_ads_indisponivel (HTTP 503) 0ms
+ ✓ src/api/erros.test.ts > deveRepetir > google_autenticacao_temporaria (falhas=0) → ErroApi: google_autenticacao_temporaria (HTTP 503) 0ms
+ ✓ src/api/erros.test.ts > deveRepetir > 401 nao_autenticado, 1ª falha (falhas=0) → ErroApi: nao_autenticado (HTTP 401) 0ms
+ ✓ src/api/erros.test.ts > deveRepetir > 401 mesmo com tipo transitório (falhas=0) → ErroApi: google_ads_indisponivel (HTTP 401) 0ms
+ ✓ src/api/erros.test.ts > deveRepetir > 400 validacao (falhas=0) → ErroApi: validacao (HTTP 400) 0ms
+ ✓ src/api/erros.test.ts > deveRepetir > 404 nao_encontrado (falhas=0) → ErroApi: nao_encontrado (HTTP 404) 0ms
+ ✓ src/api/erros.test.ts > deveRepetir > 409 conflito (falhas=0) → ErroApi: conflito (HTTP 409) 0ms
+ ✓ src/api/erros.test.ts > deveRepetir > 409 token_google_revogado (falhas=0) → ErroApi: token_google_revogado (HTTP 409) 0ms
+ ✓ src/api/erros.test.ts > deveRepetir > 503 cota_excedida (falhas=0) → ErroApi: cota_excedida (HTTP 503) 0ms
+ ✓ src/api/erros.test.ts > deveRepetir > 502 erro_google_ads (falhas=0) → ErroApi: erro_google_ads (HTTP 502) 0ms
+ ✓ src/api/erros.test.ts > deveRepetir > 500 erro_http (falhas=0) → ErroApi: erro_http (HTTP 500) 0ms
+ ✓ src/api/erros.test.ts > deveRepetir > 500 desconhecido (falhas=0) → ErroApi: desconhecido (HTTP 500) 0ms
+ ✓ src/api/erros.test.ts > deveRepetir > Error comum (falhas=0) → Error: bug 0ms
+ ✓ src/api/erros.test.ts > deveRepetir > AbortError (falhas=0) → AbortError: cancelado 0ms
+ ✓ src/api/erros.test.ts > deveRepetir > o limite é de 2 repetições (3 tentativas no total) 0ms
+ ✓ src/api/erros.test.ts > deveRepetir > 401 não é repetido em nenhuma contagem de falhas 0ms
+ ✓ src/visao-geral/dados.test.ts > diasEntre > 13/10 a 11/11/2026 → 30 dias, do primeiro ao último 4ms
+ ✓ src/visao-geral/dados.test.ts > diasEntre > virada de mês (31 dias) 1ms
+ ✓ src/visao-geral/dados.test.ts > diasEntre > virada de mês (30 dias) 0ms
+ ✓ src/visao-geral/dados.test.ts > diasEntre > virada de ano 0ms
+ ✓ src/visao-geral/dados.test.ts > diasEntre > fevereiro bissexto 1ms
+ ✓ src/visao-geral/dados.test.ts > diasEntre > fevereiro comum 0ms
+ ✓ src/visao-geral/dados.test.ts > diasEntre > 2000 é bissexto (÷400) 0ms
+ ✓ src/visao-geral/dados.test.ts > diasEntre > 2100 não é bissexto (÷100) 0ms
+ ✓ src/visao-geral/dados.test.ts > diasEntre > um dia só 1ms
+ ✓ src/visao-geral/dados.test.ts > diasEntre > início depois do fim → [] 1ms
+ ✓ src/visao-geral/dados.test.ts > diasEntre > data inválida "2026-13-01" lança erro 1ms
+ ✓ src/visao-geral/dados.test.ts > diasEntre > data inválida "2026-02-30" lança erro 0ms
+ ✓ src/visao-geral/dados.test.ts > diasEntre > data inválida "11/11/2026" lança erro 0ms
+ ✓ src/visao-geral/dados.test.ts > diasEntre > data inválida "2026-11-1" lança erro 1ms
+ ✓ src/visao-geral/dados.test.ts > diasEntre > data inválida "" lança erro 1ms
+ ✓ src/visao-geral/dados.test.ts > serieAlertasPorDia > um ponto por dia do período das métricas, em ordem e sem buracos 0ms
+ ✓ src/visao-geral/dados.test.ts > serieAlertasPorDia > preenche com 0 os 10 dias sem alerta 1ms
+ ✓ src/visao-geral/dados.test.ts > serieAlertasPorDia > todo ponto tem todas as regras 2ms
+ ✓ src/visao-geral/dados.test.ts > serieAlertasPorDia > soma da série = alertas.total (27) 0ms
+ ✓ src/visao-geral/dados.test.ts > serieAlertasPorDia > soma de cada regra na série = total dela em por_regra 0ms
+ ✓ src/visao-geral/dados.test.ts > serieAlertasPorDia > total de cada ponto = soma das regras do dia 1ms
+ ✓ src/visao-geral/dados.test.ts > serieAlertasPorDia > dias com valor batem com por_dia (17/10: R1 2, R2 1) 0ms
+ ✓ src/visao-geral/dados.test.ts > serieAlertasPorDia > dia de por_dia fora do período estende o eixo em vez de sumir 0ms
+ ✓ src/visao-geral/dados.test.ts > serieAlertasPorDia > sem alertas, mas com período → todos os dias com 0 0ms
+ ✓ src/visao-geral/dados.test.ts > serieAlertasPorDia > sem período e sem alertas → [] 0ms
+ ✓ src/visao-geral/dados.test.ts > codigosDaSerie > ordem de por_regra; código só em por_dia entra no fim, em ordem alfabética 0ms
+ ✓ src/visao-geral/dados.test.ts > codigoNoTopo > {"R1":0,"R2":2,"R3":1} → R3 0ms
+ ✓ src/visao-geral/dados.test.ts > codigoNoTopo > {"R1":2,"R2":1,"R3":0} → R2 0ms
+ ✓ src/visao-geral/dados.test.ts > codigoNoTopo > {"R1":1,"R2":0,"R3":0} → R1 0ms
+ ✓ src/visao-geral/dados.test.ts > codigoNoTopo > {"R1":0,"R2":0,"R3":0} → null 0ms
+ ✓ src/visao-geral/dados.test.ts > codigoNoTopo > {} → null 0ms
+ ✓ src/visao-geral/dados.test.ts > codigoNoTopo > na série do limen, todo dia com alerta tem exatamente um topo, e é uma regra com valor 2ms
+ ✓ src/visao-geral/dados.test.ts > descricaoGrafico > dados do limen 1ms
+ ✓ src/visao-geral/dados.test.ts > descricaoGrafico > singular: 1 alerta em 1 dia 0ms
+ ✓ src/visao-geral/dados.test.ts > descricaoGrafico > sem alertas 0ms
+ ✓ src/visao-geral/dados.test.ts > textos dos KPIs > campanhas {"ENABLED":2,"PAUSED":1,"REMOVED":0,"UNKNOWN":0} → 2 ativas · 1 pausada 0ms
+ ✓ src/visao-geral/dados.test.ts > textos dos KPIs > campanhas {"ENABLED":1,"PAUSED":0,"REMOVED":0,"UNKNOWN":0} → 1 ativa 0ms
+ ✓ src/visao-geral/dados.test.ts > textos dos KPIs > campanhas {"PAUSED":3,"ENABLED":1} → 1 ativa · 3 pausadas 0ms
+ ✓ src/visao-geral/dados.test.ts > textos dos KPIs > campanhas {"ENABLED":0,"PAUSED":0,"REMOVED":0,"UNKNOWN":0} → nenhuma campanha 0ms
+ ✓ src/visao-geral/dados.test.ts > textos dos KPIs > regras {"total":3,"ativas":3} → 3 ativas de 3 0ms
+ ✓ src/visao-geral/dados.test.ts > textos dos KPIs > regras {"total":3,"ativas":1} → 1 ativa de 3 0ms
+ ✓ src/visao-geral/dados.test.ts > textos dos KPIs > regras {"total":0,"ativas":0} → nenhuma regra 0ms
+ ✓ src/visao-geral/dados.test.ts > textos dos KPIs > métricas do limen 0ms
+ ✓ src/visao-geral/dados.test.ts > textos dos KPIs > métricas de duas origens e sem nenhuma 0ms
+ ✓ src/visao-geral/dados.test.ts > textos dos KPIs > alertas.avaliacoes = 2 → gerados em 2 avaliações 0ms
+ ✓ src/visao-geral/dados.test.ts > textos dos KPIs > alertas.avaliacoes = 1 → gerados em 1 avaliação 0ms
+ ✓ src/visao-geral/dados.test.ts > textos dos KPIs > alertas.avaliacoes = 0 → nenhuma avaliação gerou alertas 0ms
+ ✓ src/visao-geral/dados.test.ts > textoParametros > avaliação anterior à 0003 (tudo NULL) → "não registrado", nunca "só ativas" 1ms
+ ✓ src/visao-geral/dados.test.ts > textoParametros > {"incluir_pausadas":true,"campanha_id":null,"inicio":null,"fim":null} → com pausadas · todas as campanhas · período todo 0ms
+ ✓ src/visao-geral/dados.test.ts > textoParametros > {"incluir_pausadas":false,"campanha_id":null,"inicio":null,"fim":null} → só ativas · todas as campanhas · período todo 0ms
+ ✓ src/visao-geral/dados.test.ts > textoParametros > {"incluir_pausadas":false,"campanha_id":5,"inicio":"2026-10-13","fim":"2026-11-11"} → só ativas · campanha nº 5 · 13/10 a 11/11/2026 5ms
+ ✓ src/visao-geral/dados.test.ts > textoParametros > {"incluir_pausadas":true,"campanha_id":null,"inicio":"2026-10-13","fim":null} → com pausadas · todas as campanhas · a partir de 13/10/2026 1ms
+ ✓ src/visao-geral/dados.test.ts > textoParametros > {"incluir_pausadas":true,"campanha_id":null,"inicio":null,"fim":"2026-11-11"} → com pausadas · todas as campanhas · até 11/11/2026 0ms
+ ✓ src/visao-geral/dados.test.ts > textoDuracao > "0.870" → 0,870 ms 0ms
+ ✓ src/visao-geral/dados.test.ts > textoDuracao > "1234.5" → 1.234,5 ms 0ms
+ ✓ src/visao-geral/dados.test.ts > textoDuracao > null → — 0ms
+ ✓ src/visao-geral/dados.test.ts > estadoVazio > dados do limen → null (há alertas) 0ms
+ ✓ src/visao-geral/dados.test.ts > estadoVazio > sem_campanhas 0ms
+ ✓ src/visao-geral/dados.test.ts > estadoVazio > sem_metricas 0ms
+ ✓ src/visao-geral/dados.test.ts > estadoVazio > sem_avaliacoes 0ms
+ ✓ src/visao-geral/dados.test.ts > estadoVazio > sem_alertas 0ms
+ ✓ src/visao-geral/dados.test.ts > estadoVazio > a ordem do fluxo vale: sem campanhas vence os outros vazios 1ms
+ ✓ src/tema/contraste.test.ts > razaoContraste > preto × branco = 21:1 e cor igual = 1:1 4ms
+ ✓ src/tema/contraste.test.ts > razaoContraste > é simétrica 1ms
+ ✓ src/tema/contraste.test.ts > razaoContraste > recusa formato que não é oklch(L C H) 2ms
+ ✓ src/tema/contraste.test.ts > tema claro > todos os tokens de cor estão dentro da gama sRGB 3ms
+ ✓ src/tema/contraste.test.ts > tema claro > texto --foreground sobre --background ≥ 4,5:1 1ms
+ ✓ src/tema/contraste.test.ts > tema claro > texto --foreground sobre --card ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema claro > texto --foreground sobre --popover ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema claro > texto --foreground sobre --muted ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema claro > texto --muted-foreground sobre --background ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema claro > texto --muted-foreground sobre --card ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema claro > texto --muted-foreground sobre --popover ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema claro > texto --muted-foreground sobre --muted ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema claro > texto --primary sobre --background ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema claro > texto --primary sobre --card ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema claro > texto --primary sobre --popover ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema claro > texto --primary sobre --muted ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema claro > texto --destructive sobre --background ≥ 4,5:1 1ms
+ ✓ src/tema/contraste.test.ts > tema claro > texto --destructive sobre --card ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema claro > texto --destructive sobre --popover ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema claro > texto --destructive sobre --muted ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema claro > texto --regra-r1 sobre --background ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema claro > texto --regra-r1 sobre --card ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema claro > texto --regra-r1 sobre --popover ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema claro > texto --regra-r1 sobre --muted ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema claro > texto --regra-r2 sobre --background ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema claro > texto --regra-r2 sobre --card ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema claro > texto --regra-r2 sobre --popover ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema claro > texto --regra-r2 sobre --muted ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema claro > texto --regra-r3 sobre --background ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema claro > texto --regra-r3 sobre --card ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema claro > texto --regra-r3 sobre --popover ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema claro > texto --regra-r3 sobre --muted ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema claro > texto --regra-outra sobre --background ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema claro > texto --regra-outra sobre --card ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema claro > texto --regra-outra sobre --popover ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema claro > texto --regra-outra sobre --muted ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema claro > texto --primary-foreground sobre --primary ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema claro > texto --regra-r1 sobre --regra-r1-suave ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema claro > texto --regra-r2 sobre --regra-r2-suave ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema claro > texto --regra-r3 sobre --regra-r3-suave ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema claro > texto --regra-outra sobre --regra-outra-suave ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema claro > --input sobre --background ≥ 3:1 0ms
+ ✓ src/tema/contraste.test.ts > tema claro > --input sobre --card ≥ 3:1 0ms
+ ✓ src/tema/contraste.test.ts > tema claro > --ring sobre --background ≥ 3:1 0ms
+ ✓ src/tema/contraste.test.ts > tema claro > --ring sobre --card ≥ 3:1 0ms
+ ✓ src/tema/contraste.test.ts > tema claro > text-destructive sobre bg-destructive translúcido em --background ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema claro > text-destructive sobre bg-destructive translúcido em --card ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema claro > item ativo da navegação: text-primary sobre bg-primary/10 em --sidebar ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema escuro > todos os tokens de cor estão dentro da gama sRGB 2ms
+ ✓ src/tema/contraste.test.ts > tema escuro > texto --foreground sobre --background ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema escuro > texto --foreground sobre --card ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema escuro > texto --foreground sobre --popover ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema escuro > texto --foreground sobre --muted ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema escuro > texto --muted-foreground sobre --background ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema escuro > texto --muted-foreground sobre --card ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema escuro > texto --muted-foreground sobre --popover ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema escuro > texto --muted-foreground sobre --muted ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema escuro > texto --primary sobre --background ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema escuro > texto --primary sobre --card ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema escuro > texto --primary sobre --popover ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema escuro > texto --primary sobre --muted ≥ 4,5:1 5ms
+ ✓ src/tema/contraste.test.ts > tema escuro > texto --destructive sobre --background ≥ 4,5:1 1ms
+ ✓ src/tema/contraste.test.ts > tema escuro > texto --destructive sobre --card ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema escuro > texto --destructive sobre --popover ≥ 4,5:1 1ms
+ ✓ src/tema/contraste.test.ts > tema escuro > texto --destructive sobre --muted ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema escuro > texto --regra-r1 sobre --background ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema escuro > texto --regra-r1 sobre --card ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema escuro > texto --regra-r1 sobre --popover ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema escuro > texto --regra-r1 sobre --muted ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema escuro > texto --regra-r2 sobre --background ≥ 4,5:1 1ms
+ ✓ src/tema/contraste.test.ts > tema escuro > texto --regra-r2 sobre --card ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema escuro > texto --regra-r2 sobre --popover ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema escuro > texto --regra-r2 sobre --muted ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema escuro > texto --regra-r3 sobre --background ≥ 4,5:1 1ms
+ ✓ src/tema/contraste.test.ts > tema escuro > texto --regra-r3 sobre --card ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema escuro > texto --regra-r3 sobre --popover ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema escuro > texto --regra-r3 sobre --muted ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema escuro > texto --regra-outra sobre --background ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema escuro > texto --regra-outra sobre --card ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema escuro > texto --regra-outra sobre --popover ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema escuro > texto --regra-outra sobre --muted ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema escuro > texto --primary-foreground sobre --primary ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema escuro > texto --regra-r1 sobre --regra-r1-suave ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema escuro > texto --regra-r2 sobre --regra-r2-suave ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema escuro > texto --regra-r3 sobre --regra-r3-suave ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema escuro > texto --regra-outra sobre --regra-outra-suave ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema escuro > --input sobre --background ≥ 3:1 0ms
+ ✓ src/tema/contraste.test.ts > tema escuro > --input sobre --card ≥ 3:1 0ms
+ ✓ src/tema/contraste.test.ts > tema escuro > --ring sobre --background ≥ 3:1 0ms
+ ✓ src/tema/contraste.test.ts > tema escuro > --ring sobre --card ≥ 3:1 0ms
+ ✓ src/tema/contraste.test.ts > tema escuro > text-destructive sobre bg-destructive translúcido em --background ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema escuro > text-destructive sobre bg-destructive translúcido em --card ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > tema escuro > item ativo da navegação: text-primary sobre bg-primary/10 em --sidebar ≥ 4,5:1 0ms
+ ✓ src/tema/contraste.test.ts > <style> anti-flash do index.html > usa o mesmo --background do CSS nos dois temas 0ms
+ ✓ src/tema/script-inline.test.ts > script anti-flash do index.html > existe e fica no <head>, antes do bundle 3ms
+ ✓ src/tema/script-inline.test.ts > script anti-flash do index.html > guardado "claro", sistema escuro=false: igual a tema.ts 3ms
+ ✓ src/tema/script-inline.test.ts > script anti-flash do index.html > guardado "claro", sistema escuro=true: igual a tema.ts 1ms
+ ✓ src/tema/script-inline.test.ts > script anti-flash do index.html > guardado "escuro", sistema escuro=false: igual a tema.ts 2ms
+ ✓ src/tema/script-inline.test.ts > script anti-flash do index.html > guardado "escuro", sistema escuro=true: igual a tema.ts 2ms
+ ✓ src/tema/script-inline.test.ts > script anti-flash do index.html > guardado "sistema", sistema escuro=false: igual a tema.ts 2ms
+ ✓ src/tema/script-inline.test.ts > script anti-flash do index.html > guardado "sistema", sistema escuro=true: igual a tema.ts 1ms
+ ✓ src/tema/script-inline.test.ts > script anti-flash do index.html > guardado null, sistema escuro=false: igual a tema.ts 2ms
+ ✓ src/tema/script-inline.test.ts > script anti-flash do index.html > guardado null, sistema escuro=true: igual a tema.ts 3ms
+ ✓ src/tema/script-inline.test.ts > script anti-flash do index.html > guardado "dark", sistema escuro=false: igual a tema.ts 2ms
+ ✓ src/tema/script-inline.test.ts > script anti-flash do index.html > guardado "dark", sistema escuro=true: igual a tema.ts 2ms
+ ✓ src/tema/script-inline.test.ts > script anti-flash do index.html > guardado "lanca", sistema escuro=false: igual a tema.ts 1ms
+ ✓ src/tema/script-inline.test.ts > script anti-flash do index.html > guardado "lanca", sistema escuro=true: igual a tema.ts 1ms
+ ✓ src/avaliacoes/historico.test.ts > celulasHistorico — linhas reais (anteriores à 0003) > avaliação nº 2: tudo como o banco, parâmetros 'não registrado' 29ms
+ ✓ src/avaliacoes/historico.test.ts > celulasHistorico — linhas reais (anteriores à 0003) > avaliação nº 1: tudo como o banco, parâmetros 'não registrado' 1ms
+ ✓ src/avaliacoes/historico.test.ts > celulasHistorico — linhas reais (anteriores à 0003) > 'não registrado' também sem a lista de campanhas 1ms
+ ✓ src/avaliacoes/historico.test.ts > celulasHistorico — linhas reais (anteriores à 0003) > alertas novos e já existentes ficam separados (9 e 18, nunca 27) 1ms
+ ✓ src/avaliacoes/historico.test.ts > celulasHistorico — depois da 0003 (sintéticos) > incluir_pausadas false é 'não', e não 'não registrado' 1ms
+ ✓ src/avaliacoes/historico.test.ts > celulasHistorico — depois da 0003 (sintéticos) > incluir_pausadas true é 'sim' 1ms
+ ✓ src/avaliacoes/historico.test.ts > celulasHistorico — depois da 0003 (sintéticos) > campanha_id NULL depois da 0003 é 'todas' 1ms
+ ✓ src/avaliacoes/historico.test.ts > celulasHistorico — depois da 0003 (sintéticos) > campanha_id 1 → Limen A - Pesquisa (pelo id, não pela posição) 1ms
+ ✓ src/avaliacoes/historico.test.ts > celulasHistorico — depois da 0003 (sintéticos) > campanha_id 2 → Limen C - Pesquisa (pelo id, não pela posição) 2ms
+ ✓ src/avaliacoes/historico.test.ts > celulasHistorico — depois da 0003 (sintéticos) > campanha_id 3 → Limen B - Pesquisa (pelo id, não pela posição) 1ms
+ ✓ src/avaliacoes/historico.test.ts > celulasHistorico — depois da 0003 (sintéticos) > campanha fora da lista mostra o número e diz que está fora 1ms
+ ✓ src/avaliacoes/historico.test.ts > celulasHistorico — depois da 0003 (sintéticos) > sem a lista (não carregou), mostra só o número 0ms
+ ✓ src/avaliacoes/historico.test.ts > celulasHistorico — depois da 0003 (sintéticos) > período null a null → período todo 0ms
+ ✓ src/avaliacoes/historico.test.ts > celulasHistorico — depois da 0003 (sintéticos) > período 2026-10-13 a 2026-11-11 → 13/10 a 11/11/2026 1ms
+ ✓ src/avaliacoes/historico.test.ts > celulasHistorico — depois da 0003 (sintéticos) > período 2026-10-17 a 2026-10-17 → 17/10/2026 1ms
+ ✓ src/avaliacoes/historico.test.ts > celulasHistorico — depois da 0003 (sintéticos) > período 2025-12-28 a 2026-01-03 → 28/12/2025 a 03/01/2026 0ms
+ ✓ src/avaliacoes/historico.test.ts > celulasHistorico — depois da 0003 (sintéticos) > período 2026-10-13 a null → a partir de 13/10/2026 0ms
+ ✓ src/avaliacoes/historico.test.ts > celulasHistorico — depois da 0003 (sintéticos) > período null a 2026-11-11 → até 11/11/2026 0ms
+ ✓ src/avaliacoes/historico.test.ts > celulasHistorico — depois da 0003 (sintéticos) > contagens com separador de milhar 1ms
+ ✓ src/avaliacoes/historico.test.ts > textoResultado > avaliação nº 1 real (só ativas, primeira execução) 0ms
+ ✓ src/avaliacoes/historico.test.ts > textoResultado > avaliação nº 2 real (com pausadas, depois da primeira) 0ms
+ ✓ src/avaliacoes/historico.test.ts > textoResultado > zero alertas novos não parece falha 0ms
+ ✓ src/avaliacoes/historico.test.ts > textoResultado > singulares 0ms
+ ✓ src/avaliacoes/historico.test.ts > textoResultado > zero registros avaliados ganha a dica 0ms
+ ✓ src/avaliacoes/historico.test.ts > textoResultado > contagens com separador de milhar 0ms
+ ✓ src/avaliacoes/historico.test.ts > textoStatus > ocioso: vazio (a região existe, sem texto) 0ms
+ ✓ src/avaliacoes/historico.test.ts > textoStatus > executando 0ms
+ ✓ src/avaliacoes/historico.test.ts > textoStatus > concluída: a mesma frase do resultado 0ms
+ ✓ src/avaliacoes/historico.test.ts > textoStatus > erro 0ms
+ ✓ src/lib/formatar.test.ts > formatarData > 2026-11-11 → 11/11/2026 (sem deslocamento de fuso) 3ms
+ ✓ src/lib/formatar.test.ts > formatarData > 2026-10-13 → 13/10/2026 (sem deslocamento de fuso) 0ms
+ ✓ src/lib/formatar.test.ts > formatarData > 2026-01-01 → 01/01/2026 (sem deslocamento de fuso) 0ms
+ ✓ src/lib/formatar.test.ts > formatarData > 2025-12-31 → 31/12/2025 (sem deslocamento de fuso) 0ms
+ ✓ src/lib/formatar.test.ts > formatarData > formato inesperado ("") volta como veio 0ms
+ ✓ src/lib/formatar.test.ts > formatarData > formato inesperado ("11/11/2026") volta como veio 1ms
+ ✓ src/lib/formatar.test.ts > formatarData > formato inesperado ("2026-11-11T00:00:00Z") volta como veio 0ms
+ ✓ src/lib/formatar.test.ts > formatarData > formato inesperado ("2026-1-1") volta como veio 0ms
+ ✓ src/lib/formatar.test.ts > formatarDiaMes > 2026-11-11 → 11/11 1ms
+ ✓ src/lib/formatar.test.ts > formatarDiaMes > formato inesperado volta como veio 0ms
+ ✓ src/lib/formatar.test.ts > formatarPeriodo > 2026-10-13 a 2026-11-11 → 13/10 a 11/11/2026 0ms
+ ✓ src/lib/formatar.test.ts > formatarPeriodo > 2025-12-28 a 2026-01-03 → 28/12/2025 a 03/01/2026 0ms
+ ✓ src/lib/formatar.test.ts > formatarPeriodo > 2026-11-11 a 2026-11-11 → 11/11/2026 0ms
+ ✓ src/lib/formatar.test.ts > formatarPeriodo > sem início ou fim (null, "2026-11-11") → null 0ms
+ ✓ src/lib/formatar.test.ts > formatarPeriodo > sem início ou fim ("2026-10-13", null) → null 0ms
+ ✓ src/lib/formatar.test.ts > formatarPeriodo > sem início ou fim (null, null) → null 0ms
+ ✓ src/lib/formatar.test.ts > formatarDataHora > 2026-11-13T15:44:00Z em UTC → 13/11/2026 às 15:44 20ms
+ ✓ src/lib/formatar.test.ts > formatarDataHora > 2026-11-13T15:44:00Z em America/Fortaleza → 13/11/2026 às 12:44 1ms
+ ✓ src/lib/formatar.test.ts > formatarDataHora > 2026-11-13T15:44:07.123456+00:00 em America/Fortaleza → 13/11/2026 às 12:44 0ms
+ ✓ src/lib/formatar.test.ts > formatarDataHora > 2026-11-13T00:30:00+00:00 em America/Fortaleza → 12/11/2026 às 21:30 0ms
+ ✓ src/lib/formatar.test.ts > formatarDataHora > 2026-11-13T09:05:00-03:00 em America/Fortaleza → 13/11/2026 às 09:05 1ms
+ ✓ src/lib/formatar.test.ts > formatarDataHora > usa o fuso do navegador quando nenhum é pedido 0ms
+ ✓ src/lib/formatar.test.ts > formatarDataHora > sem fuso explícito ("2026-11-13T15:44:00") volta como veio 0ms
+ ✓ src/lib/formatar.test.ts > formatarDataHora > sem fuso explícito ("2026-11-13") volta como veio 0ms
+ ✓ src/lib/formatar.test.ts > formatarDataHora > sem fuso explícito ("ontem") volta como veio 0ms
+ ✓ src/lib/formatar.test.ts > formatarDataHora > sem fuso explícito ("") volta como veio 0ms
+ ✓ src/lib/formatar.test.ts > formatarDecimal (texto, sem float) > 0.504 → 0,504 0ms
+ ✓ src/lib/formatar.test.ts > formatarDecimal (texto, sem float) > 1234.50 → 1.234,50 0ms
+ ✓ src/lib/formatar.test.ts > formatarDecimal (texto, sem float) > 1234567.1 → 1.234.567,1 0ms
+ ✓ src/lib/formatar.test.ts > formatarDecimal (texto, sem float) > 100 → 100 0ms
+ ✓ src/lib/formatar.test.ts > formatarDecimal (texto, sem float) > 1000 → 1.000 0ms
+ ✓ src/lib/formatar.test.ts > formatarDecimal (texto, sem float) > 1234 → 1.234 0ms
+ ✓ src/lib/formatar.test.ts > formatarDecimal (texto, sem float) > -12.30 → -12,30 0ms
+ ✓ src/lib/formatar.test.ts > formatarDecimal (texto, sem float) > 0.30000000000000000001 → 0,30000000000000000001 1ms
+ ✓ src/lib/formatar.test.ts > formatarDecimal (texto, sem float) > 5.00 → 5,00 0ms
+ ✓ src/lib/formatar.test.ts > formatarDecimal (texto, sem float) > texto inválido ("") volta como veio 0ms
+ ✓ src/lib/formatar.test.ts > formatarDecimal (texto, sem float) > texto inválido ("abc") volta como veio 0ms
+ ✓ src/lib/formatar.test.ts > formatarDecimal (texto, sem float) > texto inválido ("1,5") volta como veio 0ms
+ ✓ src/lib/formatar.test.ts > formatarDecimal (texto, sem float) > texto inválido ("1.2.3") volta como veio 0ms
+ ✓ src/lib/formatar.test.ts > formatarDecimal (texto, sem float) > texto inválido ("NaN") volta como veio 0ms
+ ✓ src/lib/formatar.test.ts > formatarDecimal (texto, sem float) > texto inválido (".5") volta como veio 0ms
+ ✓ src/lib/formatar.test.ts > formatarInteiro > 0 → 0 0ms
+ ✓ src/lib/formatar.test.ts > formatarInteiro > 90 → 90 0ms
+ ✓ src/lib/formatar.test.ts > formatarInteiro > 999 → 999 0ms
+ ✓ src/lib/formatar.test.ts > formatarInteiro > 1000 → 1.000 0ms
+ ✓ src/lib/formatar.test.ts > formatarInteiro > 1234 → 1.234 0ms
+ ✓ src/lib/formatar.test.ts > formatarInteiro > 10000 → 10.000 0ms
+ ✓ src/lib/formatar.test.ts > formatarInteiro > 1234567 → 1.234.567 0ms
+ ✓ src/lib/formatar.test.ts > formatarInteiro > -1234 → -1.234 0ms
+ ✓ src/lib/formatar.test.ts > formatarInteiro > valor que não é inteiro (1.5) volta como texto, sem formatar 0ms
+ ✓ src/lib/formatar.test.ts > formatarInteiro > valor que não é inteiro (NaN) volta como texto, sem formatar 0ms
+ ✓ src/lib/formatar.test.ts > formatarInteiro > valor que não é inteiro (Infinity) volta como texto, sem formatar 0ms
+ ✓ src/lib/formatar.test.ts > formatarInteiro > 0: formatarInteiro e formatarDecimal dão o mesmo texto 0ms
+ ✓ src/lib/formatar.test.ts > formatarInteiro > 7: formatarInteiro e formatarDecimal dão o mesmo texto 0ms
+ ✓ src/lib/formatar.test.ts > formatarInteiro > 90: formatarInteiro e formatarDecimal dão o mesmo texto 0ms
+ ✓ src/lib/formatar.test.ts > formatarInteiro > 999: formatarInteiro e formatarDecimal dão o mesmo texto 0ms
+ ✓ src/lib/formatar.test.ts > formatarInteiro > 1000: formatarInteiro e formatarDecimal dão o mesmo texto 0ms
+ ✓ src/lib/formatar.test.ts > formatarInteiro > 1234: formatarInteiro e formatarDecimal dão o mesmo texto 0ms
+ ✓ src/lib/formatar.test.ts > formatarInteiro > 9999: formatarInteiro e formatarDecimal dão o mesmo texto 0ms
+ ✓ src/lib/formatar.test.ts > formatarInteiro > 10000: formatarInteiro e formatarDecimal dão o mesmo texto 0ms
+ ✓ src/lib/formatar.test.ts > formatarInteiro > 99999: formatarInteiro e formatarDecimal dão o mesmo texto 0ms
+ ✓ src/lib/formatar.test.ts > formatarInteiro > 100000: formatarInteiro e formatarDecimal dão o mesmo texto 0ms
+ ✓ src/lib/formatar.test.ts > formatarInteiro > 1234567: formatarInteiro e formatarDecimal dão o mesmo texto 0ms
+ ✓ src/lib/formatar.test.ts > formatarIdConta > 4327030343 → 432-703-0343 0ms
+ ✓ src/lib/formatar.test.ts > formatarIdConta > 1137051091 → 113-705-1091 0ms
+ ✓ src/lib/formatar.test.ts > formatarIdConta > fora do formato ("") volta como veio 0ms
+ ✓ src/lib/formatar.test.ts > formatarIdConta > fora do formato ("432703034") volta como veio 0ms
+ ✓ src/lib/formatar.test.ts > formatarIdConta > fora do formato ("43270303431") volta como veio 0ms
+ ✓ src/lib/formatar.test.ts > formatarIdConta > fora do formato ("432-703-0343") volta como veio 0ms
+ ✓ src/lib/formatar.test.ts > formatarIdConta > fora do formato ("abcdefghij") volta como veio 0ms
+ ✓ src/lib/formatar.test.ts > rotuloStatus > ENABLED × 1 → ativa 0ms
+ ✓ src/lib/formatar.test.ts > rotuloStatus > ENABLED × 2 → ativas 0ms
+ ✓ src/lib/formatar.test.ts > rotuloStatus > PAUSED × 1 → pausada 0ms
+ ✓ src/lib/formatar.test.ts > rotuloStatus > PAUSED × 0 → pausadas 0ms
+ ✓ src/lib/formatar.test.ts > rotuloStatus > REMOVED × 1 → removida 0ms
+ ✓ src/lib/formatar.test.ts > rotuloStatus > REMOVED × 3 → removidas 0ms
+ ✓ src/lib/formatar.test.ts > rotuloStatus > UNKNOWN × 1 → desconhecida 0ms
+ ✓ src/lib/formatar.test.ts > rotuloStatus > status fora da lista (enabled) volta como veio 0ms
+ ✓ src/lib/formatar.test.ts > rotuloStatus > status fora da lista (NOVO_STATUS) volta como veio 0ms
+ ✓ src/lib/formatar.test.ts > rotuloStatus > status fora da lista (toString) volta como veio 0ms
+ ✓ src/lib/formatar.test.ts > rotuloStatus > status fora da lista (__proto__) volta como veio 0ms
+ ✓ src/regras/validacao.test.ts > constantes iguais ao esquema do backend > métricas e operadores 4ms
+ ✓ src/regras/validacao.test.ts > constantes iguais ao esquema do backend > código: tamanho e padrão 1ms
+ ✓ src/regras/validacao.test.ts > constantes iguais ao esquema do backend > nome e quantidade de condições 0ms
+ ✓ src/regras/validacao.test.ts > constantes iguais ao esquema do backend > códigos de referência 0ms
+ ✓ src/regras/validacao.test.ts > limiar contra o oráculo > "0": Pydantic aceito (0) 1ms
+ ✓ src/regras/validacao.test.ts > limiar contra o oráculo > "1": Pydantic aceito (1) 0ms
+ ✓ src/regras/validacao.test.ts > limiar contra o oráculo > "1.5": Pydantic aceito (1.5) 0ms
+ ✓ src/regras/validacao.test.ts > limiar contra o oráculo > "0.10": Pydantic aceito (0.10) 2ms
+ ✓ src/regras/validacao.test.ts > limiar contra o oráculo > "007": Pydantic aceito (7) 0ms
+ ✓ src/regras/validacao.test.ts > limiar contra o oráculo > "1.0000000": Pydantic aceito (1.0000000) 0ms
+ ✓ src/regras/validacao.test.ts > limiar contra o oráculo > "0.000001": Pydantic aceito (0.000001) 0ms
+ ✓ src/regras/validacao.test.ts > limiar contra o oráculo > "0.0000001": Pydantic recusado (decimal_max_places) 0ms
+ ✓ src/regras/validacao.test.ts > limiar contra o oráculo > "123456789012": Pydantic aceito (123456789012) 0ms
+ ✓ src/regras/validacao.test.ts > limiar contra o oráculo > "1234567890123": Pydantic recusado (decimal_whole_digits) 0ms
+ ✓ src/regras/validacao.test.ts > limiar contra o oráculo > "123456789012.123456": Pydantic aceito (123456789012.123456) 0ms
+ ✓ src/regras/validacao.test.ts > limiar contra o oráculo > "123456789012.1234567": Pydantic recusado (decimal_max_digits) 0ms
+ ✓ src/regras/validacao.test.ts > limiar contra o oráculo > "999999999999.999999": Pydantic aceito (999999999999.999999) 0ms
+ ✓ src/regras/validacao.test.ts > limiar contra o oráculo > "00000000000001.5": Pydantic aceito (1.5) 1ms
+ ✓ src/regras/validacao.test.ts > limiar contra o oráculo > "1000000000000": Pydantic recusado (decimal_whole_digits) 0ms
+ ✓ src/regras/validacao.test.ts > limiar contra o oráculo > "0000000000000": Pydantic aceito (0) 0ms
+ ✓ src/regras/validacao.test.ts > limiar contra o oráculo > "-1": Pydantic recusado (greater_than_equal) 0ms
+ ✓ src/regras/validacao.test.ts > limiar contra o oráculo > "": Pydantic recusado (decimal_parsing) 0ms
+ ✓ src/regras/validacao.test.ts > limiar contra o oráculo > " ": Pydantic recusado (decimal_parsing) 0ms
+ ✓ src/regras/validacao.test.ts > limiar contra o oráculo > "1E-7": Pydantic recusado (decimal_max_places) 0ms
+ ✓ src/regras/validacao.test.ts > limiar contra o oráculo > " 1": Pydantic aceito (1) 0ms
+ ✓ src/regras/validacao.test.ts > limiar contra o oráculo > "1 ": Pydantic aceito (1) 0ms
+ ✓ src/regras/validacao.test.ts > limiar contra o oráculo > "abc": Pydantic recusado (decimal_parsing) 0ms
+ ✓ src/regras/validacao.test.ts > limiar contra o oráculo > "1.2.3": Pydantic recusado (decimal_parsing) 0ms
+ ✓ src/regras/validacao.test.ts > limiar contra o oráculo > "-0": o Pydantic aceita e a tela recusa (diferença de propósito) 0ms
+ ✓ src/regras/validacao.test.ts > limiar contra o oráculo > "+1": o Pydantic aceita e a tela recusa (diferença de propósito) 0ms
+ ✓ src/regras/validacao.test.ts > limiar contra o oráculo > ".5": o Pydantic aceita e a tela recusa (diferença de propósito) 0ms
+ ✓ src/regras/validacao.test.ts > limiar contra o oráculo > "5.": o Pydantic aceita e a tela recusa (diferença de propósito) 0ms
+ ✓ src/regras/validacao.test.ts > limiar contra o oráculo > "1e3": o Pydantic aceita e a tela recusa (diferença de propósito) 0ms
+ ✓ src/regras/validacao.test.ts > limiar contra o oráculo > "1,5" vira "1.5", que o Pydantic aceita com o mesmo valor 0ms
+ ✓ src/regras/validacao.test.ts > limiar contra o oráculo > nunca envia algo que o Pydantic recusa (fora as conversões) 0ms
+ ✓ src/regras/validacao.test.ts > limiar contra o oráculo > mensagem de cada motivo 1ms
+ ✓ src/regras/validacao.test.ts > limiar contra o oráculo > "1.234,5": separador de milhar não é aceito 0ms
+ ✓ src/regras/validacao.test.ts > limiar contra o oráculo > "1,234.5": separador de milhar não é aceito 0ms
+ ✓ src/regras/validacao.test.ts > limiar contra o oráculo > "1,2,3": separador de milhar não é aceito 0ms
+ ✓ src/regras/validacao.test.ts > limiar contra o oráculo > vírgula e espaços nas pontas 0ms
+ ✓ src/regras/validacao.test.ts > métrica e operador contra o oráculo > métrica "impressoes": Pydantic aceito 4ms
+ ✓ src/regras/validacao.test.ts > métrica e operador contra o oráculo > métrica "cliques": Pydantic aceito 0ms
+ ✓ src/regras/validacao.test.ts > métrica e operador contra o oráculo > métrica "custo": Pydantic aceito 0ms
+ ✓ src/regras/validacao.test.ts > métrica e operador contra o oráculo > métrica "conversoes": Pydantic aceito 0ms
+ ✓ src/regras/validacao.test.ts > métrica e operador contra o oráculo > métrica "ctr": Pydantic aceito 0ms
+ ✓ src/regras/validacao.test.ts > métrica e operador contra o oráculo > métrica "cpc": Pydantic aceito 0ms
+ ✓ src/regras/validacao.test.ts > métrica e operador contra o oráculo > métrica "CTR": Pydantic recusado 1ms
+ ✓ src/regras/validacao.test.ts > métrica e operador contra o oráculo > métrica "custo ": Pydantic recusado 0ms
+ ✓ src/regras/validacao.test.ts > métrica e operador contra o oráculo > métrica "": Pydantic recusado 0ms
+ ✓ src/regras/validacao.test.ts > métrica e operador contra o oráculo > operador "<": Pydantic aceito 0ms
+ ✓ src/regras/validacao.test.ts > métrica e operador contra o oráculo > operador "<=": Pydantic aceito 0ms
+ ✓ src/regras/validacao.test.ts > métrica e operador contra o oráculo > operador ">": Pydantic aceito 0ms
+ ✓ src/regras/validacao.test.ts > métrica e operador contra o oráculo > operador ">=": Pydantic aceito 0ms
+ ✓ src/regras/validacao.test.ts > métrica e operador contra o oráculo > operador "==": Pydantic aceito 0ms
+ ✓ src/regras/validacao.test.ts > métrica e operador contra o oráculo > operador "=": Pydantic recusado 0ms
+ ✓ src/regras/validacao.test.ts > métrica e operador contra o oráculo > operador "!=": Pydantic recusado 0ms
+ ✓ src/regras/validacao.test.ts > métrica e operador contra o oráculo > operador "=<": Pydantic recusado 0ms
+ ✓ src/regras/validacao.test.ts > métrica e operador contra o oráculo > operador "": Pydantic recusado 0ms
+ ✓ src/regras/validacao.test.ts > código contra o oráculo > "R4": Pydantic aceito 0ms
+ ✓ src/regras/validacao.test.ts > código contra o oráculo > "r4": Pydantic aceito 0ms
+ ✓ src/regras/validacao.test.ts > código contra o oráculo > "R_4-a": Pydantic aceito 0ms
+ ✓ src/regras/validacao.test.ts > código contra o oráculo > "AAAAAAAAAAAAAAAAAAAA": Pydantic aceito 0ms
+ ✓ src/regras/validacao.test.ts > código contra o oráculo > "AAAAAAAAAAAAAAAAAAAAA": Pydantic recusado 0ms
+ ✓ src/regras/validacao.test.ts > código contra o oráculo > "": Pydantic recusado 0ms
+ ✓ src/regras/validacao.test.ts > código contra o oráculo > "R 4": Pydantic recusado 0ms
+ ✓ src/regras/validacao.test.ts > código contra o oráculo > " R4": Pydantic recusado 0ms
+ ✓ src/regras/validacao.test.ts > código contra o oráculo > "R4!": Pydantic recusado 0ms
+ ✓ src/regras/validacao.test.ts > código contra o oráculo > "Ré": Pydantic recusado 0ms
+ ✓ src/regras/validacao.test.ts > código contra o oráculo > "R1": o Pydantic aceita; a tela recusa como o serviço (409) 0ms
+ ✓ src/regras/validacao.test.ts > código contra o oráculo > "r1": o Pydantic aceita; a tela recusa como o serviço (409) 0ms
+ ✓ src/regras/validacao.test.ts > código contra o oráculo > "R1" é de referência 0ms
+ ✓ src/regras/validacao.test.ts > código contra o oráculo > "R2" é de referência 0ms
+ ✓ src/regras/validacao.test.ts > código contra o oráculo > "R3" é de referência 0ms
+ ✓ src/regras/validacao.test.ts > código contra o oráculo > "r2" é de referência 0ms
+ ✓ src/regras/validacao.test.ts > código contra o oráculo > "r3" é de referência 0ms
+ ✓ src/regras/validacao.test.ts > nome contra o oráculo > "a": Pydantic aceito 0ms
+ ✓ src/regras/validacao.test.ts > nome contra o oráculo > "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa": Pydantic aceito 0ms
+ ✓ src/regras/validacao.test.ts > nome contra o oráculo > "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa": Pydantic recusado 0ms
+ ✓ src/regras/validacao.test.ts > nome contra o oráculo > "": Pydantic recusado 0ms
+ ✓ src/regras/validacao.test.ts > nome contra o oráculo > " CTR ": Pydantic aceito 0ms
+ ✓ src/regras/validacao.test.ts > nome contra o oráculo > "éééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééé": Pydantic aceito 0ms
+ ✓ src/regras/validacao.test.ts > nome contra o oráculo > "😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀": Pydantic aceito 0ms
+ ✓ src/regras/validacao.test.ts > nome contra o oráculo > "😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀": Pydantic recusado 0ms
+ ✓ src/regras/validacao.test.ts > nome contra o oráculo > "   ": o Pydantic aceita e a tela recusa (diferença de propósito) 0ms
+ ✓ src/regras/validacao.test.ts > nome contra o oráculo > envia o nome sem espaços nas pontas 0ms
+ ✓ src/regras/validacao.test.ts > quantidade de condições contra o oráculo > 0 condições: Pydantic recusado 0ms
+ ✓ src/regras/validacao.test.ts > quantidade de condições contra o oráculo > 1 condições: Pydantic aceito 0ms
+ ✓ src/regras/validacao.test.ts > quantidade de condições contra o oráculo > 10 condições: Pydantic aceito 0ms
+ ✓ src/regras/validacao.test.ts > quantidade de condições contra o oráculo > 11 condições: Pydantic recusado 0ms
+ ✓ src/regras/validacao.test.ts > corpo enviado e caminho dos erros > normaliza limiar e nome e mantém o resto 0ms
+ ✓ src/regras/validacao.test.ts > corpo enviado e caminho dos erros > cada erro aponta o seu campo 0ms
+ ✓ src/regras/textos.test.ts > rótulos > cobrem exatamente as métricas e os operadores do formulário 5ms
+ ✓ src/regras/textos.test.ts > rótulos > valor desconhecido "toString" volta como veio 1ms
+ ✓ src/regras/textos.test.ts > rótulos > valor desconhecido "__proto__" volta como veio 0ms
+ ✓ src/regras/textos.test.ts > rótulos > valor desconhecido "receita" volta como veio 0ms
+ ✓ src/regras/textos.test.ts > rótulos > valor desconhecido "" volta como veio 0ms
+ ✓ src/regras/textos.test.ts > formatarLimiar > (ctr, 1.000000) → 1% 1ms
+ ✓ src/regras/textos.test.ts > formatarLimiar > (cpc, 5.000000) → R$ 5 1ms
+ ✓ src/regras/textos.test.ts > formatarLimiar > (custo, 100.000000) → R$ 100 0ms
+ ✓ src/regras/textos.test.ts > formatarLimiar > (conversoes, 0.000000) → 0 4ms
+ ✓ src/regras/textos.test.ts > formatarLimiar > (custo, 1234.500000) → R$ 1.234,5 0ms
+ ✓ src/regras/textos.test.ts > formatarLimiar > (ctr, 0.125000) → 0,125% 0ms
+ ✓ src/regras/textos.test.ts > formatarLimiar > (impressoes, 123456789012.123456) → 123.456.789.012,123456 0ms
+ ✓ src/regras/textos.test.ts > formatarLimiar > (toString, 2.000000) → 2 0ms
+ ✓ src/regras/textos.test.ts > formatarLimiar > (ctr, abc) → abc% 0ms
+ ✓ src/regras/textos.test.ts > textoCondicao e textoCondicoes > R1: símbolo na tela, por extenso para o leitor de tela 0ms
+ ✓ src/regras/textos.test.ts > textoCondicao e textoCondicoes > R3: condições ligadas por E 1ms
+ ✓ src/regras/textos.test.ts > textoCondicao e textoCondicoes > segue a ordem da regra, não a da lista recebida 1ms
+ ✓ src/regras/textos.test.ts > valoresIniciais > limiar volta normalizado, só como texto 1ms
+ ✓ src/regras/textos.test.ts > valoresIniciais > ordena pela ordem e mantém os 18 algarismos do limiar grande 0ms
+ ✓ src/regras/textos.test.ts > valoresIniciais > copia código, nome e situação (desativada continua desativada) 0ms
+ ✓ src/regras/textos.test.ts > valoresIniciais > limiar ilegível vai como veio, e a validação aponta o campo 6ms
+ ✓ src/regras/textos.test.ts > valoresIniciais > valoresIniciais + validarRegra devolve o corpo da regra 0 1ms
+ ✓ src/regras/textos.test.ts > valoresIniciais > valoresIniciais + validarRegra devolve o corpo da regra 1 1ms
+ ✓ src/regras/textos.test.ts > valoresIniciais > regra ativa: o mesmo corpo do corpoParaAtivar (dois caminhos, mesmo PUT) 1ms
+ ✓ src/regras/textos.test.ts > valoresIniciais > R1 a R3 não passam no formulário (a tela de edição delas é só leitura) 2ms
+ ✓ src/regras/textos.test.ts > valoresNovaRegra e novaCondicao > nova regra: ativa, campos vazios, uma condição em branco 0ms
+ ✓ src/regras/textos.test.ts > valoresNovaRegra e novaCondicao > cada chamada devolve objetos novos (o useFieldArray não compartilha a condição) 1ms
+ ✓ src/regras/textos.test.ts > previaLimiar > (custo, "1.000") → R$ 1 0ms
+ ✓ src/regras/textos.test.ts > previaLimiar > (custo, "1000") → R$ 1000 0ms
+ ✓ src/regras/textos.test.ts > previaLimiar > (ctr, " 1,50 ") → 1,5% 0ms
+ ✓ src/regras/textos.test.ts > previaLimiar > (cpc, "7.500000") → R$ 7,5 0ms
+ ✓ src/regras/textos.test.ts > previaLimiar > (conversoes, "0") → 0 0ms
+ ✓ src/regras/textos.test.ts > previaLimiar > (impressoes, "123456789012.123456") → 123456789012,123456 0ms
+ ✓ src/regras/textos.test.ts > previaLimiar > "" inválido → null 0ms
+ ✓ src/regras/textos.test.ts > previaLimiar > "  " inválido → null 0ms
+ ✓ src/regras/textos.test.ts > previaLimiar > "-1" inválido → null 0ms
+ ✓ src/regras/textos.test.ts > previaLimiar > "1.234,5" inválido → null 0ms
+ ✓ src/regras/textos.test.ts > previaLimiar > "1e3" inválido → null 0ms
+ ✓ src/regras/textos.test.ts > previaLimiar > ".5" inválido → null 0ms
+ ✓ src/regras/textos.test.ts > previaLimiar > "1.1234567" inválido → null 0ms
+ ✓ src/api/consultas.test.ts > useSincronizar (opcoesSincronizar) > as chaves invalidadas no sucesso são exatamente campanhas, métricas e resumo 8ms
+ ✓ src/api/consultas.test.ts > useSincronizar (opcoesSincronizar) > sucesso invalida campanhas, as métricas de todas as campanhas e o resumo; não toca em /eu nem avaliações 6ms
+ ✓ src/api/consultas.test.ts > useSincronizar (opcoesSincronizar) > token_google_ausente invalida só /eu (google_conectado muda) 4ms
+ ✓ src/api/consultas.test.ts > useSincronizar (opcoesSincronizar) > token_google_revogado invalida só /eu (google_conectado muda) 2ms
+ ✓ src/api/consultas.test.ts > useSincronizar (opcoesSincronizar) > cota_excedida não invalida nada 1ms
+ ✓ src/api/consultas.test.ts > useSincronizar (opcoesSincronizar) > google_ads_indisponivel não invalida nada 1ms
+ ✓ src/api/consultas.test.ts > useSincronizar (opcoesSincronizar) > google_autenticacao_temporaria não invalida nada 1ms
+ ✓ src/api/consultas.test.ts > useSincronizar (opcoesSincronizar) > erro_google_ads não invalida nada 1ms
+ ✓ src/api/consultas.test.ts > useSincronizar (opcoesSincronizar) > conflito não invalida nada 1ms
+ ✓ src/api/consultas.test.ts > useSincronizar (opcoesSincronizar) > sem_conexao não invalida nada 1ms
+ ✓ src/api/consultas.test.ts > useSincronizar (opcoesSincronizar) > sem repetição automática: google_ads_indisponivel (transitório) chama o backend uma vez só, mesmo num cliente que repete 1ms
+ ✓ src/api/consultas.test.ts > useSincronizar (opcoesSincronizar) > sem repetição automática: google_autenticacao_temporaria (transitório) chama o backend uma vez só, mesmo num cliente que repete 1ms
+ ✓ src/api/consultas.test.ts > useSincronizar (opcoesSincronizar) > sem repetição automática: sem_conexao (transitório) chama o backend uma vez só, mesmo num cliente que repete 0ms
+ ✓ src/api/consultas.test.ts > useSincronizar (opcoesSincronizar) > com o cliente da aplicação, o 401 continua invalidando /eu (MutationCache global) 3ms
+ ✓ src/api/consultas.test.ts > useMetricas (opcoesMetricas) > uma chave por campanha 1ms
+ ✓ src/api/consultas.test.ts > useMetricas (opcoesMetricas) > id inválido (null): consulta desligada e nenhum pedido 3ms
+ ✓ src/api/consultas.test.ts > useMetricas (opcoesMetricas) > id válido: busca uma vez, com o id e o sinal de cancelamento 9ms
+ ✓ src/tema/grafico.test.ts > deltaEOk > cor igual = 0 e é simétrica 3ms
+ ✓ src/tema/grafico.test.ts > deltaEOk > bate com o validador da skill (R1 × R2 no claro: ΔE 18,5) 1ms
+ ✓ src/tema/grafico.test.ts > séries do gráfico, tema claro > --chart-1 com L na faixa 0.43–0.77 1ms
+ ✓ src/tema/grafico.test.ts > séries do gráfico, tema claro > --chart-2 com L na faixa 0.43–0.77 1ms
+ ✓ src/tema/grafico.test.ts > séries do gráfico, tema claro > --chart-3 com L na faixa 0.43–0.77 1ms
+ ✓ src/tema/grafico.test.ts > séries do gráfico, tema claro > --chart-5 com L na faixa 0.43–0.77 0ms
+ ✓ src/tema/grafico.test.ts > séries do gráfico, tema claro > a exceção da faixa vale só para --chart-5 0ms
+ ✓ src/tema/grafico.test.ts > séries do gráfico, tema claro > --chart-1 está dentro da gama sRGB 1ms
+ ✓ src/tema/grafico.test.ts > séries do gráfico, tema claro > --chart-2 está dentro da gama sRGB 1ms
+ ✓ src/tema/grafico.test.ts > séries do gráfico, tema claro > --chart-3 está dentro da gama sRGB 0ms
+ ✓ src/tema/grafico.test.ts > séries do gráfico, tema claro > --chart-5 está dentro da gama sRGB 0ms
+ ✓ src/tema/grafico.test.ts > séries do gráfico, tema claro > --chart-1 sobre --card ≥ 3:1 1ms
+ ✓ src/tema/grafico.test.ts > séries do gráfico, tema claro > --chart-1 sobre --background ≥ 3:1 0ms
+ ✓ src/tema/grafico.test.ts > séries do gráfico, tema claro > --chart-2 sobre --card ≥ 3:1 0ms
+ ✓ src/tema/grafico.test.ts > séries do gráfico, tema claro > --chart-2 sobre --background ≥ 3:1 0ms
+ ✓ src/tema/grafico.test.ts > séries do gráfico, tema claro > --chart-3 sobre --card ≥ 3:1 0ms
+ ✓ src/tema/grafico.test.ts > séries do gráfico, tema claro > --chart-3 sobre --background ≥ 3:1 0ms
+ ✓ src/tema/grafico.test.ts > séries do gráfico, tema claro > --chart-5 sobre --card ≥ 3:1 0ms
+ ✓ src/tema/grafico.test.ts > séries do gráfico, tema claro > --chart-5 sobre --background ≥ 3:1 0ms
+ ✓ src/tema/grafico.test.ts > séries do gráfico, tema claro > --chart-1 × --chart-2: ΔE OKLab ≥ 15 0ms
+ ✓ src/tema/grafico.test.ts > séries do gráfico, tema claro > --chart-1 × --chart-3: ΔE OKLab ≥ 15 0ms
+ ✓ src/tema/grafico.test.ts > séries do gráfico, tema claro > --chart-1 × --chart-5: ΔE OKLab ≥ 15 0ms
+ ✓ src/tema/grafico.test.ts > séries do gráfico, tema claro > --chart-2 × --chart-3: ΔE OKLab ≥ 15 0ms
+ ✓ src/tema/grafico.test.ts > séries do gráfico, tema claro > --chart-2 × --chart-5: ΔE OKLab ≥ 15 0ms
+ ✓ src/tema/grafico.test.ts > séries do gráfico, tema claro > --chart-3 × --chart-5: ΔE OKLab ≥ 15 0ms
+ ✓ src/tema/grafico.test.ts > séries do gráfico, tema escuro > --chart-1 com L na faixa 0.48–0.67 0ms
+ ✓ src/tema/grafico.test.ts > séries do gráfico, tema escuro > --chart-2 com L na faixa 0.48–0.67 1ms
+ ✓ src/tema/grafico.test.ts > séries do gráfico, tema escuro > --chart-3 com L na faixa 0.48–0.67 0ms
+ ✓ src/tema/grafico.test.ts > séries do gráfico, tema escuro > a exceção da faixa vale só para --chart-5 0ms
+ ✓ src/tema/grafico.test.ts > séries do gráfico, tema escuro > --chart-1 está dentro da gama sRGB 4ms
+ ✓ src/tema/grafico.test.ts > séries do gráfico, tema escuro > --chart-2 está dentro da gama sRGB 0ms
+ ✓ src/tema/grafico.test.ts > séries do gráfico, tema escuro > --chart-3 está dentro da gama sRGB 0ms
+ ✓ src/tema/grafico.test.ts > séries do gráfico, tema escuro > --chart-5 está dentro da gama sRGB 0ms
+ ✓ src/tema/grafico.test.ts > séries do gráfico, tema escuro > --chart-1 sobre --card ≥ 3:1 0ms
+ ✓ src/tema/grafico.test.ts > séries do gráfico, tema escuro > --chart-1 sobre --background ≥ 3:1 0ms
+ ✓ src/tema/grafico.test.ts > séries do gráfico, tema escuro > --chart-2 sobre --card ≥ 3:1 0ms
+ ✓ src/tema/grafico.test.ts > séries do gráfico, tema escuro > --chart-2 sobre --background ≥ 3:1 0ms
+ ✓ src/tema/grafico.test.ts > séries do gráfico, tema escuro > --chart-3 sobre --card ≥ 3:1 0ms
+ ✓ src/tema/grafico.test.ts > séries do gráfico, tema escuro > --chart-3 sobre --background ≥ 3:1 0ms
+ ✓ src/tema/grafico.test.ts > séries do gráfico, tema escuro > --chart-5 sobre --card ≥ 3:1 0ms
+ ✓ src/tema/grafico.test.ts > séries do gráfico, tema escuro > --chart-5 sobre --background ≥ 3:1 0ms
+ ✓ src/tema/grafico.test.ts > séries do gráfico, tema escuro > --chart-1 × --chart-2: ΔE OKLab ≥ 15 0ms
+ ✓ src/tema/grafico.test.ts > séries do gráfico, tema escuro > --chart-1 × --chart-3: ΔE OKLab ≥ 15 0ms
+ ✓ src/tema/grafico.test.ts > séries do gráfico, tema escuro > --chart-1 × --chart-5: ΔE OKLab ≥ 15 0ms
+ ✓ src/tema/grafico.test.ts > séries do gráfico, tema escuro > --chart-2 × --chart-3: ΔE OKLab ≥ 15 0ms
+ ✓ src/tema/grafico.test.ts > séries do gráfico, tema escuro > --chart-2 × --chart-5: ΔE OKLab ≥ 15 0ms
+ ✓ src/tema/grafico.test.ts > séries do gráfico, tema escuro > --chart-3 × --chart-5: ΔE OKLab ≥ 15 0ms
+ ✓ src/lib/decimal.test.ts > arredondarDecimal (oráculo: round() do PostgreSQL) > round(3.3333333333333333, 2) = 3.33 3ms
+ ✓ src/lib/decimal.test.ts > arredondarDecimal (oráculo: round() do PostgreSQL) > round(2.345, 2) = 2.35 0ms
+ ✓ src/lib/decimal.test.ts > arredondarDecimal (oráculo: round() do PostgreSQL) > round(-2.345, 2) = -2.35 0ms
+ ✓ src/lib/decimal.test.ts > arredondarDecimal (oráculo: round() do PostgreSQL) > round(2.355, 2) = 2.36 0ms
+ ✓ src/lib/decimal.test.ts > arredondarDecimal (oráculo: round() do PostgreSQL) > round(0.005, 2) = 0.01 0ms
+ ✓ src/lib/decimal.test.ts > arredondarDecimal (oráculo: round() do PostgreSQL) > round(0.0049999, 2) = 0.00 0ms
+ ✓ src/lib/decimal.test.ts > arredondarDecimal (oráculo: round() do PostgreSQL) > round(9.995, 2) = 10.00 0ms
+ ✓ src/lib/decimal.test.ts > arredondarDecimal (oráculo: round() do PostgreSQL) > round(99.999, 2) = 100.00 0ms
+ ✓ src/lib/decimal.test.ts > arredondarDecimal (oráculo: round() do PostgreSQL) > round(0E-16, 2) = 0.00 0ms
+ ✓ src/lib/decimal.test.ts > arredondarDecimal (oráculo: round() do PostgreSQL) > round(0, 2) = 0.00 0ms
+ ✓ src/lib/decimal.test.ts > arredondarDecimal (oráculo: round() do PostgreSQL) > round(1.5, 0) = 2 0ms
+ ✓ src/lib/decimal.test.ts > arredondarDecimal (oráculo: round() do PostgreSQL) > round(2.5, 0) = 3 0ms
+ ✓ src/lib/decimal.test.ts > arredondarDecimal (oráculo: round() do PostgreSQL) > round(-2.5, 0) = -3 0ms
+ ✓ src/lib/decimal.test.ts > arredondarDecimal (oráculo: round() do PostgreSQL) > round(-0.004, 2) = 0.00 0ms
+ ✓ src/lib/decimal.test.ts > arredondarDecimal (oráculo: round() do PostgreSQL) > round(1.2, 4) = 1.2000 0ms
+ ✓ src/lib/decimal.test.ts > arredondarDecimal (oráculo: round() do PostgreSQL) > round(1.5E+2, 2) = 150.00 0ms
+ ✓ src/lib/decimal.test.ts > arredondarDecimal (oráculo: round() do PostgreSQL) > round(1.25E-1, 2) = 0.13 0ms
+ ✓ src/lib/decimal.test.ts > arredondarDecimal (oráculo: round() do PostgreSQL) > round(12345678.905, 2) = 12345678.91 0ms
+ ✓ src/lib/decimal.test.ts > arredondarDecimal (oráculo: round() do PostgreSQL) > round(100.00000000000000000000, 2) = 100.00 0ms
+ ✓ src/lib/decimal.test.ts > arredondarDecimal (oráculo: round() do PostgreSQL) > round(0.5, 2) = 0.50 0ms
+ ✓ src/lib/decimal.test.ts > arredondarDecimal (oráculo: round() do PostgreSQL) > round(7, 2) = 7.00 0ms
+ ✓ src/lib/decimal.test.ts > arredondarDecimal (oráculo: round() do PostgreSQL) > round(0.125, 1) = 0.1 0ms
+ ✓ src/lib/decimal.test.ts > arredondarDecimal (oráculo: round() do PostgreSQL) > round(-0.0, 2) = 0.00 0ms
+ ✓ src/lib/decimal.test.ts > arredondarDecimal (oráculo: round() do PostgreSQL) > round(12345678901234567890.125, 2) = 12345678901234567890.13 0ms
+ ✓ src/lib/decimal.test.ts > arredondarDecimal (oráculo: round() do PostgreSQL) > empate vai para longe do zero, não para o par (2.5 → 3, como o PostgreSQL) 1ms
+ ✓ src/lib/decimal.test.ts > arredondarDecimal (oráculo: round() do PostgreSQL) > texto inválido "" → null 0ms
+ ✓ src/lib/decimal.test.ts > arredondarDecimal (oráculo: round() do PostgreSQL) > texto inválido " " → null 0ms
+ ✓ src/lib/decimal.test.ts > arredondarDecimal (oráculo: round() do PostgreSQL) > texto inválido "abc" → null 0ms
+ ✓ src/lib/decimal.test.ts > arredondarDecimal (oráculo: round() do PostgreSQL) > texto inválido "1,5" → null 0ms
+ ✓ src/lib/decimal.test.ts > arredondarDecimal (oráculo: round() do PostgreSQL) > texto inválido "1.2.3" → null 0ms
+ ✓ src/lib/decimal.test.ts > arredondarDecimal (oráculo: round() do PostgreSQL) > texto inválido ".5" → null 0ms
+ ✓ src/lib/decimal.test.ts > arredondarDecimal (oráculo: round() do PostgreSQL) > texto inválido "E5" → null 0ms
+ ✓ src/lib/decimal.test.ts > arredondarDecimal (oráculo: round() do PostgreSQL) > texto inválido "1e" → null 0ms
+ ✓ src/lib/decimal.test.ts > arredondarDecimal (oráculo: round() do PostgreSQL) > texto inválido "NaN" → null 0ms
+ ✓ src/lib/decimal.test.ts > arredondarDecimal (oráculo: round() do PostgreSQL) > texto inválido "Infinity" → null 0ms
+ ✓ src/lib/decimal.test.ts > arredondarDecimal (oráculo: round() do PostgreSQL) > texto inválido "--1" → null 0ms
+ ✓ src/lib/decimal.test.ts > arredondarDecimal (oráculo: round() do PostgreSQL) > texto inválido "0x10" → null 0ms
+ ✓ src/lib/decimal.test.ts > arredondarDecimal (oráculo: round() do PostgreSQL) > expoente acima do limite → null (não monta texto gigante) 0ms
+ ✓ src/lib/decimal.test.ts > arredondarDecimal (oráculo: round() do PostgreSQL) > casas inválidas (-1) é erro de programação 0ms
+ ✓ src/lib/decimal.test.ts > arredondarDecimal (oráculo: round() do PostgreSQL) > casas inválidas (1.5) é erro de programação 0ms
+ ✓ src/lib/decimal.test.ts > arredondarDecimal (oráculo: round() do PostgreSQL) > casas inválidas (NaN) é erro de programação 0ms
+ ✓ src/lib/decimal.test.ts > normalizarDecimal (oráculo: trim_scale() do PostgreSQL) > trim_scale(0E-16) = 0 0ms
+ ✓ src/lib/decimal.test.ts > normalizarDecimal (oráculo: trim_scale() do PostgreSQL) > trim_scale(3.3333333333333333) = 3.3333333333333333 0ms
+ ✓ src/lib/decimal.test.ts > normalizarDecimal (oráculo: trim_scale() do PostgreSQL) > trim_scale(100.00000000000000000000) = 100 0ms
+ ✓ src/lib/decimal.test.ts > normalizarDecimal (oráculo: trim_scale() do PostgreSQL) > trim_scale(1.2300000000000000) = 1.23 0ms
+ ✓ src/lib/decimal.test.ts > normalizarDecimal (oráculo: trim_scale() do PostgreSQL) > trim_scale(1.5E+2) = 150 0ms
+ ✓ src/lib/decimal.test.ts > normalizarDecimal (oráculo: trim_scale() do PostgreSQL) > trim_scale(-0.0) = 0 0ms
+ ✓ src/lib/decimal.test.ts > normalizarDecimal (oráculo: trim_scale() do PostgreSQL) > trim_scale(-2.50) = -2.5 0ms
+ ✓ src/lib/decimal.test.ts > normalizarDecimal (oráculo: trim_scale() do PostgreSQL) > trim_scale(7) = 7 0ms
+ ✓ src/lib/decimal.test.ts > normalizarDecimal (oráculo: trim_scale() do PostgreSQL) > trim_scale(0.000001) = 0.000001 0ms
+ ✓ src/lib/decimal.test.ts > normalizarDecimal (oráculo: trim_scale() do PostgreSQL) > trim_scale(1.25E-1) = 0.125 0ms
+ ✓ src/lib/decimal.test.ts > normalizarDecimal (oráculo: trim_scale() do PostgreSQL) > trim_scale(1E+3) = 1000 0ms
+ ✓ src/lib/decimal.test.ts > normalizarDecimal (oráculo: trim_scale() do PostgreSQL) > trim_scale(12345678901234567890.1250) = 12345678901234567890.125 0ms
+ ✓ src/lib/decimal.test.ts > normalizarDecimal (oráculo: trim_scale() do PostgreSQL) > texto inválido "" → null 0ms
+ ✓ src/lib/decimal.test.ts > normalizarDecimal (oráculo: trim_scale() do PostgreSQL) > texto inválido " " → null 0ms
+ ✓ src/lib/decimal.test.ts > normalizarDecimal (oráculo: trim_scale() do PostgreSQL) > texto inválido "abc" → null 0ms
+ ✓ src/lib/decimal.test.ts > normalizarDecimal (oráculo: trim_scale() do PostgreSQL) > texto inválido "1,5" → null 0ms
+ ✓ src/lib/decimal.test.ts > normalizarDecimal (oráculo: trim_scale() do PostgreSQL) > texto inválido "1.2.3" → null 0ms
+ ✓ src/lib/decimal.test.ts > normalizarDecimal (oráculo: trim_scale() do PostgreSQL) > texto inválido ".5" → null 0ms
+ ✓ src/lib/decimal.test.ts > normalizarDecimal (oráculo: trim_scale() do PostgreSQL) > texto inválido "E5" → null 0ms
+ ✓ src/lib/decimal.test.ts > normalizarDecimal (oráculo: trim_scale() do PostgreSQL) > texto inválido "1e" → null 0ms
+ ✓ src/lib/decimal.test.ts > normalizarDecimal (oráculo: trim_scale() do PostgreSQL) > texto inválido "NaN" → null 0ms
+ ✓ src/lib/decimal.test.ts > normalizarDecimal (oráculo: trim_scale() do PostgreSQL) > texto inválido "Infinity" → null 0ms
+ ✓ src/lib/decimal.test.ts > normalizarDecimal (oráculo: trim_scale() do PostgreSQL) > texto inválido "--1" → null 0ms
+ ✓ src/lib/decimal.test.ts > normalizarDecimal (oráculo: trim_scale() do PostgreSQL) > texto inválido "0x10" → null 0ms
+ ✓ src/lib/decimal.test.ts > formatação para a tela > formatarPercentual(3.3333333333333333) = 3,33% 0ms
+ ✓ src/lib/decimal.test.ts > formatação para a tela > formatarPercentual(0E-16) = 0,00% 0ms
+ ✓ src/lib/decimal.test.ts > formatação para a tela > formatarPercentual(100.00000000000000000000) = 100,00% 0ms
+ ✓ src/lib/decimal.test.ts > formatação para a tela > formatarPercentual(2.345) = 2,35% 0ms
+ ✓ src/lib/decimal.test.ts > formatação para a tela > formatarMoeda(1234.5) = R$ 1.234,50 0ms
+ ✓ src/lib/decimal.test.ts > formatação para a tela > formatarMoeda(0.125) = R$ 0,13 0ms
+ ✓ src/lib/decimal.test.ts > formatação para a tela > formatarMoeda(12345678.905) = R$ 12.345.678,91 0ms
+ ✓ src/lib/decimal.test.ts > formatação para a tela > formatarMoeda(0E-16) = R$ 0,00 0ms
+ ✓ src/lib/decimal.test.ts > formatação para a tela > moeda usa espaço inseparável entre R$ e o número (não quebra a linha) 0ms
+ ✓ src/lib/decimal.test.ts > formatação para a tela > formatarDecimalCurto(1.500000) = 1,5 0ms
+ ✓ src/lib/decimal.test.ts > formatação para a tela > formatarDecimalCurto(0E-16) = 0 0ms
+ ✓ src/lib/decimal.test.ts > formatação para a tela > formatarDecimalCurto(1234.000001) = 1.234,000001 0ms
+ ✓ src/lib/decimal.test.ts > formatação para a tela > formatarDecimalCurto(3) = 3 0ms
+ ✓ src/lib/decimal.test.ts > formatação para a tela > texto inválido volta como veio nas três funções 0ms
+ ✓ src/api/consultas-regras.test.ts > chaves > a regra fica sob o prefixo da lista 6ms
+ ✓ src/api/consultas-regras.test.ts > chaves > o que cada mutação invalida 1ms
+ ✓ src/api/consultas-regras.test.ts > salvar regra (opcoesSalvarRegra) > sem id: POST /regras com o corpo 13ms
+ ✓ src/api/consultas-regras.test.ts > salvar regra (opcoesSalvarRegra) > com id: PUT /regras/7 com o corpo 3ms
+ ✓ src/api/consultas-regras.test.ts > salvar regra (opcoesSalvarRegra) > sucesso invalida a lista, a regra e o resumo, e mais nada 4ms
+ ✓ src/api/consultas-regras.test.ts > salvar regra (opcoesSalvarRegra) > 409 conflito: um pedido só, mesmo num cliente que repete, e nada invalidado 4ms
+ ✓ src/api/consultas-regras.test.ts > salvar regra (opcoesSalvarRegra) > 409 regra_referencia: um pedido só, mesmo num cliente que repete, e nada invalidado 3ms
+ ✓ src/api/consultas-regras.test.ts > salvar regra (opcoesSalvarRegra) > sem resposta (transitório): um pedido só, mesmo num cliente que repete, e nada invalidado 3ms
+ ✓ src/api/consultas-regras.test.ts > salvar regra (opcoesSalvarRegra) > com o cliente da aplicação, o 401 continua invalidando /eu (MutationCache global) 4ms
+ ✓ src/api/consultas-regras.test.ts > ativar regra (opcoesAtivarRegra) > PUT /regras/7 com a regra inteira, ativa = true e o limiar normalizado 6ms
+ ✓ src/api/consultas-regras.test.ts > ativar regra (opcoesAtivarRegra) > regra que não passa na validação (R1) não gera pedido 1ms
+ ✓ src/api/consultas-regras.test.ts > desativar regra (opcoesDesativarRegra) > DELETE /regras/7 sem corpo; sucesso invalida a lista, a regra e o resumo 1ms
+ ✓ src/api/consultas-regras.test.ts > desativar regra (opcoesDesativarRegra) > 409 regra_referencia: um pedido só e nada invalidado 1ms
+ ✓ src/api/consultas-regras.test.ts > executar avaliação (opcoesExecutarAvaliacao) > POST /avaliacoes com o corpo exato e devolve a avaliação 1ms
+ ✓ src/api/consultas-regras.test.ts > executar avaliação (opcoesExecutarAvaliacao) > sucesso invalida o histórico de todos os limites, o resumo e os alertas; não toca em regras, campanhas e /eu 1ms
+ ✓ src/api/consultas-regras.test.ts > executar avaliação (opcoesExecutarAvaliacao) > sem resposta (transitório): um pedido só, mesmo num cliente que repete, e nada invalidado 1ms
+ ✓ src/api/consultas-regras.test.ts > executar avaliação (opcoesExecutarAvaliacao) > 400 validacao: um pedido só, mesmo num cliente que repete, e nada invalidado 1ms
+ ✓ src/api/consultas-regras.test.ts > uma regra (opcoesRegra) > id inválido (null): consulta desligada e nenhum pedido 3ms
+ ✓ src/api/consultas-regras.test.ts > uma regra (opcoesRegra) > id válido: GET /regras/7 uma vez 53ms
+ ✓ src/lib/movimento.test.ts > prefereMenosMovimento > a consulta é a do padrão CSS 3ms
+ ✓ src/lib/movimento.test.ts > prefereMenosMovimento > lê a preferência do sistema (true) 1ms
+ ✓ src/lib/movimento.test.ts > prefereMenosMovimento > lê a preferência do sistema (false) 0ms
+ ✓ src/lib/movimento.test.ts > prefereMenosMovimento > sem matchMedia → false 0ms
+ ✓ src/lib/movimento.test.ts > prefereMenosMovimento > matchMedia que lança erro → false, sem propagar 0ms
+ ✓ src/lib/movimento.test.ts > assinarMenosMovimento > avisa quando a preferência muda com a página aberta, e o valor novo é lido 2ms
+ ✓ src/lib/movimento.test.ts > assinarMenosMovimento > depois de cancelar, não avisa mais e não deixa ouvinte para trás 2ms
+ ✓ src/lib/movimento.test.ts > assinarMenosMovimento > sem matchMedia → assinatura vazia que pode ser cancelada 1ms
+ ✓ src/api/cliente.test.ts > exigir > resposta ok devolve os dados 5ms
+ ✓ src/api/cliente.test.ts > exigir > 204 devolve undefined 0ms
+ ✓ src/api/cliente.test.ts > exigir > erro do backend vira ErroApi com o tipo e o Retry-After 3ms
+ ✓ src/api/cliente.test.ts > exigir > 401 vira nao_autenticado 1ms
+ ✓ src/api/cliente.test.ts > exigir > fetch que lança vira sem_conexao 1ms
+ ✓ src/api/cliente.test.ts > exigir > cancelamento sai como veio (o TanStack Query reconhece o AbortError) 0ms
+ ✓ src/tema/tema.test.ts > lerPreferencia > aceita claro 13ms
+ ✓ src/tema/tema.test.ts > lerPreferencia > aceita escuro 0ms
+ ✓ src/tema/tema.test.ts > lerPreferencia > aceita sistema 0ms
+ ✓ src/tema/tema.test.ts > lerPreferencia > valor inválido null vira sistema 0ms
+ ✓ src/tema/tema.test.ts > lerPreferencia > valor inválido undefined vira sistema 0ms
+ ✓ src/tema/tema.test.ts > lerPreferencia > valor inválido "" vira sistema 0ms
+ ✓ src/tema/tema.test.ts > lerPreferencia > valor inválido "dark" vira sistema 0ms
+ ✓ src/tema/tema.test.ts > lerPreferencia > valor inválido "light" vira sistema 0ms
+ ✓ src/tema/tema.test.ts > lerPreferencia > valor inválido "ESCURO" vira sistema 0ms
+ ✓ src/tema/tema.test.ts > lerPreferencia > valor inválido " escuro" vira sistema 1ms
+ ✓ src/tema/tema.test.ts > lerPreferencia > valor inválido "escuro " vira sistema 1ms
+ ✓ src/tema/tema.test.ts > resolverTema > preferência claro com sistema escuro=false → claro 0ms
+ ✓ src/tema/tema.test.ts > resolverTema > preferência claro com sistema escuro=true → claro 0ms
+ ✓ src/tema/tema.test.ts > resolverTema > preferência escuro com sistema escuro=false → escuro 0ms
+ ✓ src/tema/tema.test.ts > resolverTema > preferência escuro com sistema escuro=true → escuro 0ms
+ ✓ src/tema/tema.test.ts > resolverTema > preferência sistema com sistema escuro=false → claro 0ms
+ ✓ src/tema/tema.test.ts > resolverTema > preferência sistema com sistema escuro=true → escuro 0ms
+ ✓ src/tema/tema.test.ts > aplicarTema > tema escuro (classe dark antes=false) → dark=true, color-scheme dark 0ms
+ ✓ src/tema/tema.test.ts > aplicarTema > tema escuro (classe dark antes=true) → dark=true, color-scheme dark 0ms
+ ✓ src/tema/tema.test.ts > aplicarTema > tema claro (classe dark antes=false) → dark=false, color-scheme light 1ms
+ ✓ src/tema/tema.test.ts > aplicarTema > tema claro (classe dark antes=true) → dark=false, color-scheme light 0ms
+ ✓ src/avaliacoes/pedido.test.ts > ehDataIso contra o oráculo > "2026-10-13": Pydantic aceito 3ms
+ ✓ src/avaliacoes/pedido.test.ts > ehDataIso contra o oráculo > "2024-02-29": Pydantic aceito 0ms
+ ✓ src/avaliacoes/pedido.test.ts > ehDataIso contra o oráculo > "2026-02-29": Pydantic recusado 0ms
+ ✓ src/avaliacoes/pedido.test.ts > ehDataIso contra o oráculo > "2026-13-01": Pydantic recusado 0ms
+ ✓ src/avaliacoes/pedido.test.ts > ehDataIso contra o oráculo > "2026-11-31": Pydantic recusado 0ms
+ ✓ src/avaliacoes/pedido.test.ts > ehDataIso contra o oráculo > "2026-00-10": Pydantic recusado 0ms
+ ✓ src/avaliacoes/pedido.test.ts > ehDataIso contra o oráculo > "2026-1-5": Pydantic recusado 0ms
+ ✓ src/avaliacoes/pedido.test.ts > ehDataIso contra o oráculo > "20261105": Pydantic recusado 0ms
+ ✓ src/avaliacoes/pedido.test.ts > ehDataIso contra o oráculo > "": Pydantic recusado 0ms
+ ✓ src/avaliacoes/pedido.test.ts > ehDataIso contra o oráculo > "0000-01-01": Pydantic recusado 0ms
+ ✓ src/avaliacoes/pedido.test.ts > ehDataIso contra o oráculo > "0001-01-01": Pydantic aceito 0ms
+ ✓ src/avaliacoes/pedido.test.ts > ehDataIso contra o oráculo > "9999-12-31": Pydantic aceito 0ms
+ ✓ src/avaliacoes/pedido.test.ts > ehDataIso contra o oráculo > "2026-11-11T00:00:00": o Pydantic aceita e a tela recusa (diferença de propósito) 0ms
+ ✓ src/avaliacoes/pedido.test.ts > pedido aceito: o corpo enviado é aceito pelo Pydantic com o mesmo valor > formulário vazio 3ms
+ ✓ src/avaliacoes/pedido.test.ts > pedido aceito: o corpo enviado é aceito pelo Pydantic com o mesmo valor > incluir pausadas 0ms
+ ✓ src/avaliacoes/pedido.test.ts > pedido aceito: o corpo enviado é aceito pelo Pydantic com o mesmo valor > uma campanha 0ms
+ ✓ src/avaliacoes/pedido.test.ts > pedido aceito: o corpo enviado é aceito pelo Pydantic com o mesmo valor > período 2ms
+ ✓ src/avaliacoes/pedido.test.ts > pedido aceito: o corpo enviado é aceito pelo Pydantic com o mesmo valor > início = fim 0ms
+ ✓ src/avaliacoes/pedido.test.ts > pedido aceito: o corpo enviado é aceito pelo Pydantic com o mesmo valor > só início 0ms
+ ✓ src/avaliacoes/pedido.test.ts > pedido aceito: o corpo enviado é aceito pelo Pydantic com o mesmo valor > só fim 5ms
+ ✓ src/avaliacoes/pedido.test.ts > pedido aceito: o corpo enviado é aceito pelo Pydantic com o mesmo valor > virada de ano 0ms
+ ✓ src/avaliacoes/pedido.test.ts > pedido aceito: o corpo enviado é aceito pelo Pydantic com o mesmo valor > incluir_pausadas vai explícito mesmo quando falso 0ms
+ ✓ src/avaliacoes/pedido.test.ts > pedido recusado > período 2026-11-12 a 2026-11-11: o Pydantic recusa, e a tela também 1ms
+ ✓ src/avaliacoes/pedido.test.ts > pedido recusado > período 2027-01-01 a 2026-12-31: o Pydantic recusa, e a tela também 0ms
+ ✓ src/avaliacoes/pedido.test.ts > pedido recusado > data inválida "2026-02-29" 0ms
+ ✓ src/avaliacoes/pedido.test.ts > pedido recusado > data inválida "2026-11-11T00:00:00" 0ms
+ ✓ src/avaliacoes/pedido.test.ts > pedido recusado > data inválida "11/11/2026" 0ms
+ ✓ src/avaliacoes/pedido.test.ts > pedido recusado > campanha "99" fora da lista 0ms
+ ✓ src/avaliacoes/pedido.test.ts > pedido recusado > campanha "0" fora da lista 0ms
+ ✓ src/avaliacoes/pedido.test.ts > pedido recusado > campanha "-1" fora da lista 0ms
+ ✓ src/avaliacoes/pedido.test.ts > pedido recusado > campanha "01" fora da lista 0ms
+ ✓ src/avaliacoes/pedido.test.ts > pedido recusado > campanha "1.5" fora da lista 0ms
+ ✓ src/avaliacoes/pedido.test.ts > pedido recusado > campanha "abc" fora da lista 0ms
+ ✓ src/avaliacoes/pedido.test.ts > pedido recusado > 0 e -1: o Pydantic aceita; a tela só envia ids da lista (mais rígida por construção) 0ms
+ ✓ src/avaliacoes/pedido.test.ts > aviso de campanha não ativa > pausada sem incluir pausadas 0ms
+ ✓ src/avaliacoes/pedido.test.ts > aviso de campanha não ativa > removida sem incluir pausadas 0ms
+ ✓ src/avaliacoes/pedido.test.ts > aviso de campanha não ativa > sem aviso: {"campanhaId":"3","incluirPausadas":true} 0ms
+ ✓ src/avaliacoes/pedido.test.ts > aviso de campanha não ativa > sem aviso: {"campanhaId":"1"} 0ms
+ ✓ src/avaliacoes/pedido.test.ts > aviso de campanha não ativa > sem aviso: {} 0ms
+ ✓ src/api/campos.test.ts > erros reais da API nos campos > um esperado para cada resposta do oráculo 4ms
+ ✓ src/api/campos.test.ts > erros reais da API nos campos > POST /regras {"codigo": "", "nome": "CPC muito alto", "condicoes": [{"metrica": "cpc", "operador": ">", "limiar": "7.5"}]} → 400 validacao 2ms
+ ✓ src/api/campos.test.ts > erros reais da API nos campos > POST /regras {"codigo": "R 4", "nome": "CPC muito alto", "condicoes": [{"metrica": "cpc", "operador": ">", "limiar": "7.5"}]} → 400 validacao 0ms
+ ✓ src/api/campos.test.ts > erros reais da API nos campos > POST /regras {"codigo": "R4", "nome": "", "condicoes": [{"metrica": "cpc", "operador": ">", "limiar": "7.5"}]} → 400 validacao 3ms
+ ✓ src/api/campos.test.ts > erros reais da API nos campos > POST /regras {"codigo": "R4", "condicoes": [{"metrica": "cpc", "operador": ">", "limiar": "7.5"}]} → 400 validacao 0ms
+ ✓ src/api/campos.test.ts > erros reais da API nos campos > POST /regras {"codigo": "R4", "nome": "CPC muito alto", "condicoes": []} → 400 validacao 0ms
+ ✓ src/api/campos.test.ts > erros reais da API nos campos > POST /regras {"codigo": "R4", "nome": "CPC muito alto", "condicoes": [{"metrica": "cpc", "operador": ">", "limiar": "7.5"}, {"metrica": "xyz", "operador": ">", "limiar": "7.5"}]} → 400 validacao 0ms
+ ✓ src/api/campos.test.ts > erros reais da API nos campos > POST /regras {"codigo": "R4", "nome": "CPC muito alto", "condicoes": [{"metrica": "cpc", "operador": ">", "limiar": "7.5"}, {"metrica": "cpc", "operador": "=", "limiar": "7.5"}]} → 400 validacao 1ms
+ ✓ src/api/campos.test.ts > erros reais da API nos campos > POST /regras {"codigo": "R4", "nome": "CPC muito alto", "condicoes": [{"metrica": "cpc", "operador": ">", "limiar": "7.5"}, {"metrica": "cpc", "operador": ">", "limiar": "-1"}]} → 400 validacao 1ms
+ ✓ src/api/campos.test.ts > erros reais da API nos campos > POST /regras {"codigo": "R4", "nome": "CPC muito alto", "condicoes": [{"metrica": "cpc", "operador": ">", "limiar": "0.0000001"}]} → 400 validacao 1ms
+ ✓ src/api/campos.test.ts > erros reais da API nos campos > POST /regras {"codigo": "", "nome": "", "condicoes": [{"metrica": "cpc", "operador": ">", "limiar": "7.5"}]} → 400 validacao 1ms
+ ✓ src/api/campos.test.ts > erros reais da API nos campos > POST /regras {"codigo": "R1", "nome": "CPC muito alto", "condicoes": [{"metrica": "cpc", "operador": ">", "limiar": "7.5"}]} → 409 regra_referencia 0ms
+ ✓ src/api/campos.test.ts > erros reais da API nos campos > POST /regras {"codigo": "r2", "nome": "CPC muito alto", "condicoes": [{"metrica": "cpc", "operador": ">", "limiar": "7.5"}]} → 409 regra_referencia 0ms
+ ✓ src/api/campos.test.ts > erros reais da API nos campos > PUT /regras/1 {"codigo": "", "nome": "CPC muito alto", "condicoes": [{"metrica": "cpc", "operador": ">", "limiar": "7.5"}]} → 400 validacao 0ms
+ ✓ src/api/campos.test.ts > erros reais da API nos campos > POST /avaliacoes {"inicio": "2026-11-12", "fim": "2026-11-11"} → 400 validacao 1ms
+ ✓ src/api/campos.test.ts > erros reais da API nos campos > POST /avaliacoes {"inicio": "2026-02-30"} → 400 validacao 0ms
+ ✓ src/api/campos.test.ts > erros reais da API nos campos > POST /avaliacoes {"fim": "abc"} → 400 validacao 0ms
+ ✓ src/api/campos.test.ts > erros reais da API nos campos > POST /avaliacoes {"campanha_id": "abc"} → 400 validacao 0ms
+ ✓ src/api/campos.test.ts > erros reais da API nos campos > POST /avaliacoes {"incluir_pausadas": "talvez"} → 400 validacao 0ms
+ ✓ src/api/campos.test.ts > casos fora do oráculo > 409 conflito (código repetido, vem do UNIQUE do banco) vai para o código 0ms
+ ✓ src/api/campos.test.ts > casos fora do oráculo > conflito no formulário de avaliação não é campo 0ms
+ ✓ src/api/campos.test.ts > casos fora do oráculo > sem conexão fica em restante 0ms
+ ✓ src/api/campos.test.ts > casos fora do oráculo > erro do Google fica em restante 0ms
+ ✓ src/api/campos.test.ts > casos fora do oráculo > validação sem lista fica em restante 0ms
+ ✓ src/api/campos.test.ts > casos fora do oráculo > erro que não é da API fica em restante 0ms
+ ✓ src/api/campos.test.ts > casos fora do oráculo > local que não é campo não vira campo; os conhecidos continuam 0ms
+ ✓ src/rotas.test.ts > ROTAS > /entrar não colide com o proxy /api do Vite 3ms
+ ✓ src/rotas.test.ts > ROTAS > / não colide com o proxy /api do Vite 1ms
+ ✓ src/rotas.test.ts > ROTAS > /campanhas não colide com o proxy /api do Vite 0ms
+ ✓ src/rotas.test.ts > ROTAS > /campanhas/:id não colide com o proxy /api do Vite 0ms
+ ✓ src/rotas.test.ts > ROTAS > /regras não colide com o proxy /api do Vite 0ms
+ ✓ src/rotas.test.ts > ROTAS > /regras/nova não colide com o proxy /api do Vite 0ms
+ ✓ src/rotas.test.ts > ROTAS > /regras/:id/editar não colide com o proxy /api do Vite 0ms
+ ✓ src/rotas.test.ts > ROTAS > /avaliacoes não colide com o proxy /api do Vite 0ms
+ ✓ src/rotas.test.ts > ROTAS > /alertas não colide com o proxy /api do Vite 0ms
+ ✓ src/rotas.test.ts > ROTAS > /entrar é absoluto 0ms
+ ✓ src/rotas.test.ts > ROTAS > / é absoluto 0ms
+ ✓ src/rotas.test.ts > ROTAS > /campanhas é absoluto 0ms
+ ✓ src/rotas.test.ts > ROTAS > /campanhas/:id é absoluto 0ms
+ ✓ src/rotas.test.ts > ROTAS > /regras é absoluto 0ms
+ ✓ src/rotas.test.ts > ROTAS > /regras/nova é absoluto 0ms
+ ✓ src/rotas.test.ts > ROTAS > /regras/:id/editar é absoluto 0ms
+ ✓ src/rotas.test.ts > ROTAS > /avaliacoes é absoluto 0ms
+ ✓ src/rotas.test.ts > ROTAS > /alertas é absoluto 0ms
+ ✓ src/rotas.test.ts > ROTAS > não há caminho repetido 0ms
+ ✓ src/rotas.test.ts > ITENS_NAVEGACAO > os cinco itens do plano, na ordem 1ms
+ ✓ src/rotas.test.ts > ITENS_NAVEGACAO > nenhum item leva a uma rota com parâmetro ou à tela pública de entrar 1ms
+ ✓ src/rotas.test.ts > relativo > /campanhas → "campanhas" 0ms
+ ✓ src/rotas.test.ts > relativo > /campanhas/:id → "campanhas/:id" 0ms
+ ✓ src/rotas.test.ts > relativo > /regras/nova → "regras/nova" 0ms
+ ✓ src/rotas.test.ts > relativo > /regras/:id/editar → "regras/:id/editar" 0ms
+ ✓ src/rotas.test.ts > relativo > / → "" 0ms
+ ✓ src/rotas.test.ts > rotas das regras > /regras/nova não casa com a rota de edição 1ms
+ ✓ src/rotas.test.ts > rotas das regras > /regras/7/editar casa, e o id sai como texto 0ms
+ ✓ src/rotas.test.ts > rotas das regras > "nova" não é id: lerIdCampanha (reaproveitado da Fase 2) recusa 0ms
+ ✓ src/avaliacoes/formulario.test.ts > primeiroCampoComErro > { campanhaId: 'x', inicio: 'x', …(1) } → campanhaId (ordem da tela, não a das chaves) 2ms
+ ✓ src/avaliacoes/formulario.test.ts > primeiroCampoComErro > { inicio: 'x', fim: 'x' } → inicio (ordem da tela, não a das chaves) 0ms
+ ✓ src/avaliacoes/formulario.test.ts > primeiroCampoComErro > { fim: 'x', inicio: 'x' } → inicio (ordem da tela, não a das chaves) 0ms
+ ✓ src/avaliacoes/formulario.test.ts > primeiroCampoComErro > { fim: 'x' } → fim (ordem da tela, não a das chaves) 0ms
+ ✓ src/avaliacoes/formulario.test.ts > primeiroCampoComErro > {} → null (ordem da tela, não a das chaves) 0ms
+ ✓ src/avaliacoes/formulario.test.ts > decidirEnvio > formulário inicial: envia só incluir_pausadas 1ms
+ ✓ src/avaliacoes/formulario.test.ts > decidirEnvio > com pedido em andamento, ignora (mesmo com formulário válido) 0ms
+ ✓ src/avaliacoes/formulario.test.ts > decidirEnvio > com pedido em andamento, ignora também formulário inválido (não mostra erro) 0ms
+ ✓ src/avaliacoes/formulario.test.ts > decidirEnvio > campanha, período e pausadas 1ms
+ ✓ src/avaliacoes/formulario.test.ts > decidirEnvio > período invertido: corrige, com foco na data final 0ms
+ ✓ src/avaliacoes/formulario.test.ts > decidirEnvio > campanha fora da lista e data inválida: foco na campanha (primeira da tela) 0ms
+ ✓ src/avaliacoes/formulario.test.ts > decidirEnvio > sem a lista (carregando ou com erro), só 'todas' passa 0ms
+ ✓ src/avaliacoes/formulario.test.ts > depoisDoErro > período invertido do servidor (local ['body']): nenhum campo, vai para o EstadoErro 0ms
+ ✓ src/avaliacoes/formulario.test.ts > depoisDoErro > data recusada pelo servidor: no campo, com foco 0ms
+ ✓ src/avaliacoes/formulario.test.ts > depoisDoErro > sem conexão: nenhum campo, vai para o EstadoErro 0ms
+ ✓ src/avaliacoes/formulario.test.ts > depoisDoErro > cota excedida: nenhum campo, vai para o EstadoErro 0ms
+ ✓ src/avaliacoes/formulario.test.ts > depoisDoErro > erro que não é ErroApi: nenhum campo, vai para o EstadoErro 0ms
+ ✓ src/avaliacoes/formulario.test.ts > semErroNoCampo > tira só o campo editado 0ms
+ ✓ src/avaliacoes/formulario.test.ts > semErroNoCampo > campo sem erro: devolve o mesmo objeto (sem nova renderização à toa) 0ms
+ ✓ src/avaliacoes/formulario.test.ts > valor do select > '' ↔ 'todas', ida e volta 1ms
+ ✓ src/avaliacoes/formulario.test.ts > valor do select > id passa como está, nos dois sentidos 0ms
+ ✓ src/avaliacoes/formulario.test.ts > valor do select > 'todas' escolhido no select gera pedido sem campanha_id 0ms
+ ✓ src/avaliacoes/formulario.test.ts > opcoesCampanha > 'Todas' primeiro, depois na ordem da API, com status quando não está ativa 0ms
+ ✓ src/avaliacoes/formulario.test.ts > opcoesCampanha > removida e status desconhecido 0ms
+ ✓ src/avaliacoes/formulario.test.ts > opcoesCampanha > sem campanhas: só 'Todas' 0ms
+ ✓ src/avaliacoes/formulario.test.ts > avisoAtual > campanha C (pausada) sem incluir pausadas: aviso do pedido.ts 0ms
+ ✓ src/avaliacoes/formulario.test.ts > avisoAtual > campanha C com incluir pausadas: sem aviso 0ms
+ ✓ src/avaliacoes/formulario.test.ts > avisoAtual > campanha ativa ou todas: sem aviso 0ms
+ ✓ src/regras/edicao.test.ts > regraNaoEncontrada > id da URL "abc" inválido → não encontrada, sem erro da API 3ms
+ ✓ src/regras/edicao.test.ts > regraNaoEncontrada > id da URL "nova" inválido → não encontrada, sem erro da API 0ms
+ ✓ src/regras/edicao.test.ts > regraNaoEncontrada > id da URL "0" inválido → não encontrada, sem erro da API 0ms
+ ✓ src/regras/edicao.test.ts > regraNaoEncontrada > id da URL "007" inválido → não encontrada, sem erro da API 0ms
+ ✓ src/regras/edicao.test.ts > regraNaoEncontrada > id da URL undefined inválido → não encontrada, sem erro da API 0ms
+ ✓ src/regras/edicao.test.ts > regraNaoEncontrada > 404 da API (tipo nao_encontrado) → não encontrada 0ms
+ ✓ src/regras/edicao.test.ts > regraNaoEncontrada > id válido e carregando ou carregada → não é 'não encontrada' 0ms
+ ✓ src/regras/edicao.test.ts > regraNaoEncontrada > id válido e servidor (500) → não é 'não encontrada' 0ms
+ ✓ src/regras/edicao.test.ts > regraNaoEncontrada > id válido e sem conexão → não é 'não encontrada' 0ms
+ ✓ src/regras/edicao.test.ts > regraNaoEncontrada > id válido e sessão (401) → não é 'não encontrada' 1ms
+ ✓ src/regras/edicao.test.ts > regraNaoEncontrada > id válido e erro que não é da API → não é 'não encontrada' 0ms
+ ✓ src/regras/edicao.test.ts > focoDaNovaCondicao > com 1 condições, foca a Métrica da nova: condicoes.1.metrica 0ms
+ ✓ src/regras/edicao.test.ts > focoDaNovaCondicao > com 9 condições, foca a Métrica da nova: condicoes.9.metrica 0ms
+ ✓ src/regras/edicao.test.ts > focoDaNovaCondicao > o prefixo não casa com a condição 10 (o react-hook-form compara com startsWith) 0ms
+ ✓ src/tema/movimento-css.test.ts > regra global de menos movimento (index.css) > existe um bloco @media (prefers-reduced-motion: reduce) com uma regra dentro 2ms
+ ✓ src/tema/movimento-css.test.ts > regra global de menos movimento (index.css) > vale para todos os elementos e pseudo-elementos 1ms
+ ✓ src/tema/movimento-css.test.ts > regra global de menos movimento (index.css) > animation-duration ≤ 0.01 ms, com !important 1ms
+ ✓ src/tema/movimento-css.test.ts > regra global de menos movimento (index.css) > transition-duration ≤ 0.01 ms, com !important 0ms
+ ✓ src/tema/movimento-css.test.ts > regra global de menos movimento (index.css) > animation-iteration-count: 1, com !important (animação em laço não se repete) 0ms
+ ✓ src/favicon.test.ts > public/favicon.svg > é um SVG 2ms
+ ✓ src/favicon.test.ts > public/favicon.svg > nenhum comentário contém '--' 0ms
+ ✓ src/favicon.test.ts > public/favicon.svg > todo comentário aberto foi fechado 0ms
+ ✓ src/lib/utils.test.ts > cn > a última classe conflitante do Tailwind vence 3ms
+ ✓ src/lib/utils.test.ts > cn > ignora valores falsos, como o clsx 0ms
+ ✓ src/lib/utils.test.ts > cn > variante só é substituída pela mesma variante (causa do KPI com 14 px) 1ms
+ ✓ src/lib/utils.test.ts > cn > o número do KPI substitui o 14 px do CardTitle pelo próprio tamanho 0ms
+ ✓ src/lib/utils.test.ts > cn > className passado por fora sobrescreve a cor padrão do componente 0ms
+ ✓ src/layout/titulo.test.ts > tituloDoDocumento > "Visão geral" → "Visão geral · Limen" 1ms
+ ✓ src/layout/titulo.test.ts > tituloDoDocumento > "Entrar" → "Entrar · Limen" 0ms
+ ✓ src/layout/titulo.test.ts > tituloDoDocumento > "  Regras  " → "Regras · Limen" 0ms
+ ✓ src/layout/titulo.test.ts > tituloDoDocumento > "" → "Limen" 0ms
+ ✓ src/layout/titulo.test.ts > tituloDoDocumento > "   " → "Limen" 0ms
+ ✓ src/regras/aparencia-grafico.test.ts > aparenciaDaRegra: corGrafico > R1 → var(--chart-1) 2ms
+ ✓ src/regras/aparencia-grafico.test.ts > aparenciaDaRegra: corGrafico > R2 → var(--chart-2) 0ms
+ ✓ src/regras/aparencia-grafico.test.ts > aparenciaDaRegra: corGrafico > R3 → var(--chart-3) 0ms
+ ✓ src/regras/aparencia-grafico.test.ts > aparenciaDaRegra: corGrafico > R4 → var(--chart-5) 0ms
+ ✓ src/regras/aparencia-grafico.test.ts > aparenciaDaRegra: corGrafico > r1 → var(--chart-5) 0ms
+ ✓ src/regras/aparencia-grafico.test.ts > aparenciaDaRegra: corGrafico > toString → var(--chart-5) 0ms
+ ✓ src/regras/aparencia-grafico.test.ts > aparenciaDaRegra: corGrafico > R1: token existe nos dois temas e está entre as séries conferidas 1ms
+ ✓ src/regras/aparencia-grafico.test.ts > aparenciaDaRegra: corGrafico > R2: token existe nos dois temas e está entre as séries conferidas 0ms
+ ✓ src/regras/aparencia-grafico.test.ts > aparenciaDaRegra: corGrafico > R3: token existe nos dois temas e está entre as séries conferidas 0ms
+ ✓ src/regras/aparencia-grafico.test.ts > aparenciaDaRegra: corGrafico > R4: token existe nos dois temas e está entre as séries conferidas 0ms
+ ✓ src/regras/aparencia-grafico.test.ts > aparenciaDaRegra: corGrafico > barra e texto usam tokens diferentes, e as três regras têm cores de barra distintas 1ms
+ ✓ src/regras/aparencia.test.ts > aparenciaDaRegra > R1 → tom r1, nome 'CTR baixo' e ícone próprio 2ms
+ ✓ src/regras/aparencia.test.ts > aparenciaDaRegra > R2 → tom r2, nome 'CPC alto' e ícone próprio 0ms
+ ✓ src/regras/aparencia.test.ts > aparenciaDaRegra > R3 → tom r3, nome 'Custo sem conversão' e ícone próprio 0ms
+ ✓ src/regras/aparencia.test.ts > aparenciaDaRegra > as três regras padrão têm ícones e cores diferentes entre si 0ms
+ ✓ src/regras/aparencia.test.ts > aparenciaDaRegra > código desconhecido "R4" → neutro com sino, sem nome padrão, código preservado 0ms
+ ✓ src/regras/aparencia.test.ts > aparenciaDaRegra > código desconhecido "r1" → neutro com sino, sem nome padrão, código preservado 0ms
+ ✓ src/regras/aparencia.test.ts > aparenciaDaRegra > código desconhecido "" → neutro com sino, sem nome padrão, código preservado 0ms
+ ✓ src/regras/aparencia.test.ts > aparenciaDaRegra > código desconhecido " R1" → neutro com sino, sem nome padrão, código preservado 0ms
+ ✓ src/regras/aparencia.test.ts > aparenciaDaRegra > código desconhecido "R1 " → neutro com sino, sem nome padrão, código preservado 0ms
+ ✓ src/regras/aparencia.test.ts > aparenciaDaRegra > código desconhecido "toString" → neutro com sino, sem nome padrão, código preservado 0ms
+ ✓ src/regras/aparencia.test.ts > aparenciaDaRegra > código desconhecido "__proto__" → neutro com sino, sem nome padrão, código preservado 0ms
+ ✓ src/regras/aparencia.test.ts > aparenciaDaRegra > código desconhecido "constructor" → neutro com sino, sem nome padrão, código preservado 0ms
+
+ Test Files  27 passed (27)
+      Tests  950 passed (950)
+   Start at  22:09:06
+   Duration  901ms (import 53%, tests 24%, transform 16%, worker 6%)
+

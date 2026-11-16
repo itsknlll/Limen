@@ -150,6 +150,7 @@ export default function FormularioRegra({ regra }: { regra: Regra | null }) {
                 <div className="flex items-center gap-2">
                   <Checkbox
                     id={`${id}-ativa`}
+                    name={field.name}
                     ref={field.ref}
                     checked={field.value}
                     onCheckedChange={(marcado) => field.onChange(marcado === true)}
