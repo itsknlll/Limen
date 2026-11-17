@@ -66,7 +66,7 @@ class Configuracoes(BaseSettings):
         """Retorna (client_id, client_secret) lidos do arquivo JSON.
 
         Decisão: o segredo nunca passa pela conversa nem fica duplicado no .env.
-        Configure GOOGLE_CLIENT_SECRET_FILE=/home/kauan/.config/limen/client_secret.json.
+        Configure GOOGLE_CLIENT_SECRET_FILE=/caminho/para/client_secret.json (fora do repositório).
         """
         if self.google_client_secret_file is None:
             raise ValueError(

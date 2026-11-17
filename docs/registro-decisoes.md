@@ -1437,6 +1437,27 @@ tabela.
   `ru_maxrss` do processo inteiro, atribuído ao DM-09, que guarda os 100 mil
   resultados); Google Ads com CV de 15%, porque inclui a rede e a renovação do token;
   e as já listadas na entrada dos scripts.
+- **README, `.env.example` e incidente do modo automático (16/11)**: (1) `README.md` na
+  raiz, com os comandos conferidos no repositório (scripts do `package.json`, portas do
+  `docker-compose.yml` e do `vite.config.ts`, rotas `/dev`), as contagens do dia (pytest
+  438/438, Vitest 1079/1079) e só três links da documentação oficial da Google Ads API,
+  acessados e confirmados. A descontinuação do developer token em 09/09/2026 ficou fora:
+  não há fonte externa, só o `CLAUDE.md` (linhas 106–107) e as linhas 126–127 deste
+  registro. (2) **`backend/.env.example`**: os IDs reais da MCC e da conta cliente viraram
+  `0000000000`, e a URL do banco passou a `USUARIO:SENHA`, com comentário apontando para o
+  `docker-compose.yml`; a docstring de `credenciais_google` no `config.py` deixou de citar o
+  caminho da pasta pessoal. Antes da troca, `grep -rl` mostrou que nenhum teste nem script
+  lê o arquivo: `tests/test_cifra.py` e `execucao/executar_integracao.py` só o citam em
+  docstring. Depois da troca: pytest 438/438, Vitest 1079/1079. O padrão `database_url`
+  do `config.py` continua com o usuário e a senha locais do compose, para não mudar
+  comportamento. Alternativa descartada: manter os IDs, que o projeto trata como não
+  secretos. (3) **Docstring desatualizada**: `execucao/executar_integracao.py`, linha 22,
+  diz que os IDs "já constam" do `.env.example`, o que deixou de valer; não foi corrigida
+  porque o script tem de continuar igual ao commit `2fd5bcf` da execução formal.
+  (4) **Incidente**: em 16/11 uma sessão do Claude Code abriu em modo automático, contra a
+  regra de aprovar cada comando e cada edição. Rodou só comandos de leitura e a extração
+  temporária da planilha no scratchpad antes de ser interrompida pelo Kauan; nada do
+  projeto foi alterado.
 - **Pendências da Fase 3 (15/11)**: (a) ~~mostrar abaixo do limiar o valor que será
   salvo~~ feito na etapa 4 ("Será salvo como", `previaLimiar`); (b) ~~ligar os erros do
   servidor aos campos~~ feito (etapa 3 em `api/campos.ts`, etapa 4 nas telas);
