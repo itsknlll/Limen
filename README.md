@@ -199,7 +199,19 @@ sobre o `httpx` no cliente de testes) e **Vitest 1079 passando** em 30 arquivos.
 Além dos testes, a lógica crítica (motor, cálculos, isolamento entre usuários e erros)
 passou por testes de mutação manuais: um trecho é alterado de propósito, confere-se qual
 teste reprova e o arquivo é restaurado e conferido. Cada mutação está documentada em
-`docs/registro-decisoes.md`.
+`docs/registro-decisoes.md`. Nos scripts de desempenho foram aplicadas 32 mutações: 31
+foram detectadas pelos testes, e a única sobrevivente (M5b) era prevista, porque a releitura
+feita depois de gravar já cobre sozinha a checagem removida.
+
+## Artigo do TCC
+
+- Título: *Desenvolvimento e avaliação de um motor de regras para geração de alertas sobre
+  métricas de campanhas digitais: integração à Google Ads API*.
+- Autor: Kauan Negreiros Lima.
+- Orientador: Prof. Esp. Ítalo César Carvalho Lima.
+- Curso: Engenharia de Software, iCEV, 2026.
+- Status: versão submetida ao orientador em novembro de 2026.
+- A versão do código avaliada no artigo corresponde à tag `tcc-2026`.
 
 ## Avaliação do TCC
 
@@ -211,8 +223,8 @@ limiares, políticas e resultados esperados.
 `backend/execucao/preparar.py`), com o código igual ao do commit `2fd5bcf` em todas as
 execuções.
 
-- Cenários: **23 de 23 corretos**, 0 alertas indevidos e 0 omitidos, tanto pela aplicação
-  quanto pelo motor isolado.
+- Cenários: **23 de 23 corretos**, com 13 alertas gerados (os 13 esperados), 0 alertas
+  indevidos e 0 omitidos, tanto pela aplicação quanto pelo motor isolado.
 - Integração: **12 de 12 conferem**. Os casos IN-01 e IN-02 foram refeitos com a API real
   no navegador, e o IN-10 foi conferido no dashboard.
 
@@ -248,15 +260,15 @@ O raciocínio de cada etapa, as alternativas descartadas e as mutações estão 
 
 ## Uso de IA no desenvolvimento
 
-O desenvolvimento contou com o Claude Code (Anthropic) como assistente de programação, na
-escrita de código, testes, scripts e documentação. Cada comando e cada edição foram
-aprovados um a um pelo autor, com uma exceção em 16/11/2026, em que uma sessão abriu em
-modo automático e rodou só comandos de leitura antes de ser interrompida, registrada em
-`docs/registro-decisoes.md`. O autor conferiu as decisões, os testes de mutação e os
-resultados da execução formal. A tabela de avaliação foi congelada antes de qualquer código.
-O texto do artigo é escrito pelo autor.
+O desenvolvimento e a redação contaram com apoio de ferramentas de IA, entre elas o Claude
+Code (Anthropic), usado como assistente de programação na escrita de código, testes,
+scripts e documentação. Cada comando e cada edição foram aprovados um a um pelo autor, com
+uma exceção em 16/11/2026, em que uma sessão abriu em modo automático e rodou só comandos
+de leitura antes de ser interrompida, registrada em `docs/registro-decisoes.md`. A tabela
+de avaliação foi congelada antes de qualquer código. As decisões de projeto, os critérios
+de avaliação e a interpretação dos resultados são de responsabilidade do autor.
 
 ## Autor e orientação
 
 - Autor: Kauan Negreiros Lima, Engenharia de Software, iCEV.
-- Orientador: Prof. Ítalo César Carvalho Lima.
+- Orientador: Prof. Esp. Ítalo César Carvalho Lima.
