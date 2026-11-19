@@ -15,9 +15,10 @@ Histórico detalhado (decisões por fase, mutações, execução formal, desempe
   cada passo.
 - Ele precisa **entender o código** para escrever o artigo: ao final de cada etapa, explicar
   em poucas linhas o que foi feito e as decisões tomadas (com a alternativa descartada).
-- Ao final da aplicação, ele quer um **relatório técnico completo** do que foi feito, para
-  servir de base ao artigo (ele escreve o artigo com as próprias palavras). Por isso, manter
-  o registro de decisões abaixo **atualizado** a cada etapa.
+- Ao final da aplicação, ele quis um relatório técnico completo do que foi feito, para
+  servir de base ao artigo. Esse papel foi cumprido pelo `docs/registro-decisoes.md` e
+  pelas notas do projeto, e o artigo já foi escrito. Por isso, manter o
+  `docs/registro-decisoes.md` **atualizado** a cada etapa.
 - Prazo: aplicação pronta até **segunda, 16/11/2026**; artigo até **27/11/2026**.
 - **Segredos fora do alcance**: nunca ler nem editar `backend/.env` nem nada em
   `~/.config/limen/`. Buscas de segredo só com `grep -l` (mostra o nome do arquivo,
@@ -165,7 +166,7 @@ linhas, sem salvar por cima. Evidências: `docs/evidencias/2026-11-16_desempenho
 artigo (commit `04554f6`). Falta o retorno do orientador. A versão final, com revisão por
 profissional de Letras e comprovante, vai até **27/11/2026**.
 
-Depois: relatório técnico; versão final do artigo até 27/11/2026.
+Depois: ajustes do orientador e versão final do artigo até 27/11/2026.
 
 ## Pendências
 
