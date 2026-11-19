@@ -1,8 +1,8 @@
 # Limen — contexto do projeto para o Claude Code
 
-TCC de Kauan Negreiros Lima (Engenharia de Software, iCEV), orientador Prof. Ítalo César
+TCC de Kauan Negreiros Lima (Engenharia de Software, iCEV), orientador Prof. Esp. Ítalo César
 Carvalho Lima. Modalidade: artigo científico. Título: "Desenvolvimento e avaliação de um
-motor de regras para geração de alertas sobre métricas de campanhas digitais integrado à
+motor de regras para geração de alertas sobre métricas de campanhas digitais: integração à
 Google Ads API". O **motor de regras é o objeto central**; integração, persistência e
 dashboard dão suporte a ele.
 
@@ -161,8 +161,11 @@ novos; pytest **438/438**; 32 mutações, todas como previsto. Evidência:
 commit: 0). Motor (DM) 9/9 e endpoints (DE) 4/4 sem falhas; Google Ads à parte, 30/30.
 Planilha preenchida (66 células), coluna H recalculada no LibreOffice e conferida nas 13
 linhas, sem salvar por cima. Evidências: `docs/evidencias/2026-11-16_desempenho_*`.
+**Artigo (19/11)**: enviado ao orientador em 19/11/2026; README atualizado com a seção do
+artigo (commit `04554f6`). Falta o retorno do orientador. A versão final, com revisão por
+profissional de Letras e comprovante, vai até **27/11/2026**.
 
-Depois: README → relatório técnico. (Dashboard, execução da planilha e desempenho concluídos.)
+Depois: relatório técnico; versão final do artigo até 27/11/2026.
 
 ## Pendências
 

@@ -1458,6 +1458,22 @@ tabela.
   regra de aprovar cada comando e cada edição. Rodou só comandos de leitura e a extração
   temporária da planilha no scratchpad antes de ser interrompida pelo Kauan; nada do
   projeto foi alterado.
+- **README com as informações do artigo (19/11)**: o artigo foi concluído e enviado ao
+  orientador em novembro de 2026, e o `README.md` foi atualizado (commit `04554f6`).
+  (1) Seção nova "Artigo do TCC": título, autor, orientador (Prof. Esp.), curso e ano,
+  status ("versão submetida ao orientador em novembro de 2026") e a tag `tcc-2026` como a
+  versão do código avaliada no artigo. A tag, no `3dcef78`, não foi alterada.
+  (2) "Uso de IA no desenvolvimento" alinhado à declaração da seção 3.7 do artigo: apoio
+  de ferramentas de IA no desenvolvimento e na redação, com as decisões de projeto, os
+  critérios de avaliação e a interpretação dos resultados sob responsabilidade do autor.
+  Saiu a frase "O texto do artigo é escrito pelo autor.", que contradizia a declaração.
+  Nenhuma ferramenta nova foi citada além do Claude Code. (3) Números conferidos com o
+  artigo: pytest 438, Vitest 1.079, 23 de 23 cenários, 0 indevidos, 0 omitidos e 12 de 12
+  na integração já batiam. Foram acrescentados os 13 alertas (soma dos "Sim" esperados) e
+  as 32 mutações dos scripts de desempenho (31 detectadas; a M5b sobreviveu, como
+  previsto). Nenhum número divergia, e o README não dizia "todas as mutações". O PDF e o
+  Word do artigo ficaram fora do repositório. No `CLAUDE.md`, o título passou a ser o do
+  artigo ("…campanhas digitais: integração à Google Ads API").
 - **Pendências da Fase 3 (15/11)**: (a) ~~mostrar abaixo do limiar o valor que será
   salvo~~ feito na etapa 4 ("Será salvo como", `previaLimiar`); (b) ~~ligar os erros do
   servidor aos campos~~ feito (etapa 3 em `api/campos.ts`, etapa 4 nas telas);
